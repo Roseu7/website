@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+/build/
+/.react-router/
+dist/
+
+# Cloudflare Workers
+.wrangler/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# TypeScript
+*.tsbuildinfo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Development/Build configuration files
+wrangler.jsonc
+vite.config.ts
+tailwind.config.ts
+tsconfig*.json
+react-router.config.ts
+.npmrc
+
+# Design files and drafts
+my-design-pages/
+
+# AI関連ファイル
+.claude/
+.serena/
+CLAUDE.md

@@ -1,0 +1,171 @@
+/* Custom styles for Digital Sandbox */
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+    --theme-transition-duration: 0.5s;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url('/fonts/Poppins/Poppins-ExtraBold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Encode Sans SC';
+    font-style: normal;
+    font-weight: 100;
+    font-display: swap;
+    src: url('/fonts/EncodeSansSC/EncodeSansSC-Thin.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 100;
+    font-display: swap;
+    src: url('/fonts/NotoSansJP/NotoSansJP-Thin.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/fonts/NotoSansJP/NotoSansJP-Light.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/NotoSansJP/NotoSansJP-Regular.woff2') format('woff2');
+}
+
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 400;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+#main-title-text,
+#main-subtitle-text {
+    font-family: 'Poppins', sans-serif;
+}
+
+h3 {
+    font-family: 'Encode Sans SC', sans-serif;
+    font-weight: 300;
+}
+
+h4 {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 400;
+}
+
+h5 {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 100;
+}
+
+.theme-transition {
+    transition:
+        color var(--theme-transition-duration) ease,
+        background-color var(--theme-transition-duration) ease,
+        border-color var(--theme-transition-duration) ease,
+        text-shadow var(--theme-transition-duration) ease,
+        fill var(--theme-transition-duration) ease;
+}
+
+header {
+    transition: background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+}
+
+header.scrolled {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dark header.scrolled {
+    background-color: rgba(17, 24, 39, 0.8);
+}
+
+#animated-title-container,
+#main-subtitle-text {
+    will-change: transform;
+}
+
+.knockout-text {
+    color: #4b5563;
+    text-shadow: 0px 0px 4px white, 0px 0px 6px white, 0px 0px 8px white;
+    transition: color var(--theme-transition-duration) ease, text-shadow var(--theme-transition-duration) ease;
+}
+
+.dark .knockout-text {
+    color: #9ca3af;
+    text-shadow: 0px 0px 4px #111827, 0px 0px 6px #111827, 0px 0px 8px #111827;
+}
+
+.project-image-container {
+    transition: transform 0.3s ease, background-color var(--theme-transition-duration) ease;
+}
+
+.project-image-container:hover {
+    transform: scale(1.03);
+}
+
+#theme-toggle-btn {
+    transition: background-color var(--theme-transition-duration) ease;
+}
+
+#loader {
+    transition: opacity 0.5s ease;
+}
+
+#loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loader-dot {
+    width: 16px;
+    height: 16px;
+    background-color: #9ca3af;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.dark .loader-dot {
+    background-color: #4b5563;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+.tech-tag {
+    transition: background-color var(--theme-transition-duration) ease, color var(--theme-transition-duration) ease;
+}
