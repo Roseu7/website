@@ -1,61 +1,19 @@
 import { Link } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { HandwritingTitle } from "~/components/HandwritingTitle";
+import { attachThemeToggle } from "~/utils/theme";
 
 export default function NotFound() {
-  const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
-    // テーマ初期化
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-
-    // ローダー非表示（homeページと同じパターン）
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 100);
-
     // テーマ切り替え
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const sunIcon = document.getElementById('sun-icon');
     const moonIcon = document.getElementById('moon-icon');
-    const htmlEl = document.documentElement;
-
-    const updateIcons = () => {
-      if (htmlEl.classList.contains('dark')) {
-        sunIcon?.classList.remove('hidden');
-        moonIcon?.classList.add('hidden');
-      } else {
-        sunIcon?.classList.add('hidden');
-        moonIcon?.classList.remove('hidden');
-      }
-    };
-
-    // テーマ初期化
-    const initTheme = () => {
-      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        htmlEl.classList.add('dark');
-      } else {
-        htmlEl.classList.remove('dark');
-      }
-    };
-
-    initTheme();
-    updateIcons();
-
-    const handleThemeToggle = () => {
-      htmlEl.classList.toggle('dark');
-      if (htmlEl.classList.contains('dark')) {
-        localStorage.setItem('theme', 'dark');
-      } else {
-        localStorage.setItem('theme', 'light');
-      }
-      updateIcons();
-    };
-
-    themeToggleBtn?.addEventListener('click', handleThemeToggle);
+    const detachThemeToggle = attachThemeToggle({
+      button: themeToggleBtn,
+      sunIcon,
+      moonIcon
+    });
 
     // スクロールアニメーション（404ページでは最下限状態で固定）
     const header = document.getElementById('main-header');
@@ -66,7 +24,7 @@ export default function NotFound() {
     const START_SCALE = 1.0;
     const END_SCALE = 0.3;
     const SUBTITLE_VISUAL_START_SCALE = 1.0;
-    const SUBTITLE_VISUAL_END_SCALE = 0.65;
+    let subtitleVisualEndScale = window.innerWidth <= 768 ? 0.5 : 0.65;
     const START_Y_OFFSET = 0;
     let END_Y_OFFSET = -(window.innerHeight / 2) + ((header?.offsetHeight || 0) / 2);
     const SUBTITLE_END_Y_TRANSLATE = 8;
@@ -74,6 +32,7 @@ export default function NotFound() {
     function calculateAnimationValues() {
       END_Y_OFFSET = -(window.innerHeight / 2) + ((header?.offsetHeight || 0) / 2);
       ANIMATION_END = window.innerHeight * 0.8;
+      subtitleVisualEndScale = window.innerWidth <= 768 ? 0.5 : 0.65;
     }
 
     function handleScrollFixed() {
@@ -98,7 +57,7 @@ export default function NotFound() {
       }
 
       const counterScale = 1 / currentContainerScale;
-      const targetSubtitleScale = SUBTITLE_VISUAL_START_SCALE - (SUBTITLE_VISUAL_START_SCALE - SUBTITLE_VISUAL_END_SCALE) * progress;
+      const targetSubtitleScale = SUBTITLE_VISUAL_START_SCALE - (SUBTITLE_VISUAL_START_SCALE - subtitleVisualEndScale) * progress;
       const currentSubtitleY = SUBTITLE_END_Y_TRANSLATE * progress;
 
       if (subTitle) {
@@ -129,20 +88,13 @@ export default function NotFound() {
 
     // クリーンアップ
     return () => {
-      clearTimeout(timer);
-      themeToggleBtn?.removeEventListener('click', handleThemeToggle);
+      detachThemeToggle();
       window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
-      {isLoading && (
-        <div id="loader" className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-gray-900 theme-transition">
-          <div className="loader-dot"></div>
-        </div>
-      )}
-
       <header id="main-header" className="fixed top-0 left-0 w-full p-4 sm:p-6 z-40">
         <div className="container mx-auto flex justify-end items-center relative h-10">
           <button
@@ -182,13 +134,11 @@ export default function NotFound() {
         </div>
       </header>
 
-      <div id="animated-title-container" className="fixed top-1/2 left-1/2 z-50">
+      <div id="animated-title-container" className="fixed top-1/2 left-1/2 z-50 logo-entrance">
         <Link to="/" className="block">
-          <div className="relative">
-            <h2 id="main-title-text" className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-400 dark:to-purple-500 py-4 theme-transition">
-              Digital Sandbox
-            </h2>
-            <p id="main-subtitle-text" className="knockout-text absolute bottom-4 right-0 text-md font-semibold theme-transition">
+          <div className="relative text-center">
+            <HandwritingTitle />
+            <p id="main-subtitle-text" className="absolute bottom-4 right-0 text-md font-semibold theme-transition logo-subtitle-script">
               by Roseu
             </p>
           </div>
@@ -214,7 +164,7 @@ export default function NotFound() {
 
       <footer className="p-4 sm:p-6">
         <div className="container mx-auto text-center text-sm text-gray-500 dark:text-gray-400 theme-transition">
-          <p>&copy; 2025 Roseu. All Rights Reserved.</p>
+          <p>&copy; 2026 Roseu. All Rights Reserved.</p>
         </div>
       </footer>
 

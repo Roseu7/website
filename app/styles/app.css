@@ -6,6 +6,25 @@
 
 :root {
     --theme-transition-duration: 0.5s;
+    --logo-write-duration: 2900ms;
+    --logo-neon-start-delay: 2900ms;
+    --logo-ink: #30b7cf;
+    --logo-ink-soft: #83deee;
+    --logo-glow: rgba(14, 116, 144, 0.36);
+    --logo-subtitle: #f277c0;
+    --logo-subtitle-soft: #f8c4e3;
+    --logo-subtitle-stroke: rgba(255, 255, 255, 0.92);
+    --logo-subtitle-shadow: rgba(12, 20, 38, 0.5);
+}
+
+.dark {
+    --logo-ink: #7ff1ff;
+    --logo-ink-soft: #d1f9ff;
+    --logo-glow: rgba(56, 189, 248, 0.54);
+    --logo-subtitle: #ffb8e3;
+    --logo-subtitle-soft: #ffe3f5;
+    --logo-subtitle-stroke: rgba(17, 24, 39, 0.96);
+    --logo-subtitle-shadow: rgba(2, 6, 23, 0.72);
 }
 
 html {
@@ -53,6 +72,7 @@ html {
 }
 
 body {
+    margin: 0;
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 400;
     -ms-overflow-style: none;
@@ -70,7 +90,7 @@ body::-webkit-scrollbar {
 
 h3 {
     font-family: 'Encode Sans SC', sans-serif;
-    font-weight: 300;
+    font-weight: 100;
 }
 
 h4 {
@@ -89,11 +109,18 @@ h5 {
         background-color var(--theme-transition-duration) ease,
         border-color var(--theme-transition-duration) ease,
         text-shadow var(--theme-transition-duration) ease,
-        fill var(--theme-transition-duration) ease;
+        fill var(--theme-transition-duration) ease,
+        stroke var(--theme-transition-duration) ease,
+        -webkit-text-stroke-color var(--theme-transition-duration) ease,
+        filter var(--theme-transition-duration) ease,
+        backdrop-filter var(--theme-transition-duration) ease;
 }
 
 header {
-    transition: background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+    transition:
+        background-color var(--theme-transition-duration) ease,
+        box-shadow var(--theme-transition-duration) ease,
+        backdrop-filter var(--theme-transition-duration) ease;
 }
 
 header.scrolled {
@@ -134,11 +161,24 @@ header.scrolled {
     transition: background-color var(--theme-transition-duration) ease;
 }
 
-#loader {
-    transition: opacity 0.5s ease;
+#to-top-btn {
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        background-color var(--theme-transition-duration) ease,
+        color var(--theme-transition-duration) ease;
 }
 
-#loader.hidden {
+#app-loader {
+    transition: opacity 0.5s ease;
+    background-color: white;
+}
+
+.dark #app-loader {
+    background-color: #111827;
+}
+
+#app-loader.hidden {
     opacity: 0;
     pointer-events: none;
 }
@@ -168,4 +208,233 @@ header.scrolled {
 
 .tech-tag {
     transition: background-color var(--theme-transition-duration) ease, color var(--theme-transition-duration) ease;
+}
+
+.logo-entrance {
+    opacity: 0;
+    filter: none;
+    animation: logoReveal 820ms cubic-bezier(0.22, 1, 0.36, 1) 100ms forwards;
+}
+
+@keyframes logoReveal {
+    0% {
+        opacity: 0;
+        filter: none;
+    }
+    100% {
+        opacity: 1;
+        filter: none;
+    }
+}
+
+#main-title-text.logo-title-text {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-size: clamp(2.8rem, 8.8vw, 5.8rem);
+    text-align: center;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transform: translateZ(0);
+}
+
+#main-title-text.logo-title-text .logo-stroke-svg {
+    width: min(84vw, 9.8em);
+    height: auto;
+    display: block;
+    overflow: visible;
+    shape-rendering: auto;
+    animation: logoStrokeGlow 3.2s ease-in-out var(--logo-neon-start-delay) infinite;
+}
+
+#main-title-text.logo-title-text .logo-stroke-path {
+    fill: none;
+    stroke: var(--logo-ink);
+    stroke-width: 5.0;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: var(--path-length, 1);
+    stroke-dashoffset: var(--path-length, 1);
+    opacity: 1;
+    filter: none;
+    will-change: stroke-dashoffset;
+    transition:
+        stroke var(--theme-transition-duration) ease,
+        filter var(--theme-transition-duration) ease;
+}
+
+#main-title-text.logo-title-text .logo-stroke-svg.logo-strokes-ready .logo-stroke-path {
+    animation: logoStrokeWriteSmooth var(--logo-write-duration) linear both;
+}
+
+#main-title-text.logo-title-text .logo-neon-layer {
+    pointer-events: none;
+}
+
+#main-title-text.logo-title-text .logo-neon-stroke {
+    fill: none;
+    stroke: var(--logo-ink-soft);
+    stroke-width: 5.0;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    filter: drop-shadow(0 0 0 var(--logo-glow));
+}
+
+#main-title-text.logo-title-text .logo-stroke-svg.logo-strokes-ready .logo-neon-stroke {
+    animation: logoNeonSettle var(--neon-duration, 1000ms) cubic-bezier(0.2, 0.75, 0.2, 1) calc(var(--logo-neon-start-delay) + var(--neon-delay, 0ms)) 1 forwards;
+}
+
+#main-subtitle-text.logo-subtitle-script {
+    color: var(--logo-subtitle);
+    font-family: "Segoe Script", "Bradley Hand", "Comic Sans MS", "Snell Roundhand", cursive;
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+    line-height: 1.1;
+    -webkit-text-stroke: 1.2px var(--logo-subtitle-stroke);
+    paint-order: stroke fill;
+    bottom: clamp(1rem, calc(2.2vh + 0.6vw), 2.55rem);
+    text-shadow:
+        0 0 2px var(--logo-subtitle-stroke),
+        0 1px 8px var(--logo-subtitle-shadow),
+        0 0 10px rgba(255, 142, 207, 0.38);
+    opacity: 0;
+    letter-spacing: 0.035em;
+    transition:
+        color var(--theme-transition-duration) ease,
+        -webkit-text-stroke-color var(--theme-transition-duration) ease,
+        text-shadow var(--theme-transition-duration) ease;
+    animation: subtitleReveal 0.55s ease calc(var(--logo-write-duration) - 2.25s) forwards;
+}
+
+#main-subtitle-text.logo-subtitle-script::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--logo-subtitle-soft), transparent);
+    animation: subtitleUnderline 0.65s ease calc(var(--logo-write-duration) - 2.05s) forwards;
+}
+
+@keyframes logoStrokeWriteSmooth {
+    0% {
+        stroke-dashoffset: var(--path-length, 1);
+        stroke: var(--logo-ink-soft);
+    }
+    100% {
+        stroke-dashoffset: 0;
+        stroke: var(--logo-ink);
+    }
+}
+
+@keyframes logoStrokeGlow {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 3px var(--logo-glow));
+    }
+    50% {
+        filter: drop-shadow(0 0 7px var(--logo-glow));
+    }
+}
+
+@keyframes logoNeonSettle {
+    0% {
+        opacity: 0;
+        filter: drop-shadow(0 0 1px var(--logo-glow));
+    }
+    70% {
+        opacity: 0.78;
+        filter: drop-shadow(0 0 10px var(--logo-glow));
+    }
+    100% {
+        opacity: 0.68;
+        filter: drop-shadow(0 0 8px var(--logo-glow));
+    }
+}
+
+@keyframes subtitleReveal {
+    0% {
+        opacity: 0;
+        filter: blur(3px);
+    }
+    100% {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+@keyframes subtitleUnderline {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .logo-entrance {
+        opacity: 1;
+        filter: none;
+        animation: none;
+    }
+
+    #main-subtitle-text.logo-subtitle-script,
+    #main-subtitle-text.logo-subtitle-script::after {
+        animation: none;
+        width: 100%;
+        opacity: 1;
+        border-right-color: transparent;
+    }
+
+    #main-title-text.logo-title-text .logo-stroke-svg {
+        animation: none;
+    }
+
+    #main-title-text.logo-title-text .logo-stroke-path {
+        animation: none;
+        opacity: 1;
+        stroke-dashoffset: 0;
+        stroke: var(--logo-ink);
+    }
+
+    #main-title-text.logo-title-text .logo-neon-stroke {
+        animation: none;
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+    :root {
+        --logo-write-duration: 7200ms;
+    }
+}
+
+@media (max-width: 768px) {
+    #main-subtitle-text.logo-subtitle-script {
+        font-size: clamp(0.9rem, 3.4vw, 1.02rem);
+        bottom: clamp(0.55rem, calc(1.2vh + 0.35vw), 1.05rem);
+        animation: subtitleReveal 0.45s ease max(120ms, calc(var(--logo-write-duration) - 6.0s)) forwards;
+    }
+
+    #main-subtitle-text.logo-subtitle-script::after {
+        animation: subtitleUnderline 0.55s ease max(220ms, calc(var(--logo-write-duration) - 5.8s)) forwards;
+    }
+
+    header.scrolled ~ #animated-title-container #main-subtitle-text.logo-subtitle-script {
+        font-size: clamp(0.74rem, 2.9vw, 0.86rem);
+    }
+}
+
+@media (min-width: 768px) {
+    #main-subtitle-text.logo-subtitle-script {
+        font-size: clamp(1.2rem, 1.3vw, 1.5rem);
+        bottom: clamp(2.9rem, 4vh, 3.9rem);
+    }
 }

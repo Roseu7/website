@@ -2,46 +2,39 @@
 node_modules/
 
 # Build outputs
-/build/
-/.react-router/
-dist/
-
-# Cloudflare Workers
+build/
+.react-router/
 .wrangler/
 
-# Environment variables
+# Secrets / local env
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
 
-# TypeScript
-*.tsbuildinfo
+# Potentially sensitive local config
+.npmrc
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# TypeScript build cache
+tsconfig.cloudflare.tsbuildinfo
+tsconfig.node.tsbuildinfo
 
-# IDE files
-.vscode/
+# Certificates / private keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.jks
 
 # Logs
 *.log
 npm-debug.log*
 
-# Development/Build configuration files
-wrangler.jsonc
-vite.config.ts
-tailwind.config.ts
-tsconfig*.json
-react-router.config.ts
-.npmrc
+# Local IDE / assistant files
+.vscode/
 
-# Design files and drafts
+# Local draft pages
 my-design-pages/
-
-# AI関連ファイル
-.claude/
-.serena/
-CLAUDE.md

@@ -1,5 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { HandwritingTitle } from "~/components/HandwritingTitle";
+import { attachThemeToggle } from "~/utils/theme";
 
 export const meta = () => {
   return [
@@ -18,58 +20,27 @@ export const meta = () => {
     { name: "theme-color", content: "#3b82f6" },
     { name: "msapplication-TileColor", content: "#3b82f6" },
   ];
-};;
+};
 
 export default function Home() {
   // 画像エラー状態管理
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+  const hasDigitalSandboxError = imageErrors.has("digitalsandbox");
 
   const handleImageError = (imageName: string) => {
     setImageErrors(prev => new Set([...prev, imageName]));
   };
 
   useEffect(() => {
-
-
     // テーマ切り替え
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const sunIcon = document.getElementById('sun-icon');
     const moonIcon = document.getElementById('moon-icon');
-    const htmlEl = document.documentElement;
-
-    const updateIcons = () => {
-      if (htmlEl.classList.contains('dark')) {
-        sunIcon?.classList.remove('hidden');
-        moonIcon?.classList.add('hidden');
-      } else {
-        sunIcon?.classList.add('hidden');
-        moonIcon?.classList.remove('hidden');
-      }
-    };
-
-    // テーマ初期化
-    const initTheme = () => {
-      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        htmlEl.classList.add('dark');
-      } else {
-        htmlEl.classList.remove('dark');
-      }
-    };
-
-    initTheme();
-    updateIcons();
-
-    const handleThemeToggle = () => {
-      htmlEl.classList.toggle('dark');
-      if (htmlEl.classList.contains('dark')) {
-        localStorage.setItem('theme', 'dark');
-      } else {
-        localStorage.setItem('theme', 'light');
-      }
-      updateIcons();
-    };
-
-    themeToggleBtn?.addEventListener('click', handleThemeToggle);
+    const detachThemeToggle = attachThemeToggle({
+      button: themeToggleBtn,
+      sunIcon,
+      moonIcon
+    });
 
     // スクロールアニメーション
     const header = document.getElementById('main-header');
@@ -81,7 +52,7 @@ export default function Home() {
     const START_SCALE = 1.0;
     const END_SCALE = 0.3;
     const SUBTITLE_VISUAL_START_SCALE = 1.0;
-    const SUBTITLE_VISUAL_END_SCALE = 0.65;
+    let subtitleVisualEndScale = window.innerWidth <= 768 ? 0.5 : 0.65;
     const START_Y_OFFSET = 0;
     let END_Y_OFFSET = -(window.innerHeight / 2) + ((header?.offsetHeight || 0) / 2);
     const SUBTITLE_END_Y_TRANSLATE = 8;
@@ -89,6 +60,7 @@ export default function Home() {
     function calculateAnimationValues() {
       END_Y_OFFSET = -(window.innerHeight / 2) + ((header?.offsetHeight || 0) / 2);
       ANIMATION_END = window.innerHeight * 0.8;
+      subtitleVisualEndScale = window.innerWidth <= 768 ? 0.5 : 0.65;
     }
 
     function handleScroll() {
@@ -120,7 +92,7 @@ export default function Home() {
       }
 
       const counterScale = 1 / currentContainerScale;
-      const targetSubtitleScale = SUBTITLE_VISUAL_START_SCALE - (SUBTITLE_VISUAL_START_SCALE - SUBTITLE_VISUAL_END_SCALE) * progress;
+      const targetSubtitleScale = SUBTITLE_VISUAL_START_SCALE - (SUBTITLE_VISUAL_START_SCALE - subtitleVisualEndScale) * progress;
       const currentSubtitleY = SUBTITLE_END_Y_TRANSLATE * progress;
 
       if (subTitle) {
@@ -156,7 +128,7 @@ export default function Home() {
     animatedTitle?.addEventListener('click', handleTitleClick);
     toTopBtn?.addEventListener('click', handleToTopClick);
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     const handleResize = () => {
       calculateAnimationValues();
       handleScroll();
@@ -168,7 +140,7 @@ export default function Home() {
 
     // クリーンアップ
     return () => {
-      themeToggleBtn?.removeEventListener('click', handleThemeToggle);
+      detachThemeToggle();
       animatedTitle?.removeEventListener('click', handleTitleClick);
       toTopBtn?.removeEventListener('click', handleToTopClick);
       window.removeEventListener('scroll', handleScroll);
@@ -218,13 +190,11 @@ export default function Home() {
       </header>
 
 
-      <div id="animated-title-container" className="fixed top-1/2 left-1/2 z-50">
+      <div id="animated-title-container" className="fixed top-1/2 left-1/2 z-50 logo-entrance">
         <a href="#" className="block">
-          <div className="relative">
-            <h2 id="main-title-text" className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-400 dark:to-purple-500 py-4 theme-transition">
-              Digital Sandbox
-            </h2>
-            <p id="main-subtitle-text" className="knockout-text absolute bottom-4 right-0 text-md font-semibold">
+          <div className="relative text-center">
+            <HandwritingTitle />
+            <p id="main-subtitle-text" className="absolute bottom-4 right-0 text-md font-semibold theme-transition logo-subtitle-script">
               by Roseu
             </p>
           </div>
@@ -316,7 +286,7 @@ export default function Home() {
                     </div>
                     <a href="https://github.com/Roseu7/geek0623" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white theme-transition">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                       </svg>
                       View on GitHub
                     </a>
@@ -325,20 +295,20 @@ export default function Home() {
 
                 <div className="grid md:grid-cols-2 gap-12 items-center">
                   <div className="project-image-container rounded-lg bg-gray-100 dark:bg-gray-800/50 aspect-video flex items-center justify-center text-gray-400 dark:text-gray-600 theme-transition">
-                    {imageErrors.has('digitalsandbox') ? (
+                    {hasDigitalSandboxError ? (
                       <div className="text-center text-gray-400 dark:text-gray-600">Image coming soon...</div>
                     ) : (
                       <picture>
                         <source srcSet="/images/digitalsandbox.webp" type="image/webp" />
-                        <img 
-                          src="/images/digitalsandbox.png" 
-                          alt="Digital Sandbox project preview" 
-                          className="w-full h-full object-cover rounded-lg" 
-                          loading="lazy" 
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw" 
-                          width="640" 
-                          height="360" 
-                          onError={() => handleImageError('digitalsandbox')} 
+                        <img
+                          src="/images/digitalsandbox.png"
+                          alt="Digital Sandbox project preview"
+                          className="w-full h-full object-cover rounded-lg"
+                          loading="lazy"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
+                          width="640"
+                          height="360"
+                          onError={() => handleImageError("digitalsandbox")}
                         />
                       </picture>
                     )}
@@ -356,7 +326,7 @@ export default function Home() {
                     </div>
                     <a href="https://github.com/Roseu7/website" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white theme-transition">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                       </svg>
                       View on GitHub
                     </a>
@@ -412,7 +382,7 @@ export default function Home() {
                     </a>
                     <a href="https://github.com/Roseu7" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:hover:text-white theme-transition">
                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                       </svg>
                     </a>
                   </div>
@@ -425,7 +395,7 @@ export default function Home() {
 
       <footer className="p-4 sm:p-6">
         <div className="container mx-auto text-center text-sm text-gray-500 dark:text-gray-400 theme-transition">
-          <p>&copy; 2025 Roseu. All Rights Reserved.</p>
+          <p>&copy; 2026 Roseu. All Rights Reserved.</p>
         </div>
       </footer>
 
