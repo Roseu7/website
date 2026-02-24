@@ -23,7 +23,6 @@ export const meta = () => {
 };
 
 export default function Home() {
-  // 画像エラー状態管理
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const hasDigitalSandboxError = imageErrors.has("digitalsandbox");
 
@@ -42,7 +41,7 @@ export default function Home() {
       moonIcon
     });
 
-    // スクロールアニメーション
+    // スクロール連動
     const header = document.getElementById('main-header');
     const animatedTitle = document.getElementById('animated-title-container');
     const subTitle = document.getElementById('main-subtitle-text');
@@ -72,7 +71,7 @@ export default function Home() {
         header?.classList.remove('scrolled');
       }
 
-      // TOPに戻るボタンの表示制御
+      // TOPボタン表示
       if (scrollY > window.innerHeight / 2) {
         toTopBtn?.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
         toTopBtn?.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
@@ -86,7 +85,6 @@ export default function Home() {
       const currentContainerScale = START_SCALE - (START_SCALE - END_SCALE) * progress;
       const currentY = START_Y_OFFSET + (END_Y_OFFSET - START_Y_OFFSET) * progress;
 
-      // 中央配置の制御
       if (animatedTitle) {
         animatedTitle.style.transform = `translate(-50%, calc(-50% + ${currentY}px)) scale(${currentContainerScale})`;
       }

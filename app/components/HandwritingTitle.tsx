@@ -26,7 +26,6 @@ function getResponsiveWriteDurationMs(viewportWidth: number, viewportHeight: num
   const aspectRatio = viewportHeight / Math.max(viewportWidth, 1);
   const isPortraitMobile = viewportWidth <= 768 && aspectRatio >= 1.45;
   if (isPortraitMobile) {
-    // 縦長スマホでは見かけ上の描画が速く感じるため、さらに遅くする。
     durationMs = Math.max(7200, durationMs * 2.6);
   }
 

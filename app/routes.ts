@@ -2,6 +2,6 @@ import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
     index("routes/home.tsx"),
-    // 404 catch-all route (must be last)
+    // 404用ルート(最後に配置)
     route("*", "routes/$.tsx"),
 ] satisfies RouteConfig;

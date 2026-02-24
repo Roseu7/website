@@ -62,9 +62,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 }, remaining);
               }
 
-              // 初回読み込み完了後にローダーを閉じる
+              // 読み込み完了でローダーを閉じる
               window.addEventListener('load', hideLoader, { once: true });
-              // 異常系フォールバック
+              // フォールバック
               window.setTimeout(hideLoader, LOADER_MAX_WAIT_MS);
             })();
           `
@@ -82,7 +82,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ダークモード初期化
+// 初期テーマ適用
 function DarkModeScript() {
   return (
     <script

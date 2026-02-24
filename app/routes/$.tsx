@@ -3,6 +3,15 @@ import { useEffect } from "react";
 import { HandwritingTitle } from "~/components/HandwritingTitle";
 import { attachThemeToggle } from "~/utils/theme";
 
+export const meta = () => {
+  return [
+    { title: "404 Not Found | Digital Sandbox by Roseu" },
+    { name: "robots", content: "noindex, nofollow" },
+    { property: "og:title", content: "404 Not Found | Digital Sandbox by Roseu" },
+    { property: "og:type", content: "website" },
+  ];
+};
+
 export default function NotFound() {
   useEffect(() => {
     // テーマ切り替え
@@ -15,7 +24,7 @@ export default function NotFound() {
       moonIcon
     });
 
-    // スクロールアニメーション（404ページでは最下限状態で固定）
+    // スクロール状態を最終表示に固定
     const header = document.getElementById('main-header');
     const animatedTitle = document.getElementById('animated-title-container');
     const subTitle = document.getElementById('main-subtitle-text');
@@ -36,8 +45,7 @@ export default function NotFound() {
     }
 
     function handleScrollFixed() {
-      // 404ページでは常にスクロール最下限状態（progress = 1.0）に固定
-      const scrollY = ANIMATION_END; // 最下限相当の値
+      const scrollY = ANIMATION_END;
 
       if (scrollY > 50) {
         header?.classList.add('scrolled');
@@ -51,7 +59,6 @@ export default function NotFound() {
       const currentContainerScale = START_SCALE - (START_SCALE - END_SCALE) * progress;
       const currentY = START_Y_OFFSET + (END_Y_OFFSET - START_Y_OFFSET) * progress;
 
-      // 中央配置の制御
       if (animatedTitle) {
         animatedTitle.style.transform = `translate(-50%, calc(-50% + ${currentY}px)) scale(${currentContainerScale})`;
       }
@@ -73,9 +80,6 @@ export default function NotFound() {
         }
       }
     }
-
-    // 404ページではアニメーションタイトルのクリックはReact Routerに任せる
-    // （JavaScriptでのスクロール制御は不要）
 
     const handleResize = () => {
       calculateAnimationValues();
@@ -172,7 +176,7 @@ export default function NotFound() {
   );
 }
 
-// React Router v7のエラーバウンダリー用
+// ルート単位のエラーバウンダリー
 export function ErrorBoundary() {
   return <NotFound />;
 }
