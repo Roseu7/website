@@ -71,7 +71,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         }} />
       </head>
       <body className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 theme-transition">
-        <div id="app-loader" className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div id="app-loader" className="fixed inset-0 z-100 flex items-center justify-center">
           <div className="loader-dot"></div>
         </div>
         {children}
