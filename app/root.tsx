@@ -5,11 +5,11 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
 } from "react-router";
 import type { LinksFunction } from "react-router";
 
 import "./styles/app.css";
-import { siteConfig } from "~/utils/site";
 
 export const links: LinksFunction = () => [
   {
@@ -36,8 +36,6 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const loaderWordmark = siteConfig.name.split(" ");
-
   return (
     <html lang="ja">
       <head>
@@ -81,12 +79,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <div id="app-loader" className="app-loader" aria-hidden="true">
           <div className="app-loader__inner">
-            <div className="app-loader__wordmark">
-              {loaderWordmark.map((word) => (
-                <span key={word}>{word}</span>
-              ))}
-            </div>
-            <span className="app-loader__line" />
+            <span className="app-loader__spinner" aria-hidden="true" />
+            <span className="sr-only">読み込み中</span>
           </div>
         </div>
         {children}
@@ -115,5 +109,70 @@ function DarkModeScript() {
 }
 
 export default function App() {
+  useRouteLoaderOverlay();
   return <Outlet />;
+}
+
+function useRouteLoaderOverlay() {
+  const navigation = useNavigation();
+  const showTimerRef = React.useRef<number | null>(null);
+  const hideTimerRef = React.useRef<number | null>(null);
+  const shownAtRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    const loader = document.getElementById("app-loader");
+    if (!(loader instanceof HTMLElement)) {
+      return;
+    }
+
+    const clearShowTimer = () => {
+      if (showTimerRef.current !== null) {
+        window.clearTimeout(showTimerRef.current);
+        showTimerRef.current = null;
+      }
+    };
+
+    const clearHideTimer = () => {
+      if (hideTimerRef.current !== null) {
+        window.clearTimeout(hideTimerRef.current);
+        hideTimerRef.current = null;
+      }
+    };
+
+    const showLoader = () => {
+      shownAtRef.current = Date.now();
+      loader.classList.remove("is-hidden");
+      loader.classList.add("is-route-loading");
+    };
+
+    const hideLoader = () => {
+      loader.classList.remove("is-route-loading");
+      loader.classList.add("is-hidden");
+      shownAtRef.current = null;
+    };
+
+    const isNavigating = navigation.state !== "idle";
+
+    if (isNavigating) {
+      clearHideTimer();
+      if (!loader.classList.contains("is-route-loading")) {
+        clearShowTimer();
+        showTimerRef.current = window.setTimeout(showLoader, 90);
+      }
+    } else {
+      clearShowTimer();
+      if (loader.classList.contains("is-route-loading")) {
+        const elapsed =
+          shownAtRef.current === null ? 0 : Date.now() - shownAtRef.current;
+        const remaining = Math.max(0, 260 - elapsed);
+        clearHideTimer();
+        hideTimerRef.current = window.setTimeout(hideLoader, remaining);
+      }
+    }
+
+    return () => {
+      clearShowTimer();
+      clearHideTimer();
+    };
+  }, [navigation.state]);
 }

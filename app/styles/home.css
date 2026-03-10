@@ -114,6 +114,18 @@
   text-shadow: 0 14px 40px color-mix(in srgb, var(--ink-1) 8%, transparent);
 }
 
+html.theme-transition-running .brand-stage {
+  --brand-shift-x: 0px;
+  --brand-shift-y: 0px;
+  --brand-tilt-x: 0deg;
+  --brand-tilt-y: 0deg;
+}
+
+html.theme-transition-running .brand-stage__wordmark,
+html.theme-transition-running .brand-stage .site-brand__name-line {
+  transition: none !important;
+}
+
 @media (max-width: 640px) {
   .home-page,
   .brand-stage {

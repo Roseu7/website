@@ -788,6 +788,13 @@
     align-items: center;
   }
 
+  .solver-attempt-row__tiles {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+
   .solver-highlight__row,
   .info-row {
     flex-direction: column;

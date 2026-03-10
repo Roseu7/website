@@ -20,7 +20,7 @@ export default function ToolsPage() {
           <div className="tool-card__body">
             <h2 className="tool-card__title">Wordle Solver</h2>
             <p className="tool-card__copy">
-              Wordleの候補を絞り込み、次の推測候補を提示するソルバー
+              Wordleの候補を絞り込み、次の推測候補を提示するツール
             </p>
             <Link to="/tools/wsolver" className="cta-link" viewTransition>
               <span>ツールを開く</span>

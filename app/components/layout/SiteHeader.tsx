@@ -22,26 +22,64 @@ export function SiteHeader({
   const location = useLocation();
   const navItems = siteConfig.primaryNav.filter(isRouteNavItem);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [mobileMenuClosing, setMobileMenuClosing] = React.useState(false);
+  const closeTimerRef = React.useRef<number | null>(null);
+
+  const clearCloseTimer = React.useCallback(() => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
+
+  const closeMobileMenu = React.useCallback(() => {
+    clearCloseTimer();
+    setMobileMenuOpen(false);
+    setMobileMenuClosing(true);
+    closeTimerRef.current = window.setTimeout(() => {
+      setMobileMenuClosing(false);
+      closeTimerRef.current = null;
+    }, 320);
+  }, [clearCloseTimer]);
+
+  const openMobileMenu = React.useCallback(() => {
+    clearCloseTimer();
+    setMobileMenuClosing(false);
+    setMobileMenuOpen(true);
+  }, [clearCloseTimer]);
+
+  const toggleMobileMenu = React.useCallback(() => {
+    if (mobileMenuOpen) {
+      closeMobileMenu();
+      return;
+    }
+
+    openMobileMenu();
+  }, [closeMobileMenu, mobileMenuOpen, openMobileMenu]);
+
+  const mobileMenuVisible = mobileMenuOpen || mobileMenuClosing;
 
   React.useEffect(() => {
+    clearCloseTimer();
     setMobileMenuOpen(false);
+    setMobileMenuClosing(false);
   }, [location.pathname]);
 
   React.useEffect(() => {
-    document.body.classList.toggle("mobile-menu-active", mobileMenuOpen);
+    document.body.classList.toggle("mobile-menu-active", mobileMenuVisible);
     return () => {
       document.body.classList.remove("mobile-menu-active");
     };
-  }, [mobileMenuOpen]);
+  }, [mobileMenuVisible]);
 
   React.useEffect(() => {
-    if (!mobileMenuOpen) {
+    if (!mobileMenuVisible) {
       return;
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setMobileMenuOpen(false);
+        closeMobileMenu();
       }
     };
 
@@ -49,7 +87,13 @@ export function SiteHeader({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [mobileMenuOpen]);
+  }, [closeMobileMenu, mobileMenuVisible]);
+
+  React.useEffect(() => {
+    return () => {
+      clearCloseTimer();
+    };
+  }, [clearCloseTimer]);
 
   return (
     <header
@@ -164,7 +208,7 @@ export function SiteHeader({
             aria-expanded={mobileMenuOpen}
             aria-controls="site-mobile-menu"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMobileMenuOpen((open) => !open)}
+            onClick={toggleMobileMenu}
           >
             <span className="site-menu-toggle__line" />
             <span className="site-menu-toggle__line" />
@@ -175,13 +219,18 @@ export function SiteHeader({
 
       <div
         id="site-mobile-menu"
-        className={cx("site-mobile-menu", mobileMenuOpen && "is-open")}
+        className={cx(
+          "site-mobile-menu",
+          mobileMenuVisible && "is-visible",
+          mobileMenuOpen && "is-open",
+          mobileMenuClosing && "is-closing"
+        )}
       >
         <button
           type="button"
           className="site-mobile-menu__backdrop"
           aria-label="Close menu"
-          onClick={() => setMobileMenuOpen(false)}
+          onClick={closeMobileMenu}
         />
 
         <div className="site-mobile-menu__panel">
@@ -204,7 +253,7 @@ export function SiteHeader({
                 type="button"
                 className="site-menu-close"
                 aria-label="Close menu"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={closeMobileMenu}
               >
                 <span className="site-menu-close__line" />
                 <span className="site-menu-close__line" />
