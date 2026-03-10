@@ -23,7 +23,7 @@ export default function ToolsPage() {
               Wordleの候補を絞り込み、次の推測候補を提示するソルバー
             </p>
             <Link to="/tools/wsolver" className="cta-link" viewTransition>
-              <span>Open Tool</span>
+              <span>ツールを開く</span>
             </Link>
           </div>
         </article>

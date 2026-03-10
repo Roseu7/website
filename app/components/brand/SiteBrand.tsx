@@ -1,11 +1,9 @@
-import * as React from "react";
 import { siteConfig } from "~/utils/site";
 
 interface SiteBrandProps {
   compact?: boolean;
   interactive?: boolean;
   mode?: "default" | "wordmark";
-  transitionName?: string;
 }
 
 function cx(...values: Array<string | false | null | undefined>) {
@@ -16,16 +14,12 @@ export function SiteBrand({
   compact = false,
   interactive = false,
   mode = "default",
-  transitionName,
 }: SiteBrandProps) {
   const words = siteConfig.name.split(" ");
-  const style = transitionName
-    ? ({ viewTransitionName: transitionName } as React.CSSProperties)
-    : undefined;
 
   if (compact) {
     return (
-      <div className="site-brand site-brand--compact" style={style}>
+      <div className="site-brand site-brand--compact">
         <span className="site-brand__compact-name">{siteConfig.name}</span>
       </div>
     );
@@ -39,7 +33,6 @@ export function SiteBrand({
         mode === "wordmark" && "site-brand--wordmark-only",
         interactive && "site-brand--interactive"
       )}
-      style={style}
     >
       <div className="site-brand__copy">
         <div className="site-brand__wordmark" aria-label={siteConfig.name}>

@@ -49,6 +49,13 @@ interface NextApiResponse {
   solver?: SolverResult;
 }
 
+function normalizeAlphaText(value: string) {
+  const halfWidth = value.replace(/[Ａ-Ｚａ-ｚ]/g, (char) =>
+    String.fromCharCode(char.charCodeAt(0) - 0xfee0)
+  );
+  return halfWidth.replace(/[^a-zA-Z]/g, "").toLowerCase();
+}
+
 function getLetterFromKeyEvent(event: KeyboardEvent | React.KeyboardEvent) {
   if (event.ctrlKey || event.metaKey || event.altKey) {
     return null;
@@ -116,8 +123,10 @@ export default function WordleSolverPage() {
   const [solverError, setSolverError] = useState<string>("");
   const [isSolverPending, setIsSolverPending] = useState<boolean>(false);
   const [workerReady, setWorkerReady] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const workerRef = useRef<Worker | null>(null);
   const solveRequestIdRef = useRef(0);
+  const draftInputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   const constraints = useMemo(() => {
     const completed = attempts.filter((row) => isCompletePattern(row.pattern));
@@ -151,6 +160,26 @@ export default function WordleSolverPage() {
   const focusIndexAfterInput = React.useCallback((index: number) => {
     setSelectedDraftIndex(index < draftLetters.length - 1 ? index + 1 : index);
   }, [draftLetters.length]);
+
+  const focusDraftInput = React.useCallback((index: number) => {
+    window.requestAnimationFrame(() => {
+      draftInputRefs.current[index]?.focus();
+      draftInputRefs.current[index]?.select();
+    });
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 720px)");
+    const updateIsMobile = () => {
+      setIsMobile(mediaQuery.matches);
+    };
+
+    updateIsMobile();
+    mediaQuery.addEventListener("change", updateIsMobile);
+    return () => {
+      mediaQuery.removeEventListener("change", updateIsMobile);
+    };
+  }, []);
 
   useEffect(() => {
     const worker = new Worker(new URL("../../workers/wordle-solver.worker.ts", import.meta.url), {
@@ -267,6 +296,75 @@ export default function WordleSolverPage() {
     setSelectedDraftIndex(index);
   };
 
+  const handleMobileDraftInputChange = (index: number, value: string) => {
+    const normalized = normalizeAlphaText(value);
+
+    if (!normalized) {
+      replaceDraftLetter(index, "");
+      return;
+    }
+
+    if (normalized.length > 1) {
+      applyDraftLetters(index, normalized);
+      const nextIndex = Math.min(index + normalized.length, EMPTY_DRAFT.length - 1);
+      focusDraftInput(nextIndex);
+      return;
+    }
+
+    replaceDraftLetter(index, normalized);
+    setSelectedDraftIndex(index);
+    if (index < EMPTY_DRAFT.length - 1) {
+      focusDraftInput(index + 1);
+    }
+  };
+
+  const handleMobileDraftInputKeyDown = (
+    index: number,
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Backspace" && !draftLetters[index] && index > 0) {
+      event.preventDefault();
+      replaceDraftLetter(index - 1, "");
+      setSelectedDraftIndex(index - 1);
+      focusDraftInput(index - 1);
+      return;
+    }
+
+    if (event.key === "ArrowLeft" && index > 0) {
+      event.preventDefault();
+      setSelectedDraftIndex(index - 1);
+      focusDraftInput(index - 1);
+      return;
+    }
+
+    if (event.key === "ArrowRight" && index < EMPTY_DRAFT.length - 1) {
+      event.preventDefault();
+      setSelectedDraftIndex(index + 1);
+      focusDraftInput(index + 1);
+      return;
+    }
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitGuess();
+    }
+  };
+
+  const handleMobileDraftPaste = (
+    index: number,
+    event: React.ClipboardEvent<HTMLInputElement>
+  ) => {
+    const pasted = normalizeAlphaText(event.clipboardData.getData("text")).slice(0, 5);
+    if (!pasted) {
+      return;
+    }
+
+    event.preventDefault();
+    applyDraftLetters(index, pasted);
+    const nextIndex = Math.min(index + pasted.length, EMPTY_DRAFT.length - 1);
+    focusDraftInput(nextIndex);
+  };
+
   const handleDraftPaste = React.useCallback((event: ClipboardEvent) => {
     if (isEditableElement(event.target)) {
       return;
@@ -315,6 +413,10 @@ export default function WordleSolverPage() {
   }, [attempts.length, draftLetters]);
 
   useEffect(() => {
+    if (isMobile) {
+      return;
+    }
+
     const handlePageKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey || event.metaKey || event.altKey) {
         return;
@@ -386,6 +488,7 @@ export default function WordleSolverPage() {
   }, [
     findNextDraftIndex,
     focusIndexAfterInput,
+    isMobile,
     handleDraftPaste,
     replaceDraftLetter,
     selectedDraftIndex,
@@ -419,11 +522,24 @@ export default function WordleSolverPage() {
     <PageLayout contentClassName="page-stack">
       <PageIntro
         title="Wordle Solver"
-        description="左で入力し、右で候補を確認します。"
+        description="Wordleを効率的に解くツール"
       />
 
       <section className="solver-layout">
-        <section className="solver-panel">
+        <section className="solver-panel solver-panel--metrics">
+          <div className="metric-grid">
+            <div className="metric-card">
+              <div className="metric-card__label">候補数</div>
+              <div className="metric-card__value">{candidateCount}</div>
+            </div>
+            <div className="metric-card">
+              <div className="metric-card__label">手数</div>
+              <div className="metric-card__value">{turnsUsed} / {MAX_TURNS}</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="solver-panel solver-panel--input">
           <div className="solver-panel__header">
             <h2 className="solver-section-title">入力</h2>
             <button
@@ -466,19 +582,41 @@ export default function WordleSolverPage() {
           <div className="solver-draft">
             <p className="solver-label">推測語を入力</p>
             <div className="solver-draft__row">
-              {draftLetters.map((letter, index) => (
-                <button
-                  key={`draft-${index}`}
-                  type="button"
-                  onMouseDown={(event) => event.preventDefault()}
-                  onClick={() => handleDraftTileClick(index)}
-                  className={`solver-draft-tile${selectedDraftIndex === index ? " is-selected" : ""}`}
-                  aria-label={`推測語の${index + 1}文字目`}
-                  aria-pressed={selectedDraftIndex === index}
-                >
-                  {letter.toUpperCase()}
-                </button>
-              ))}
+              {isMobile
+                ? draftLetters.map((letter, index) => (
+                    <input
+                      key={`draft-input-${index}`}
+                      ref={(node) => {
+                        draftInputRefs.current[index] = node;
+                      }}
+                      type="text"
+                      inputMode="text"
+                      autoCapitalize="off"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      value={letter.toUpperCase()}
+                      onChange={(event) => handleMobileDraftInputChange(index, event.target.value)}
+                      onFocus={() => setSelectedDraftIndex(index)}
+                      onKeyDown={(event) => handleMobileDraftInputKeyDown(index, event)}
+                      onPaste={(event) => handleMobileDraftPaste(index, event)}
+                      className="solver-draft-input"
+                      aria-label={`推測語の${index + 1}文字目`}
+                    />
+                  ))
+                : draftLetters.map((letter, index) => (
+                    <button
+                      key={`draft-${index}`}
+                      type="button"
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => handleDraftTileClick(index)}
+                      className={`solver-draft-tile${selectedDraftIndex === index ? " is-selected" : ""}`}
+                      aria-label={`推測語の${index + 1}文字目`}
+                      aria-pressed={selectedDraftIndex === index}
+                    >
+                      {letter.toUpperCase()}
+                    </button>
+                  ))}
               <button
                 type="button"
                 onClick={submitGuess}
@@ -491,26 +629,11 @@ export default function WordleSolverPage() {
           </div>
 
           <p className="solver-note">
-            <span>灰</span> → <span>黄</span> → <span>緑</span>
+            文字をクリックで色を切り替え
           </p>
         </section>
 
-        <section className="solver-panel">
-          <div className="metric-grid">
-            <div className="metric-card">
-              <div className="metric-card__label">候補数</div>
-              <div className="metric-card__value">{candidateCount}</div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-card__label">使用手</div>
-              <div className="metric-card__value">{turnsUsed}</div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-card__label">残り手</div>
-              <div className="metric-card__value">{turnsLeft}</div>
-            </div>
-          </div>
-
+        <section className="solver-panel solver-panel--results">
           <div className="solver-highlight">
             <p className="solver-label">推奨入力</p>
             <div className="solver-highlight__row">
@@ -545,11 +668,13 @@ export default function WordleSolverPage() {
                 <div key={item.word} className="candidate-row">
                   <span className="candidate-row__rank">#{index + 1}</span>
                   <span className="candidate-row__word">{item.word}</span>
-                  <span className="candidate-row__meta">
-                    期待:{item.expectedRemaining?.toFixed(2) ?? "-"}
-                  </span>
-                  <span className="candidate-row__meta">
-                    最大:{item.worstBucket ?? "-"}
+                  <span className="candidate-row__summary">
+                    <span className="candidate-row__meta">
+                      期待:{item.expectedRemaining?.toFixed(2) ?? "-"}
+                    </span>
+                    <span className="candidate-row__meta">
+                      最大:{item.worstBucket ?? "-"}
+                    </span>
                     {item.safe ? <span className="candidate-row__safe">safe</span> : null}
                   </span>
                 </div>
@@ -572,8 +697,10 @@ export default function WordleSolverPage() {
                 <div key={item.word} className="candidate-row">
                   <span className="candidate-row__rank">#{index + 1}</span>
                   <span className="candidate-row__word">{item.word}</span>
-                  <span className="candidate-row__meta">分岐:{item.probeLetterCount}</span>
-                  <span className="candidate-row__meta">重み:{item.probeLetterScore}</span>
+                  <span className="candidate-row__summary">
+                    <span className="candidate-row__meta">分岐:{item.probeLetterCount}</span>
+                    <span className="candidate-row__meta">重み:{item.probeLetterScore}</span>
+                  </span>
                 </div>
               ))}
               {solver.explorationSuggestions.length === 0 ? (
