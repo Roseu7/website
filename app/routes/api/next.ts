@@ -19,8 +19,8 @@ const MAX_REQUEST_BODY_BYTES = 8 * 1024;
 const ALLOWED_ORIGINS = new Set([
   "https://roseu.net",
   "https://www.roseu.net",
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
+  "http://localhost:4173",
+  "http://127.0.0.1:4173",
 ]);
 
 function buildCorsHeaders(request: Request): HeadersInit {
@@ -104,8 +104,8 @@ export async function action({ request }: ActionFunctionArgs) {
     const turnsLeft = Math.max(0, 6 - constraints.length);
     const candidates = filterAnswers(constraints);
     const solver = turnsLeft > 0
-      ? suggestMoves(candidates, turnsLeft)
-      : { suggestions: [], recommended: null, mode: "heuristic" as const };
+      ? suggestMoves(candidates, turnsLeft, constraints)
+      : { candidateSuggestions: [], explorationSuggestions: [], recommended: null, mode: "heuristic" as const };
 
     return Response.json({
       candidateCount: candidates.length,

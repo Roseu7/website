@@ -9,6 +9,7 @@ import {
 import type { LinksFunction } from "react-router";
 
 import "./styles/app.css";
+import { siteConfig } from "~/utils/site";
 
 export const links: LinksFunction = () => [
   {
@@ -20,14 +21,14 @@ export const links: LinksFunction = () => [
   },
   {
     rel: "preload",
-    href: "/fonts/EncodeSansSC/EncodeSansSC-Thin.woff2",
+    href: "/fonts/NotoSansJP/NotoSansJP-Regular.woff2",
     as: "font",
     type: "font/woff2",
     crossOrigin: "anonymous",
   },
   {
     rel: "preload",
-    href: "/fonts/NotoSansJP/NotoSansJP-Regular.woff2",
+    href: "/fonts/EncodeSansSC/EncodeSansSC-Thin.woff2",
     as: "font",
     type: "font/woff2",
     crossOrigin: "anonymous",
@@ -35,6 +36,8 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const loaderWordmark = siteConfig.name.split(" ");
+
   return (
     <html lang="ja">
       <head>
@@ -43,36 +46,48 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
         <DarkModeScript />
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              const LOADER_MIN_MS = 400;
-              const LOADER_MAX_WAIT_MS = 8000;
-              const startedAt = Date.now();
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const LOADER_MIN_MS = 560;
+                const LOADER_MAX_WAIT_MS = 8000;
+                const startedAt = Date.now();
 
-              function hideLoader() {
-                const loader = document.getElementById('app-loader');
-                if (!loader || loader.classList.contains('hidden')) return;
+                function hideLoader() {
+                  const loader = document.getElementById('app-loader');
+                  if (!loader || loader.classList.contains('is-hidden')) return;
 
-                const elapsed = Date.now() - startedAt;
-                const remaining = Math.max(0, LOADER_MIN_MS - elapsed);
+                  const elapsed = Date.now() - startedAt;
+                  const remaining = Math.max(0, LOADER_MIN_MS - elapsed);
 
-                window.setTimeout(() => {
-                  loader.classList.add('hidden');
-                }, remaining);
-              }
+                  window.setTimeout(function() {
+                    loader.classList.add('is-hidden');
+                  }, remaining);
+                }
 
-              // 読み込み完了でローダーを閉じる
-              window.addEventListener('load', hideLoader, { once: true });
-              // フォールバック
-              window.setTimeout(hideLoader, LOADER_MAX_WAIT_MS);
-            })();
-          `
-        }} />
+                window.addEventListener('load', hideLoader, { once: true });
+                window.setTimeout(hideLoader, LOADER_MAX_WAIT_MS);
+              })();
+            `,
+          }}
+        />
       </head>
-      <body className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 theme-transition">
-        <div id="app-loader" className="fixed inset-0 z-100 flex items-center justify-center">
-          <div className="loader-dot"></div>
+      <body className="site-body theme-transition">
+        <div
+          id="theme-transition-layer"
+          className="theme-transition-layer"
+          aria-hidden="true"
+        />
+        <div id="app-loader" className="app-loader" aria-hidden="true">
+          <div className="app-loader__inner">
+            <div className="app-loader__wordmark">
+              {loaderWordmark.map((word) => (
+                <span key={word}>{word}</span>
+              ))}
+            </div>
+            <span className="app-loader__line" />
+          </div>
         </div>
         {children}
         <ScrollRestoration />
@@ -82,19 +97,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-// 初期テーマ適用
 function DarkModeScript() {
   return (
     <script
       dangerouslySetInnerHTML={{
         __html: `
           (function() {
-            if (localStorage.getItem('theme') === 'dark' ||
-                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-              document.documentElement.classList.add('dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-            }
+            var isDark = localStorage.getItem('theme') === 'dark' ||
+              (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+            document.documentElement.classList.toggle('dark', isDark);
           })();
         `,
       }}

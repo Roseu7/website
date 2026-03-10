@@ -31,8 +31,8 @@ self.onmessage = (event: MessageEvent<SolveRequestMessage>) => {
 
   const candidates = filterAnswers(message.constraints);
   const solver = message.turnsLeft > 0
-    ? suggestMoves(candidates, message.turnsLeft)
-    : { suggestions: [], recommended: null, mode: "heuristic" as const };
+    ? suggestMoves(candidates, message.turnsLeft, message.constraints)
+    : { candidateSuggestions: [], explorationSuggestions: [], recommended: null, mode: "heuristic" as const };
 
   self.postMessage({
     type: "solve",

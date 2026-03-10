@@ -38,3 +38,18 @@ npm-debug.log*
 
 # Local draft pages
 my-design-pages/
+
+# Private operations / planning (not for public showcase)
+docs/
+services/
+config.yml
+
+# Local infra credentials
+.cloudflared/
+**/.cloudflared/
+
+# Local binaries / OS artifacts
+*.exe
+*.dll
+.DS_Store
+Thumbs.db

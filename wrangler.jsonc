@@ -17,6 +17,10 @@
     {
       "pattern": "roseu.net",
       "custom_domain": true
+    },
+    {
+      "pattern": "home.roseu.net",
+      "custom_domain": true
     }
   ]
   /**

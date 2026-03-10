@@ -10,15 +10,18 @@ export interface WordleConstraint {
 
 export interface SolverSuggestion {
   word: string;
-  expectedRemaining: number;
-  worstBucket: number;
+  expectedRemaining: number | null;
+  worstBucket: number | null;
   safe: boolean;
   inAnswers: boolean;
   inCandidates: boolean;
+  probeLetterCount: number;
+  probeLetterScore: number;
 }
 
 export interface SolverResult {
-  suggestions: SolverSuggestion[];
+  candidateSuggestions: SolverSuggestion[];
+  explorationSuggestions: SolverSuggestion[];
   recommended: SolverSuggestion | null;
   mode: "heuristic" | "late-exact";
 }
@@ -52,6 +55,8 @@ const ANSWER_INDEX = new Map<string, number>(WORDLE_ANSWERS.map((word, index) =>
 
 const FEEDBACK_CACHE_LIMIT = 1200;
 const FEEDBACK_UNKNOWN = 255;
+const CANDIDATE_SUGGESTION_LIMIT = 5;
+const EXPLORATION_SUGGESTION_LIMIT = 5;
 const feedbackRowCache = new Map<string, Uint8Array>();
 
 function getFeedbackRow(guess: string): Uint8Array {
@@ -128,6 +133,106 @@ function buildCoveragePool(candidates: readonly string[], poolSize: number): str
     .map((entry) => entry.guess);
 
   return uniqueWords([...candidates, ...ranked]);
+}
+
+function buildKnownPresentLetterSet(constraints: readonly WordleConstraint[]): Set<string> {
+  const presentLetters = new Set<string>();
+
+  for (const constraint of constraints) {
+    for (let index = 0; index < constraint.guess.length; index += 1) {
+      if (constraint.pattern[index] === 1 || constraint.pattern[index] === 2) {
+        presentLetters.add(constraint.guess[index]);
+      }
+    }
+  }
+
+  return presentLetters;
+}
+
+function buildProbeLetterScoreMap(
+  candidates: readonly string[],
+  knownPresentLetters: ReadonlySet<string>
+): Map<string, number> {
+  const probeScore = new Map<string, number>();
+
+  for (let index = 0; index < 5; index += 1) {
+    const positionCounts = new Map<string, number>();
+
+    for (const word of candidates) {
+      const letter = word[index];
+      positionCounts.set(letter, (positionCounts.get(letter) ?? 0) + 1);
+    }
+
+    if (positionCounts.size <= 1) {
+      continue;
+    }
+
+    for (const [letter, count] of positionCounts) {
+      if (knownPresentLetters.has(letter)) continue;
+      probeScore.set(letter, (probeScore.get(letter) ?? 0) + count);
+    }
+  }
+
+  return probeScore;
+}
+
+function getProbeMetrics(
+  word: string,
+  probeLetterScoreMap: ReadonlyMap<string, number>
+): { probeLetterCount: number; probeLetterScore: number } {
+  const counted = new Set<string>();
+  let probeLetterCount = 0;
+  let probeLetterScore = 0;
+
+  for (const letter of word) {
+    if (counted.has(letter)) continue;
+    counted.add(letter);
+
+    const score = probeLetterScoreMap.get(letter);
+    if (!score) continue;
+    probeLetterCount += 1;
+    probeLetterScore += score;
+  }
+
+  return {
+    probeLetterCount,
+    probeLetterScore,
+  };
+}
+
+function buildUnusedLetterScoreMap(candidates: readonly string[], knownPresentLetters: ReadonlySet<string>): Map<string, number> {
+  const letterScore = new Map<string, number>();
+
+  for (const word of candidates) {
+    const counted = new Set<string>();
+    for (const letter of word) {
+      if (knownPresentLetters.has(letter) || counted.has(letter)) continue;
+      counted.add(letter);
+      letterScore.set(letter, (letterScore.get(letter) ?? 0) + 1);
+    }
+  }
+
+  return letterScore;
+}
+
+function getUnusedLetterMetrics(
+  word: string,
+  knownPresentLetters: ReadonlySet<string>,
+  letterScore: ReadonlyMap<string, number>
+) {
+  const unseen = new Set<string>();
+  let unusedLetterScore = 0;
+
+  for (const letter of word) {
+    if (knownPresentLetters.has(letter) || unseen.has(letter)) continue;
+    unseen.add(letter);
+    unusedLetterScore += letterScore.get(letter) ?? 0;
+  }
+
+  return {
+    unusedLetterCount: unseen.size,
+    unusedLetterScore,
+  };
 }
 
 function expectedRemaining(candidates: readonly string[], guess: string): number {
@@ -314,8 +419,8 @@ export function isCompletePattern(pattern: readonly LetterState[]): pattern is [
   return pattern.length === 5 && pattern.every((value) => value === 0 || value === 1 || value === 2);
 }
 
-export function filterAnswers(constraints: readonly WordleConstraint[]): string[] {
-  return WORDLE_ANSWERS.filter((candidate) => {
+function filterMatchingWords(wordPool: readonly string[], constraints: readonly WordleConstraint[]): string[] {
+  return wordPool.filter((candidate) => {
     for (const constraint of constraints) {
       if (feedbackCode(candidate, constraint.guess) !== toPatternCode(constraint.pattern)) {
         return false;
@@ -323,6 +428,32 @@ export function filterAnswers(constraints: readonly WordleConstraint[]): string[
     }
     return true;
   });
+}
+
+export function filterAnswers(constraints: readonly WordleConstraint[]): string[] {
+  const fromAnswers = filterMatchingWords(WORDLE_ANSWERS, constraints);
+
+  if (constraints.length === 0) {
+    return fromAnswers;
+  }
+
+  const shouldProbeFallback = constraints.length >= 3 && fromAnswers.length <= 24;
+  if (!shouldProbeFallback && fromAnswers.length > 0) {
+    return fromAnswers;
+  }
+
+  const fromAllowed = filterMatchingWords(WORDLE_ALLOWED, constraints);
+  if (fromAnswers.length === 0) {
+    return fromAllowed;
+  }
+
+  const extraFallbackCandidates = fromAllowed.length - fromAnswers.length;
+  const fallbackPoolCap = Math.max(32, fromAnswers.length * 4);
+  if (extraFallbackCandidates > 0 && fromAllowed.length <= fallbackPoolCap) {
+    return fromAllowed;
+  }
+
+  return fromAnswers;
 }
 
 export function isAllowedGuess(word: string): boolean {
@@ -333,79 +464,106 @@ export function isAnswerWord(word: string): boolean {
   return ANSWER_SET.has(word.toLowerCase());
 }
 
-export function suggestMoves(candidates: readonly string[], turnsLeft: number): SolverResult {
+export function suggestMoves(
+  candidates: readonly string[],
+  turnsLeft: number,
+  constraints: readonly WordleConstraint[] = []
+): SolverResult {
   if (candidates.length === 0) {
-    return { suggestions: [], recommended: null, mode: "heuristic" };
-  }
-
-  if (candidates.length === 1) {
-    const only = candidates[0];
-    const decided: SolverSuggestion = {
-      word: only,
-      expectedRemaining: 1,
-      worstBucket: 1,
-      safe: true,
-      inAnswers: true,
-      inCandidates: true,
-    };
-
     return {
-      suggestions: [decided],
-      recommended: decided,
-      mode: "late-exact",
+      candidateSuggestions: [],
+      explorationSuggestions: [],
+      recommended: null,
+      mode: "heuristic",
     };
   }
 
   const candidateSet = new Set(candidates);
+  const fallbackMode = candidates.some((word) => !isAnswerWord(word));
+  const knownPresentLetters = buildKnownPresentLetterSet(constraints);
+  const probeLetterScoreMap = buildProbeLetterScoreMap(candidates, knownPresentLetters);
+  const unknownLetterScoreMap = buildUnusedLetterScoreMap(candidates, knownPresentLetters);
 
-  const evaluationPool = candidates.length <= 30
-    ? WORDLE_ALLOWED
-    : buildCoveragePool(candidates, 380);
-
-  const evaluated = evaluationPool.map((word) => ({
+  const candidateEvaluated = candidates.map((word) => ({
     word,
     expectedRemaining: expectedRemaining(candidates, word),
     worstBucket: worstBucket(candidates, word),
     inAnswers: isAnswerWord(word),
-    inCandidates: candidateSet.has(word),
+    inCandidates: true,
     safe: false,
+    ...getProbeMetrics(word, probeLetterScoreMap),
   }));
 
-  evaluated.sort((a, b) => {
+  const exactMode = candidates.length <= 60 && turnsLeft <= 4;
+  if (exactMode) {
+    const memo = new Map<string, boolean>();
+    for (let i = 0; i < candidateEvaluated.length; i += 1) {
+      candidateEvaluated[i].safe = isSafeMove(candidates, candidateEvaluated[i].word, turnsLeft, memo);
+    }
+  }
+
+  candidateEvaluated.sort((a, b) => {
+    if (a.safe !== b.safe) {
+      return a.safe ? -1 : 1;
+    }
     if (a.expectedRemaining !== b.expectedRemaining) {
-      return a.expectedRemaining - b.expectedRemaining;
+      return (a.expectedRemaining ?? Number.POSITIVE_INFINITY) - (b.expectedRemaining ?? Number.POSITIVE_INFINITY);
     }
     if (a.worstBucket !== b.worstBucket) {
-      return a.worstBucket - b.worstBucket;
+      return (a.worstBucket ?? Number.POSITIVE_INFINITY) - (b.worstBucket ?? Number.POSITIVE_INFINITY);
     }
-    if (a.inCandidates !== b.inCandidates) {
-      return a.inCandidates ? -1 : 1;
-    }
-    if (a.inAnswers !== b.inAnswers) {
+    if (!fallbackMode && a.inAnswers !== b.inAnswers) {
       return a.inAnswers ? -1 : 1;
+    }
+    if (a.probeLetterCount !== b.probeLetterCount) {
+      return b.probeLetterCount - a.probeLetterCount;
+    }
+    if (a.probeLetterScore !== b.probeLetterScore) {
+      return b.probeLetterScore - a.probeLetterScore;
     }
     return a.word.localeCompare(b.word);
   });
 
-  const top = evaluated.slice(0, 40);
-  const exactMode = candidates.length <= 60 && turnsLeft <= 4;
+  const candidateSuggestions = candidateEvaluated.slice(0, CANDIDATE_SUGGESTION_LIMIT);
+  const candidateSuggestionSet = new Set(candidateSuggestions.map((item) => item.word));
 
-  if (exactMode) {
-    const memo = new Map<string, boolean>();
-    for (let i = 0; i < Math.min(16, top.length); i += 1) {
-      top[i].safe = isSafeMove(candidates, top[i].word, turnsLeft, memo);
-    }
-  }
+  const explorationRanked = WORDLE_ALLOWED
+    .filter((word) => !candidateSet.has(word) && !candidateSuggestionSet.has(word))
+    .map((word) => ({
+      word,
+      expectedRemaining: null,
+      worstBucket: null,
+      inAnswers: isAnswerWord(word),
+      inCandidates: candidateSet.has(word),
+      safe: false,
+      ...getProbeMetrics(word, probeLetterScoreMap),
+      unknownLetterScore: getUnusedLetterMetrics(word, knownPresentLetters, unknownLetterScoreMap).unusedLetterScore,
+    }))
+    .sort((a, b) => {
+      if (a.probeLetterCount !== b.probeLetterCount) {
+        return b.probeLetterCount - a.probeLetterCount;
+      }
+      if (a.probeLetterScore !== b.probeLetterScore) {
+        return b.probeLetterScore - a.probeLetterScore;
+      }
+      if (a.unknownLetterScore !== b.unknownLetterScore) {
+        return b.unknownLetterScore - a.unknownLetterScore;
+      }
+      return a.word.localeCompare(b.word);
+    });
+
+  const explorationSuggestions = explorationRanked
+    .filter((item) => item.probeLetterCount > 0)
+    .slice(0, EXPLORATION_SUGGESTION_LIMIT);
 
   const recommended =
-    top.find((item) => item.safe && item.inCandidates) ??
-    top.find((item) => item.safe) ??
-    top.find((item) => item.inCandidates) ??
-    top[0] ??
+    candidateSuggestions.find((item) => item.safe) ??
+    candidateSuggestions[0] ??
     null;
 
   return {
-    suggestions: top,
+    candidateSuggestions,
+    explorationSuggestions,
     recommended,
     mode: exactMode ? "late-exact" : "heuristic",
   };
