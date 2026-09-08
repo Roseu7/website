@@ -1,0 +1,58 @@
+.about-board {
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.about-board__identity {
+  display: grid;
+  grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr);
+  gap: clamp(1.25rem, 4vw, 3rem);
+  align-items: start;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.about-board__portrait {
+  min-width: 0;
+}
+
+.about-board__image {
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.about-board__intro {
+  display: grid;
+  gap: 1rem;
+}
+
+.about-board__name {
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+}
+
+.about-board__details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 4vw, 3rem);
+}
+
+.about-slab {
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.about-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+}
+
+.about-link {
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.38em;
+}
+
+.about-link:hover {
+  color: var(--ink-1);
+}

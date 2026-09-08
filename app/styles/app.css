@@ -1,0 +1,46 @@
+@config "../../tailwind.config.ts";
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: false;
+  include: button, badge, input, loading, menu, navbar;
+}
+@plugin "daisyui/theme" {
+  name: "digital-sandbox";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+  --color-base-100: #f7f7f5;
+  --color-base-200: #eeeeeb;
+  --color-base-300: #d6d6d0;
+  --color-base-content: #171717;
+  --color-primary: #2f3538;
+  --color-primary-content: #f7f7f5;
+  --color-secondary: #55595b;
+  --color-secondary-content: #f7f7f5;
+  --color-accent: #687276;
+  --color-accent-content: #f7f7f5;
+  --color-neutral: #171717;
+  --color-neutral-content: #f7f7f5;
+  --color-info: #55595b;
+  --color-info-content: #f7f7f5;
+  --color-success: #3f4547;
+  --color-success-content: #f7f7f5;
+  --color-warning: #6a6258;
+  --color-warning-content: #f7f7f5;
+  --color-error: #4b4b4b;
+  --color-error-content: #f7f7f5;
+  --radius-selector: 0.15rem;
+  --radius-field: 0.15rem;
+  --radius-box: 0.15rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@import "./foundation.css";
+@import "./shell.css";
+@import "./home.css";
+@import "./pages.css";
+@import "./mc.css";

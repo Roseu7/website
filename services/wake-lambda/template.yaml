@@ -1,0 +1,149 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Roseu Home Control Wake-on-LAN Lambda
+
+Parameters:
+  ApiCustomDomainName:
+    Type: String
+    Default: ''
+    Description: Cloudflare-proxied hostname protected by Cloudflare Access.
+  CertificateArn:
+    Type: String
+    Default: ''
+    Description: ACM certificate ARN in this region for ApiCustomDomainName.
+  HmacSecret:
+    Type: String
+    NoEcho: true
+    Description: Shared secret used by the Worker request signature.
+  TargetMac:
+    Type: String
+    NoEcho: true
+    Description: Fixed MAC address of the PC to wake.
+Conditions:
+  UseCustomDomain: !And
+    - !Not [!Equals [!Ref ApiCustomDomainName, '']]
+    - !Not [!Equals [!Ref CertificateArn, '']]
+
+Resources:
+  WakeTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+
+  WakeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/handler.handler
+      Runtime: nodejs22.x
+      MemorySize: 256
+      Timeout: 10
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+              Resource: !GetAtt WakeTable.Arn
+      Environment:
+        Variables:
+          DDB_TABLE_NAME: !Ref WakeTable
+          HMAC_SECRET: !Ref HmacSecret
+          TARGET_MAC: !Ref TargetMac
+
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: roseu-home-control-wake
+      ProtocolType: HTTP
+      DisableExecuteApiEndpoint: !If [UseCustomDomain, true, false]
+
+  HttpApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: $default
+      AutoDeploy: true
+
+  WakeIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: AWS_PROXY
+      IntegrationMethod: POST
+      IntegrationUri: !Join
+        - ''
+        - - 'arn:'
+          - !Ref AWS::Partition
+          - ':apigateway:'
+          - !Ref AWS::Region
+          - ':lambda:path/2015-03-31/functions/'
+          - !GetAtt WakeFunction.Arn
+          - '/invocations'
+      PayloadFormatVersion: '2.0'
+      TimeoutInMillis: 10000
+
+  WakeRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: POST /wake
+      Target: !Sub integrations/${WakeIntegration}
+
+  HealthRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: GET /health
+      Target: !Sub integrations/${WakeIntegration}
+
+  WakeFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref WakeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*/*
+
+  ApiDomainName:
+    Condition: UseCustomDomain
+    Type: AWS::ApiGatewayV2::DomainName
+    Properties:
+      DomainName: !Ref ApiCustomDomainName
+      DomainNameConfigurations:
+        - CertificateArn: !Ref CertificateArn
+          EndpointType: REGIONAL
+          SecurityPolicy: TLS_1_2
+
+  ApiMapping:
+    Condition: UseCustomDomain
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties:
+      ApiId: !Ref HttpApi
+      DomainName: !Ref ApiDomainName
+      Stage: !Ref HttpApiStage
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint used before the custom domain is ready.
+    Value: !GetAtt HttpApi.ApiEndpoint
+  CustomDomainTarget:
+    Condition: UseCustomDomain
+    Description: CNAME target for the Cloudflare DNS record.
+    Value: !GetAtt ApiDomainName.RegionalDomainName
+  WakeTableName:
+    Description: DynamoDB table used for nonce and rate-limit state.
+    Value: !Ref WakeTable

@@ -1,0 +1,15 @@
+node_modules/
+build/
+.react-router/
+.wrangler/
+*.tsbuildinfo
+.env*
+.dev.vars*
+wrangler.jsonc
+worker-configuration.d.ts
+.aws-sam/
+samconfig.toml
+tests/
+test/
+*.test.*
+*.spec.*

@@ -1,0 +1,15 @@
+.empty-state {
+  display: grid;
+  place-items: center;
+  min-height: 45vh;
+}
+
+.empty-state__panel {
+  width: min(100%, 34rem);
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.empty-state__title {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+}

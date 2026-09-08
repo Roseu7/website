@@ -1,0 +1,17 @@
+.tool-grid,
+.solver-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.solver-layout {
+  grid-template-columns: minmax(18rem, 0.78fr) minmax(0, 1.22fr);
+}
+
+.solver-panel,
+.control-panel {
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-soft);
+}

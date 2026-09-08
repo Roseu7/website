@@ -1,0 +1,143 @@
+.projects-board {
+  gap: 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.project-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 18rem);
+  gap: clamp(1.25rem, 4vw, 3rem);
+  align-items: start;
+  padding: clamp(1.6rem, 4vw, 3rem) 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.project-sheet__index {
+  display: none;
+}
+
+.project-sheet__body,
+.about-slab,
+.solver-panel,
+.control-panel,
+.empty-state__panel,
+.tool-card__body {
+  display: grid;
+  gap: 1rem;
+}
+
+.project-sheet__body {
+  min-width: 0;
+}
+
+.project-sheet__media {
+  align-self: start;
+}
+
+.project-sheet__picture,
+.project-sheet__image,
+.about-board__picture,
+.about-board__image {
+  width: 100%;
+}
+
+.project-sheet__image {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.project-sheet__fallback,
+.about-board__fallback {
+  min-height: 10rem;
+  display: grid;
+  place-items: center;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink-3);
+}
+
+.project-sheet__title,
+.about-board__name,
+.tool-card__title,
+.empty-state__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+}
+
+.project-sheet__title,
+.tool-card__title {
+  font-size: clamp(2rem, 5vw, 3.7rem);
+}
+
+.project-sheet__copy,
+.about-board__copy,
+.tool-card__copy,
+.content-panel__copy,
+.empty-state__copy {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.project-sheet__copy {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.project-sheet__copy p {
+  margin: 0;
+}
+
+.content-panel__eyebrow {
+  margin: 0;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.65rem;
+}
+
+.tech-tag,
+.tech-tag.badge {
+  min-height: 1.8rem;
+  height: auto;
+  padding: 0.18rem 0.48rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.cta-link {
+  width: fit-content;
+}
+
+.cta-link svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.cta-link--danger,
+.cta-link[aria-disabled="true"] {
+  border-color: var(--line-soft);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
+
+.cta-link--danger:hover,
+.cta-link[aria-disabled="true"]:hover {
+  background: transparent;
+  color: var(--ink-3);
+}

@@ -1,0 +1,17 @@
+.tool-directory {
+  gap: 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.tool-card {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.tool-card__body {
+  min-height: 12rem;
+  padding: clamp(1.6rem, 4vw, 3rem) 0;
+}
+
+.tool-card .cta-link {
+  align-self: end;
+}
