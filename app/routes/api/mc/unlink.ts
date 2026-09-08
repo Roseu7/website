@@ -22,7 +22,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   const env = getMcDashboardEnv(context);
   const secret = requireMcServiceApiMasterSecret(env);
-  const body = await verifySignedServiceJson<UnlinkBody>(request, secret);
+  const body = await verifySignedServiceJson<UnlinkBody>(request, secret, { db: env.DB, scope: "mc" });
 
   if (typeof body.minecraftUuid !== "string" || body.minecraftUuid.length === 0) {
     throw new Response("Invalid unlink payload.", { status: 400 });

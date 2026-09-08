@@ -134,7 +134,8 @@ export async function ensureDefaultManagedServer(db: D1Database, discordGuildId:
      VALUES (?, ?, ?, 1, ?, ?)
      ON CONFLICT(server_id) DO UPDATE SET
        discord_guild_id = CASE WHEN excluded.discord_guild_id <> '' THEN excluded.discord_guild_id ELSE managed_servers.discord_guild_id END,
-       updated_at = excluded.updated_at`
+       updated_at = excluded.updated_at
+     WHERE excluded.discord_guild_id <> '' AND managed_servers.discord_guild_id <> excluded.discord_guild_id`
   ).bind(DEFAULT_SERVER_ID, "Niko Server", discordGuildId, now, now).run();
 }
 
@@ -289,12 +290,8 @@ export async function createWhitelistApplication(
     status, mode, now, status === "approved" ? now : null, status === "approved" ? "AUTO" : null,
     requiresManual ? reviewNote : null, input.verificationStatus, input.verificationSource
   ).run();
-  await db.batch([
-    db.prepare("UPDATE invite_codes SET used_count = used_count + 1 WHERE code = ? AND server_id = ?").bind(code, input.serverId),
-    db.prepare(`INSERT INTO smanage_discord_links(minecraft_uuid, minecraft_name, discord_id, updated_at)
-      VALUES (?, ?, ?, ?) ON CONFLICT(minecraft_uuid) DO UPDATE SET minecraft_name = excluded.minecraft_name, discord_id = excluded.discord_id, updated_at = excluded.updated_at`)
-      .bind(input.minecraftUuid, input.minecraftName, input.discordId, now),
-  ]);
+  await db.prepare("UPDATE invite_codes SET used_count = used_count + 1 WHERE code = ? AND server_id = ?")
+    .bind(code, input.serverId).run();
   return { ok: true as const, id: Number(result.meta.last_row_id), status };
 }
 
@@ -422,20 +419,11 @@ export async function confirmApplicationMinecraftProfile(db: D1Database, input: 
   serverId: string; id: number; minecraftUuid: string; minecraftName: string;
 }) {
   await ensureInviteSchema(db);
-  const now = new Date().toISOString();
-  const current = await db.prepare(
-    "SELECT minecraft_uuid, discord_id FROM whitelist_applications WHERE id = ? AND server_id = ? AND status = 'approved' AND verification_status = 'unverified' LIMIT 1"
-  ).bind(input.id, input.serverId).first<{ minecraft_uuid: string; discord_id: string }>();
-  if (!current) return false;
-  await db.batch([
-    db.prepare(`UPDATE whitelist_applications SET minecraft_uuid = ?, minecraft_name = ?, verification_status = 'verified', verification_source = 'server_mojang'
-      WHERE id = ? AND server_id = ?`).bind(input.minecraftUuid, input.minecraftName, input.id, input.serverId),
-    db.prepare("DELETE FROM smanage_discord_links WHERE minecraft_uuid = ?").bind(current.minecraft_uuid),
-    db.prepare(`INSERT INTO smanage_discord_links(minecraft_uuid, minecraft_name, discord_id, updated_at)
-      VALUES (?, ?, ?, ?) ON CONFLICT(minecraft_uuid) DO UPDATE SET minecraft_name = excluded.minecraft_name, discord_id = excluded.discord_id, updated_at = excluded.updated_at`)
-      .bind(input.minecraftUuid, input.minecraftName, current.discord_id, now),
-  ]);
-  return true;
+  const result = await db.prepare(`UPDATE whitelist_applications
+    SET minecraft_uuid = ?, minecraft_name = ?, verification_status = 'verified', verification_source = 'server_mojang'
+    WHERE id = ? AND server_id = ? AND status = 'approved' AND verification_status = 'unverified'`)
+    .bind(input.minecraftUuid, input.minecraftName, input.id, input.serverId).run();
+  return result.meta.changes === 1;
 }
 
 export async function updateTrust(db: D1Database, input: { serverId: string; minecraftUuid: string; minecraftName: string; state: string; reason?: string }) {
@@ -464,15 +452,11 @@ export async function getAdminDiscordIds(db: D1Database, serverId: string) {
   await ensureInviteSchema(db);
   const rows = await db.prepare(`SELECT DISTINCT linked.discord_id FROM (
       SELECT admins.minecraft_uuid, mc_links.discord_id FROM smanage_admins AS admins INNER JOIN mc_links ON mc_links.minecraft_uuid = admins.minecraft_uuid WHERE admins.server_id = ? AND admins.active = 1 AND mc_links.active = 1
-      UNION
-      SELECT admins.minecraft_uuid, applications.discord_id FROM smanage_admins AS admins INNER JOIN whitelist_applications AS applications ON applications.minecraft_uuid = admins.minecraft_uuid WHERE admins.server_id = ? AND admins.active = 1 AND applications.server_id = ? AND applications.status = 'approved'
-      UNION
-      SELECT admins.minecraft_uuid, links.discord_id FROM smanage_admins AS admins INNER JOIN smanage_discord_links AS links ON links.minecraft_uuid = admins.minecraft_uuid WHERE admins.server_id = ? AND admins.active = 1
     ) AS linked
     LEFT JOIN smanage_admin_dm_settings AS settings
       ON settings.server_id = ? AND settings.minecraft_uuid = linked.minecraft_uuid
     WHERE COALESCE(settings.enabled, 1) = 1`)
-    .bind(serverId, serverId, serverId, serverId, serverId).all<{ discord_id: string }>();
+    .bind(serverId, serverId).all<{ discord_id: string }>();
   return (rows.results ?? []).map((row) => row.discord_id);
 }
 

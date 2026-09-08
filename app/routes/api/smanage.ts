@@ -1,3 +1,4 @@
+import { readLimitedText } from "~/utils/request-body.server";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { handleSManageOperation } from "~/utils/smanage/handlers.server";
 import { requireStrings, type ServiceBody } from "~/utils/smanage/payload.server";
@@ -20,7 +21,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
     throw new Response("Method Not Allowed", { status: 405 });
   }
   const env = getMcDashboardEnv(context);
-  const bodyText = await request.text();
+  const bodyText = await readLimitedText(request, 64 * 1024);
   const body = parseServiceJson<ServiceBody>(bodyText);
   requireStrings(body, ["serverId"]);
   const serverId = body.serverId as string;
@@ -28,7 +29,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
     throw new Response("Invalid server ID.", { status: 400 });
   }
   const masterSecret = requireMcServiceApiMasterSecret(env);
-  await verifySignedServiceBody(request, bodyText, await deriveServerApiSecret(masterSecret, serverId));
+  await verifySignedServiceBody(request, bodyText, await deriveServerApiSecret(masterSecret, serverId), { db: env.DB, scope: `smanage:${serverId}` });
   await inviteDb.ensureDefaultManagedServer(
     env.DB,
     requireNikoServerDiscordGuildId(env)

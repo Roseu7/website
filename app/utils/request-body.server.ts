@@ -1,6 +1,6 @@
-export async function readLimitedJson(request: Request, maxBytes: number): Promise<unknown> {
+export async function readLimitedText(request: Request, maxBytes: number): Promise<string> {
   const reader = request.body?.getReader();
-  if (!reader) return JSON.parse("");
+  if (!reader) return "";
   const decoder = new TextDecoder();
   let size = 0;
   let text = "";
@@ -15,8 +15,12 @@ export async function readLimitedJson(request: Request, maxBytes: number): Promi
       }
       text += decoder.decode(value, { stream: true });
     }
-    return JSON.parse(text + decoder.decode());
+    return text + decoder.decode();
   } finally {
     reader.releaseLock();
   }
+}
+
+export async function readLimitedJson(request: Request, maxBytes: number): Promise<unknown> {
+  return JSON.parse(await readLimitedText(request, maxBytes));
 }

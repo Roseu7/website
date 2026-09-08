@@ -250,51 +250,28 @@ export async function consumeLinkCodeAndLinkDiscord(
   await ensureSchemaCompatibility(db);
 
   const normalizedCode = code.trim().toUpperCase();
-  const row = await db
-    .prepare(
-      `SELECT code, minecraft_uuid, minecraft_name, expires_at, consumed_at
-       FROM link_codes
-       WHERE code = ?
-       LIMIT 1`
-    )
-    .bind(normalizedCode)
-    .first<LinkCodeRow>();
-
-  if (!row) {
-    return { ok: false as const, message: "リンクコードが見つかりません。" };
-  }
-
-  if (row.consumed_at) {
-    return { ok: false as const, message: "このリンクコードはすでに使用されています。" };
-  }
-
   const now = new Date().toISOString();
-  if (new Date(row.expires_at).getTime() <= Date.now()) {
-    return { ok: false as const, message: "このリンクコードは期限切れです。" };
-  }
-
-  await db.batch([
-    db.prepare(
-      `UPDATE link_codes
-       SET consumed_at = ?
-       WHERE code = ?`
-    ).bind(now, normalizedCode),
-    db.prepare(
-      `UPDATE mc_links
-       SET active = 0, unlinked_at = ?
-       WHERE discord_id = ? AND active = 1`
-    ).bind(now, discordId),
-    db.prepare(
-      `UPDATE mc_links
-       SET active = 0, unlinked_at = ?
-       WHERE minecraft_uuid = ? AND active = 1`
-    ).bind(now, row.minecraft_uuid),
-    db.prepare(
-      `INSERT INTO mc_links (
-        discord_id, minecraft_uuid, minecraft_name, linked_at, unlinked_at, active
-      ) VALUES (?, ?, ?, ?, NULL, 1)`
-    ).bind(discordId, row.minecraft_uuid, row.minecraft_name, now),
+  const token = crypto.randomUUID();
+  // D1 executes the batch transactionally. Only the request that claims this
+  // token may change links; a failed insert rolls the claim back as well.
+  const results = await db.batch([
+    db.prepare(`UPDATE link_codes SET consumed_at = ?, consumption_token = ?
+      WHERE code = ? AND consumed_at IS NULL AND julianday(expires_at) > julianday(?)
+      RETURNING minecraft_uuid, minecraft_name`).bind(now, token, normalizedCode, now),
+    db.prepare(`UPDATE mc_links SET active = 0, unlinked_at = ?
+      WHERE active = 1 AND (discord_id = ? OR minecraft_uuid IN
+        (SELECT minecraft_uuid FROM link_codes WHERE code = ? AND consumption_token = ?))
+      AND EXISTS (SELECT 1 FROM link_codes WHERE code = ? AND consumption_token = ?)`)
+      .bind(now, discordId, normalizedCode, token, normalizedCode, token),
+    db.prepare(`INSERT INTO mc_links
+      (discord_id, minecraft_uuid, minecraft_name, linked_at, unlinked_at, active)
+      SELECT ?, minecraft_uuid, minecraft_name, ?, NULL, 1 FROM link_codes
+      WHERE code = ? AND consumption_token = ?`).bind(discordId, now, normalizedCode, token),
   ]);
+  const row = results[0].results[0] as Pick<LinkCodeRow, "minecraft_uuid" | "minecraft_name"> | undefined;
+  if (!row) {
+    return { ok: false as const, message: "リンクコードが無効、期限切れ、または使用済みです。" };
+  }
 
   return {
     ok: true as const,
@@ -319,7 +296,8 @@ export async function registerLinkCode(db: D1Database, input: RegisterLinkCodeIn
         minecraft_name = excluded.minecraft_name,
         expires_at = excluded.expires_at,
         created_at = excluded.created_at,
-        consumed_at = NULL`
+        consumed_at = NULL,
+        consumption_token = NULL`
     )
     .bind(
       input.code.trim().toUpperCase(),

@@ -25,7 +25,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   const env = getMcDashboardEnv(context);
   const secret = requireMcServiceApiMasterSecret(env);
-  const body = await verifySignedServiceJson<RegisterLinkCodeBody>(request, secret);
+  const body = await verifySignedServiceJson<RegisterLinkCodeBody>(request, secret, { db: env.DB, scope: "mc" });
 
   if (
     typeof body.code !== "string" ||
