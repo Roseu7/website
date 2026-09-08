@@ -450,6 +450,16 @@ export async function syncAdmin(db: D1Database, input: { serverId: string; minec
 
 export async function getAdminDiscordIds(db: D1Database, serverId: string) {
   await ensureInviteSchema(db);
+  const rows = await db.prepare(`SELECT DISTINCT mc_links.discord_id
+    FROM smanage_admins AS admins
+    INNER JOIN mc_links ON mc_links.minecraft_uuid = admins.minecraft_uuid
+    WHERE admins.server_id = ? AND admins.active = 1 AND mc_links.active = 1`)
+    .bind(serverId).all<{ discord_id: string }>();
+  return (rows.results ?? []).map((row) => row.discord_id);
+}
+
+export async function getAdminNotificationDiscordIds(db: D1Database, serverId: string) {
+  await ensureInviteSchema(db);
   const rows = await db.prepare(`SELECT DISTINCT linked.discord_id FROM (
       SELECT admins.minecraft_uuid, mc_links.discord_id FROM smanage_admins AS admins INNER JOIN mc_links ON mc_links.minecraft_uuid = admins.minecraft_uuid WHERE admins.server_id = ? AND admins.active = 1 AND mc_links.active = 1
     ) AS linked

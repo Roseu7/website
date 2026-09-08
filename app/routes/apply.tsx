@@ -72,7 +72,7 @@ export async function action({ request, context }: ActionFunctionArgs): Promise<
     { requireMcDashboardHost, requireMcMutationOrigin },
     { getMcSession },
     { getMcDashboardEnv, requireNikoServerDiscordGuildId },
-    { createWhitelistApplication, ensureDefaultManagedServer, getAdminDiscordIds, getApplicationById, getInviteServer, recordDiscordNotification },
+    { createWhitelistApplication, ensureDefaultManagedServer, getAdminNotificationDiscordIds, getApplicationById, getInviteServer, recordDiscordNotification },
     { isDiscordGuildMember, resolveMinecraftProfile, sendDiscordDm },
     { buildInviteNotification, inviteReviewComponents },
   ] = await Promise.all([
@@ -137,7 +137,7 @@ export async function action({ request, context }: ActionFunctionArgs): Promise<
   }
   const notification = buildInviteNotification(application);
   const reviewComponents = inviteReviewComponents(application);
-  const adminDiscordIds = await getAdminDiscordIds(env.DB, targetServer.serverId);
+  const adminDiscordIds = await getAdminNotificationDiscordIds(env.DB, targetServer.serverId);
   context.cloudflare.ctx.waitUntil(
     Promise.allSettled(
       adminDiscordIds.map(async (adminDiscordId) => {
