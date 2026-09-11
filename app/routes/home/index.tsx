@@ -277,15 +277,15 @@ export default function Home() {
       </section>
 
       <section className="home-index" aria-label="Navigation">
-        <Link to="/projects" className="home-index__link" viewTransition>
+        <Link to="/projects" className="home-index__link" prefetch="viewport" viewTransition>
           <span className="home-index__label">Projects</span>
           <span className="home-index__copy">過去に作った作品たち。</span>
         </Link>
-        <Link to="/about" className="home-index__link" viewTransition>
+        <Link to="/about" className="home-index__link" prefetch="viewport" viewTransition>
           <span className="home-index__label">About me</span>
           <span className="home-index__copy">ろせ / Roseu のこと。</span>
         </Link>
-        <Link to="/tools" className="home-index__link" viewTransition>
+        <Link to="/tools" className="home-index__link" prefetch="viewport" viewTransition>
           <span className="home-index__label">Tools</span>
           <span className="home-index__copy">自分の技術を試す小道具たち。</span>
         </Link>
@@ -294,10 +294,10 @@ export default function Home() {
       <section className="home-now" aria-labelledby="home-now-title">
         <p className="home-now__label" id="home-now-title">Recently</p>
         <div className="home-now__links">
-          <Link to="/tools/wsolver" className="home-now__link" viewTransition>
+          <Link to="/tools/wsolver" className="home-now__link" prefetch="intent" viewTransition>
             Wordle Solver を開く
           </Link>
-          <Link to="/projects" className="home-now__link" viewTransition>
+          <Link to="/projects" className="home-now__link" prefetch="intent" viewTransition>
             過去の作品を見る
           </Link>
         </div>

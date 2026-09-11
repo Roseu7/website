@@ -222,6 +222,7 @@ body.mobile-menu-active .theme-transition-layer {
   padding: var(--space-300);
   background: var(--bg-canvas);
   color: var(--ink-2);
+  transition: opacity 160ms ease, visibility 160ms;
 }
 
 .app-loader.is-hidden {
@@ -234,10 +235,50 @@ body.mobile-menu-active .theme-transition-layer {
   justify-items: center;
 }
 
-.app-loader__spinner {
-  width: 2.25rem;
-  height: 1px;
+.app-loader__bar {
+  width: 8rem;
+  height: 2px;
+  overflow: hidden;
   background: var(--line-strong);
+}
+
+.app-loader__bar::after,
+.route-loader__bar {
+  content: "";
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: var(--ink-1);
+  animation: loadingBar 1.2s ease-in-out infinite;
+}
+
+.app-loader.is-hidden .app-loader__bar::after {
+  animation: none;
+  width: 100%;
+}
+
+.route-loader {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 2px;
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.route-loader.is-loading {
+  visibility: visible;
+  transition: visibility 0s 120ms;
+}
+
+.route-loader:not(.is-loading) .route-loader__bar {
+  animation: none;
+}
+
+@keyframes loadingBar {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(350%); }
 }
 
 @keyframes homeTextIn {
@@ -253,6 +294,12 @@ body.mobile-menu-active .theme-transition-layer {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .app-loader__bar::after,
+  .route-loader__bar {
+    animation: none !important;
+    transform: translateX(75%);
+  }
+
   html {
     scroll-behavior: auto;
   }

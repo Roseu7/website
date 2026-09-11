@@ -51,25 +51,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                const isMcDashboardHost = window.location.hostname === 'mc.roseu.net';
-                const LOADER_MIN_MS = isMcDashboardHost ? 180 : 560;
-                const LOADER_MAX_WAIT_MS = 8000;
-                const startedAt = Date.now();
-
                 function hideLoader() {
-                  const loader = document.getElementById('app-loader');
-                  if (!loader || loader.classList.contains('is-hidden')) return;
-
-                  const elapsed = Date.now() - startedAt;
-                  const remaining = Math.max(0, LOADER_MIN_MS - elapsed);
-
-                  window.setTimeout(function() {
-                    loader.classList.add('is-hidden');
-                  }, remaining);
+                  document.getElementById('app-loader')?.classList.add('is-hidden');
                 }
 
-                window.addEventListener('load', hideLoader, { once: true });
-                window.setTimeout(hideLoader, LOADER_MAX_WAIT_MS);
+                document.addEventListener('DOMContentLoaded', hideLoader, { once: true });
+                window.setTimeout(hideLoader, 8000);
               })();
             `,
           }}
@@ -83,7 +70,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <div id="app-loader" className="app-loader" aria-hidden="true">
           <div className="app-loader__inner">
-            <span className="app-loader__spinner" aria-hidden="true" />
+            <span className="app-loader__bar" aria-hidden="true" />
             <span className="sr-only">読み込み中</span>
           </div>
         </div>
@@ -119,70 +106,20 @@ function DarkModeScript({ nonce }: { nonce?: string }) {
 }
 
 export default function App() {
-  useRouteLoaderOverlay();
-  return <Outlet />;
-}
-
-function useRouteLoaderOverlay() {
   const navigation = useNavigation();
-  const showTimerRef = React.useRef<number | null>(null);
-  const hideTimerRef = React.useRef<number | null>(null);
-  const shownAtRef = React.useRef<number | null>(null);
+  const isNavigating = navigation.state !== "idle";
 
-  React.useEffect(() => {
-    const loader = document.getElementById("app-loader");
-    if (!(loader instanceof HTMLElement)) {
-      return;
-    }
-
-    const clearShowTimer = () => {
-      if (showTimerRef.current !== null) {
-        window.clearTimeout(showTimerRef.current);
-        showTimerRef.current = null;
-      }
-    };
-
-    const clearHideTimer = () => {
-      if (hideTimerRef.current !== null) {
-        window.clearTimeout(hideTimerRef.current);
-        hideTimerRef.current = null;
-      }
-    };
-
-    const showLoader = () => {
-      shownAtRef.current = Date.now();
-      loader.classList.remove("is-hidden");
-      loader.classList.add("is-route-loading");
-    };
-
-    const hideLoader = () => {
-      loader.classList.remove("is-route-loading");
-      loader.classList.add("is-hidden");
-      shownAtRef.current = null;
-    };
-
-    const isNavigating = navigation.state !== "idle";
-
-    if (isNavigating) {
-      clearHideTimer();
-      if (!loader.classList.contains("is-route-loading")) {
-        clearShowTimer();
-        showTimerRef.current = window.setTimeout(showLoader, 90);
-      }
-    } else {
-      clearShowTimer();
-      if (loader.classList.contains("is-route-loading")) {
-        const elapsed =
-          shownAtRef.current === null ? 0 : Date.now() - shownAtRef.current;
-        const remaining = Math.max(0, 260 - elapsed);
-        clearHideTimer();
-        hideTimerRef.current = window.setTimeout(hideLoader, remaining);
-      }
-    }
-
-    return () => {
-      clearShowTimer();
-      clearHideTimer();
-    };
-  }, [navigation.state]);
+  return (
+    <>
+      <div
+        className={`route-loader${isNavigating ? " is-loading" : ""}`}
+        role="progressbar"
+        aria-label="ページを読み込み中"
+        aria-hidden={!isNavigating}
+      >
+        <span className="route-loader__bar" />
+      </div>
+      <Outlet />
+    </>
+  );
 }

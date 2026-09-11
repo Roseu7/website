@@ -115,11 +115,11 @@ export function SiteHeader({
           <div className="site-header__topline">
             <div className="site-header__lead">
               {showLogo ? (
-                <Link to={topPageHref} className="site-header__brand-link" viewTransition>
+                <Link to={topPageHref} className="site-header__brand-link" prefetch="intent" viewTransition>
                   <SiteBrand compact />
                 </Link>
               ) : (
-                <Link to={topPageHref} className="site-header__wordmark" viewTransition>
+                <Link to={topPageHref} className="site-header__wordmark" prefetch="intent" viewTransition>
                   <span className="site-header__wordmark-name">{siteConfig.name}</span>
                 </Link>
               )}
@@ -156,7 +156,7 @@ export function SiteHeader({
                           (isActive || isGroupActive) && "is-active"
                         )
                       }
-                      viewTransition
+                      prefetch="intent" viewTransition
                     >
                       <span>{groupLabel}</span>
                     </NavLink>
@@ -169,7 +169,7 @@ export function SiteHeader({
                           className={({ isActive }) =>
                             cx("site-nav-group__link", isActive && "is-active")
                           }
-                          viewTransition
+                          prefetch="intent" viewTransition
                         >
                           {child.label}
                         </NavLink>
@@ -195,7 +195,7 @@ export function SiteHeader({
                     className={({ isActive }) =>
                       cx("site-tabs__link", isActive && "is-active")
                     }
-                    viewTransition
+                    prefetch="intent" viewTransition
                   >
                     {item.label}
                   </NavLink>
@@ -208,11 +208,11 @@ export function SiteHeader({
         <div className="site-header__mobile-bar">
           <div className="site-header__lead">
             {showLogo ? (
-              <Link to={topPageHref} className="site-header__brand-link" viewTransition>
+              <Link to={topPageHref} className="site-header__brand-link" prefetch="intent" viewTransition>
                 <SiteBrand compact />
               </Link>
             ) : (
-              <Link to={topPageHref} className="site-header__wordmark" viewTransition>
+              <Link to={topPageHref} className="site-header__wordmark" prefetch="intent" viewTransition>
                 <span className="site-header__wordmark-name">{siteConfig.name}</span>
               </Link>
             )}
@@ -253,11 +253,11 @@ export function SiteHeader({
           <div className="site-mobile-menu__header">
             <div className="site-header__lead">
               {showLogo ? (
-                <Link to={topPageHref} className="site-header__brand-link" viewTransition>
+                <Link to={topPageHref} className="site-header__brand-link" prefetch="intent" viewTransition>
                   <SiteBrand compact />
                 </Link>
               ) : (
-                <Link to={topPageHref} className="site-header__wordmark" viewTransition>
+                <Link to={topPageHref} className="site-header__wordmark" prefetch="intent" viewTransition>
                   <span className="site-header__wordmark-name">{siteConfig.name}</span>
                 </Link>
               )}
@@ -292,7 +292,7 @@ export function SiteHeader({
                       className={({ isActive }) =>
                         cx("site-mobile-nav__link", (isActive || isGroupActive) && "is-active")
                       }
-                      viewTransition
+                      prefetch="intent" viewTransition
                     >
                       {item.label}
                     </NavLink>
@@ -305,7 +305,7 @@ export function SiteHeader({
                           className={({ isActive }) =>
                             cx("site-mobile-nav__link", "site-mobile-nav__link--child", isActive && "is-active")
                           }
-                          viewTransition
+                          prefetch="intent" viewTransition
                         >
                           {child.label}
                         </NavLink>
@@ -331,7 +331,7 @@ export function SiteHeader({
                     className={({ isActive }) =>
                       cx("site-mobile-nav__link", isActive && "is-active")
                     }
-                    viewTransition
+                    prefetch="intent" viewTransition
                   >
                     {item.label}
                   </NavLink>
