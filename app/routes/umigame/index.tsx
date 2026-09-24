@@ -566,17 +566,19 @@ export default function UmigameIndexPage() {
           <div className="umigame-list-footer__links">
             <Link
               to="/games/umigame/about"
-              className="btn site-button site-button--ghost"
+              className="btn site-button site-button--ghost umigame-icon-button"
+              aria-label="Jevの実装例"
+              title="Jevの実装例"
             >
-              <Info size={15} aria-hidden="true" />
-              Jevの実装例
+              <Info size={18} aria-hidden="true" />
             </Link>
             <Link
               to="/games/umigame/licenses"
-              className="btn site-button site-button--ghost"
+              className="btn site-button site-button--ghost umigame-icon-button"
+              aria-label="ライセンス"
+              title="ライセンス"
             >
-              <ScrollText size={15} aria-hidden="true" />
-              ライセンス
+              <ScrollText size={18} aria-hidden="true" />
             </Link>
           </div>
         </div>
