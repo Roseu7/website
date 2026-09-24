@@ -35,6 +35,8 @@ npm-debug.log*
 
 # Local IDE / assistant files
 .vscode/
+.codex/
+.codex-qa-*/
 
 # Local draft pages
 my-design-pages/
@@ -42,6 +44,7 @@ my-design-pages/
 # Private operations / planning (not for public showcase)
 docs/
 services/
+db/
 config.yml
 
 # Local infra credentials

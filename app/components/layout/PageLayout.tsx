@@ -1,4 +1,5 @@
 import * as React from "react";
+import { usePreviousPage } from "~/components/routing/usePreviousPage";
 import { SiteFooter } from "~/components/layout/SiteFooter";
 import {
   SiteHeader,
@@ -28,6 +29,8 @@ export function PageLayout({
   showHeaderLogo = true,
   withTopOffset = true,
 }: PageLayoutProps) {
+  usePreviousPage();
+
   return (
     <div className="page-frame">
       <SiteHeader variant={headerVariant} showLogo={showHeaderLogo} />

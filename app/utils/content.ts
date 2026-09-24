@@ -61,10 +61,11 @@ export const projects: ProjectItem[] = [
       "私がやりたい/作ってみたい機能を実際に作成して、記録に残すサイトです。",
     ],
     repoUrl: "https://github.com/Roseu7/website",
-    repoVisibility: "private",
+    repoVisibility: "public",
     stack: [
       { label: "TypeScript", tone: "blue" },
       { label: "TailwindCSS", tone: "cyan" },
+      { label: "DaisyUI", tone: "mono" },
       { label: "React Router", tone: "sky" },
       { label: "Cloudflare Workers", tone: "orange" },
     ],

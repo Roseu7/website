@@ -1,0 +1,35 @@
+.control-actions {
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+.control-actions .site-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.control-panel .status-pill--online {
+  border-color: #2f8f55;
+  background: color-mix(in srgb, #2f8f55 14%, var(--bg-base));
+  color: #247642;
+}
+
+.control-panel .status-pill--offline {
+  border-color: #c84848;
+  background: color-mix(in srgb, #c84848 14%, var(--bg-base));
+  color: #a93636;
+}
+
+.dark .control-panel .status-pill--online {
+  border-color: #75d69a;
+  background: color-mix(in srgb, #75d69a 18%, var(--bg-base));
+  color: #9ae8b5;
+}
+
+.dark .control-panel .status-pill--offline {
+  border-color: #ff8f8f;
+  background: color-mix(in srgb, #ff8f8f 18%, var(--bg-base));
+  color: #ffaaaa;
+}

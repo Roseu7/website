@@ -1,0 +1,438 @@
+/* next_task UI pass 2 */
+.umigame-results-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.umigame-results-head h2 {
+  margin: 0;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.umigame-results-list {
+  display: grid;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-result-record {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-result-record__head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.umigame-result-record__head h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.umigame-result-record__head .status-pill {
+  flex: none;
+}
+
+.umigame-result-record time,
+.umigame-result-record__unavailable {
+  color: var(--ink-3);
+  font-size: 0.82rem;
+}
+
+.umigame-result-record__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  border: 1px solid var(--line-soft);
+  background: var(--line-soft);
+}
+
+.umigame-result-record__stats > div {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.75rem;
+  background: var(--bg-base);
+}
+
+.umigame-result-record__stats dt {
+  color: var(--ink-3);
+  font-size: 0.76rem;
+}
+
+.umigame-result-record__stats dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+}
+
+.umigame-result-record__link {
+  width: fit-content;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.umigame-results-pages {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.umigame-results-pages a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@media (max-width: 620px) {
+  .umigame-result-record__head {
+    flex-wrap: wrap;
+  }
+
+  .umigame-result-record__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.umigame-favorite__button.is-selected,
+.umigame-favorite__button.is-selected.btn,
+.umigame-favorite__button.is-selected:hover {
+  border-color: var(--ink-1);
+  background: var(--ink-1);
+  color: var(--bg-base);
+}
+
+.umigame-page-head__account {
+  display: grid;
+  justify-items: end;
+  align-content: center;
+  gap: 0.55rem;
+}
+
+.umigame-page-head__account .umigame-account-bar__actions {
+  justify-content: flex-end;
+}
+
+.umigame-detail-head,
+.umigame-play-head {
+  gap: 0.75rem;
+}
+
+.umigame-detail-head + .umigame-problem-panel,
+.umigame-play-head + .umigame-problem-panel {
+  margin-top: calc(-1 * var(--section-gap) + 1.2rem);
+}
+
+.umigame-detail-head__main {
+  gap: 0.55rem;
+}
+
+.umigame-detail-head__toolbar {
+  flex-wrap: nowrap;
+}
+
+.umigame-detail-head__stats {
+  justify-content: flex-start;
+}
+
+.umigame-detail-head__actions {
+  gap: 1.05rem;
+}
+
+.umigame-detail-head__stats {
+  --umigame-puzzle-meta-size: 0.92rem;
+  --umigame-puzzle-meta-icon-size: 20px;
+  gap: 0.75rem 1rem;
+}
+
+.umigame-detail-head__stats > .umigame-play-count {
+  min-height: 2.35rem;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--umigame-puzzle-meta-size);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.umigame-detail-head__stats > .umigame-difficulty {
+  min-height: 2.35rem;
+}
+
+.umigame-detail-head__stats > .umigame-vote {
+  margin-left: 0.15rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--line-soft);
+}
+
+.umigame-detail-head__stats > .umigame-vote .umigame-vote__button,
+.umigame-detail-head__stats > .umigame-vote .umigame-vote__score {
+  font-size: var(--umigame-puzzle-meta-icon-size, 20px);
+}
+
+.umigame-detail-head__stats > .umigame-vote .umigame-vote__score {
+  line-height: 1;
+}
+
+.umigame-history-head {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--bg-base);
+}
+
+.umigame-history-head__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.umigame-history-head__title h2 {
+  margin: 0;
+}
+
+.umigame-transcript__scroll {
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Keep long history from determining the desktop grid row height. */
+.umigame-transcript {
+  contain: size;
+}
+
+.umigame-turn {
+  animation: none;
+}
+
+.umigame-turn.is-new {
+  animation: umigame-turn-arrive 260ms ease-out both;
+}
+
+.umigame-play-grid {
+  --umigame-no-border: #c97979;
+  --umigame-no-bg: #f5dddd;
+  --umigame-no-ink: #6b2929;
+  --umigame-incorrect-border: #b84a4a;
+  --umigame-incorrect-bg: color-mix(in srgb, #b84a4a 14%, transparent);
+  --umigame-incorrect-ink: #8b3030;
+}
+
+.dark .umigame-play-grid {
+  --umigame-no-border: #c98282;
+  --umigame-no-bg: #492b2b;
+  --umigame-no-ink: #ffdede;
+  --umigame-incorrect-border: #d06666;
+  --umigame-incorrect-bg: #4a2828;
+  --umigame-incorrect-ink: #ffdada;
+}
+
+.umigame-turn[data-answer="NO"] {
+  --umigame-answer-tone: var(--umigame-no-ink);
+  --umigame-answer-bg: var(--umigame-no-bg);
+  border-left-color: var(--umigame-no-border);
+}
+
+.umigame-turn[data-answer="CORRECT"] {
+  --umigame-answer-tone: var(--umigame-yes-ink);
+  --umigame-answer-bg: var(--umigame-yes-bg);
+  border-left-color: var(--umigame-yes-border);
+}
+
+.umigame-turn[data-answer="INCORRECT"] {
+  --umigame-answer-tone: var(--umigame-incorrect-ink);
+  --umigame-answer-bg: var(--umigame-incorrect-bg);
+  border-left-color: var(--umigame-incorrect-border);
+}
+
+.umigame-turn[data-kind="guess"] .umigame-turn__question > span {
+  color: var(--ink-3);
+}
+
+.umigame-turn[data-kind="guess"] .umigame-turn__answer {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
+  text-align: right;
+}
+
+.umigame-turn[data-kind="guess"] .umigame-turn__answer strong {
+  grid-row: 2;
+  align-self: center;
+}
+
+.umigame-turn[data-kind="guess"] .umigame-turn__answer small {
+  grid-row: 3;
+  align-self: end;
+}
+
+.umigame-result-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  background: color-mix(in srgb, var(--bg-base) 76%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.umigame-result-overlay__panel {
+  display: grid;
+  gap: 1.2rem;
+  width: min(46rem, 100%);
+  max-height: min(90vh, 54rem);
+  overflow-y: auto;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-base);
+  box-shadow: 0 1.5rem 5rem color-mix(in srgb, var(--ink-1) 18%, transparent);
+}
+
+.umigame-result-overlay__head {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.umigame-result-overlay__head h2 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+
+.umigame-result-overlay__truth {
+  display: grid;
+  gap: 0.45rem;
+  padding-block: 1rem;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-result-overlay__truth h3,
+.umigame-result-overlay__truth p {
+  margin: 0;
+}
+
+.umigame-result-overlay__truth h3 {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.umigame-result-overlay__truth p {
+  color: var(--ink-2);
+  line-height: 1.8;
+}
+
+.umigame-result-overlay__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+}
+
+.umigame-result-overlay__stats > div {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.85rem;
+  background: var(--bg-base);
+}
+
+.umigame-result-overlay__stats dt {
+  color: var(--ink-3);
+  font-size: 0.75rem;
+}
+
+.umigame-result-overlay__stats dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.umigame-result-overlay__back {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.umigame-licenses-head--simple {
+  display: block;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.umigame-licenses-head--simple h2 {
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .umigame-transcript {
+    contain: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .umigame-page-head__account {
+    justify-items: start;
+  }
+
+  .umigame-page-head__account .umigame-account-bar__actions {
+    justify-content: flex-start;
+  }
+
+  .umigame-detail-head__toolbar {
+    flex-wrap: wrap;
+  }
+
+  .umigame-result-overlay__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .umigame-detail-head__actions {
+    gap: 0.65rem;
+    margin-left: auto;
+    justify-content: flex-end;
+  }
+
+  .umigame-detail-head__stats > .umigame-vote {
+    width: 100%;
+    margin-left: 0;
+    padding-top: 0.7rem;
+    padding-left: 0;
+    border-top: 1px solid var(--line-soft);
+    border-left: 0;
+  }
+
+  .umigame-result-overlay__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .umigame-result-overlay__back {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .umigame-turn.is-new {
+    animation: none;
+  }
+}

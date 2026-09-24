@@ -1,4 +1,5 @@
 import type { ActionFunctionArgs } from "react-router";
+import { readLimitedJson } from "~/utils/request-body.server";
 import {
   type LetterState,
   type WordleConstraint,
@@ -72,7 +73,7 @@ function parseConstraints(value: NextApiRequestBody["constraints"]): WordleConst
   return parsed;
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   const method = request.method.toUpperCase();
   const corsHeaders = buildCorsHeaders(request);
 
@@ -88,6 +89,23 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
+    const { success } = await context.cloudflare.env.WORDLE_RATE_LIMITER.limit({
+      key: `wordle:${request.headers.get("CF-Connecting-IP") ?? "unknown"}`,
+    });
+    if (!success) {
+      return Response.json(
+        { error: { code: "rate_limited", message: "Too many requests. Try again shortly." } },
+        { status: 429, headers: { ...corsHeaders, "Retry-After": "60", "Cache-Control": "no-store" } }
+      );
+    }
+  } catch {
+    return Response.json(
+      { error: { code: "service_unavailable", message: "Please try again shortly." } },
+      { status: 503, headers: { ...corsHeaders, "Cache-Control": "no-store" } }
+    );
+  }
+
+  try {
     const contentLength = request.headers.get("content-length");
     if (contentLength) {
       const bodyBytes = Number(contentLength);
@@ -99,7 +117,7 @@ export async function action({ request }: ActionFunctionArgs) {
       }
     }
 
-    const body = (await request.json()) as NextApiRequestBody;
+    const body = (await readLimitedJson(request, MAX_REQUEST_BODY_BYTES)) as NextApiRequestBody;
     const constraints = parseConstraints(body?.constraints);
     const turnsLeft = Math.max(0, 6 - constraints.length);
     const candidates = filterAnswers(constraints);
@@ -112,7 +130,13 @@ export async function action({ request }: ActionFunctionArgs) {
       solver,
       mode: "api",
     }, { headers: corsHeaders });
-  } catch {
+  } catch (error) {
+    if (error instanceof Response && error.status === 413) {
+      return Response.json(
+        { error: { code: "payload_too_large", message: "Request body is too large." } },
+        { status: 413, headers: corsHeaders }
+      );
+    }
     return Response.json(
       { error: { code: "invalid_json", message: "Invalid JSON request body." } },
       { status: 400, headers: corsHeaders }

@@ -8,14 +8,15 @@ export default async function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
-  _loadContext: AppLoadContext
+  loadContext: AppLoadContext
 ) {
   let shellRendered = false;
   const userAgent = request.headers.get("user-agent");
 
   const body = await renderToReadableStream(
-    <ServerRouter context={routerContext} url={request.url} />,
+    <ServerRouter context={routerContext} url={request.url} nonce={loadContext.cspNonce} />,
     {
+      nonce: loadContext.cspNonce,
       onError(error: unknown) {
         responseStatusCode = 500;
         // Shell送信後のストリーミングエラーのみ記録する

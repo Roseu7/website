@@ -1,0 +1,33 @@
+.tool-directory {
+  gap: 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.tool-card {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.tool-card__body {
+  min-height: 12rem;
+  padding: clamp(1.6rem, 4vw, 3rem) 0;
+}
+
+.tool-card .cta-link {
+  align-self: end;
+}
+
+.game-card__actions {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.game-card__info,
+.game-card__info.btn {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.5rem;
+  padding-inline: 0.7rem;
+}

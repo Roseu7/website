@@ -1,7 +1,12 @@
 import { createRequestHandler } from "react-router";
+import { reviewComment } from "../app/utils/umigame/comment-review.server";
+import { reviewPuzzleRevision } from "../app/utils/umigame/puzzle-review.server";
+import { getUmigameEnvFromBindings } from "../app/utils/umigame/env.server";
+import { withSecurityHeaders } from "./security-headers";
 
 declare module "react-router" {
   export interface AppLoadContext {
+    cspNonce: string;
     cloudflare: {
       env: Env;
       ctx: ExecutionContext;
@@ -14,43 +19,55 @@ const requestHandler = createRequestHandler(
   import.meta.env.MODE
 );
 
-function withSecurityHeaders(response: Response): Response {
-  const nextHeaders = new Headers(response.headers);
-  const csp = [
-    "default-src 'self'",
-    "base-uri 'self'",
-    "frame-ancestors 'none'",
-    "object-src 'none'",
-    "script-src 'self' 'unsafe-inline'",
-    "worker-src 'self' blob:",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: https:",
-    "font-src 'self'",
-    "connect-src 'self' https://home.roseu.net https://roseu.net https://www.roseu.net ws: wss:",
-    "form-action 'self'",
-    "upgrade-insecure-requests",
-  ].join("; ");
 
-  nextHeaders.set("X-Content-Type-Options", "nosniff");
-  nextHeaders.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  nextHeaders.set("X-Frame-Options", "DENY");
-  nextHeaders.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-  nextHeaders.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-  nextHeaders.set("Content-Security-Policy", csp);
-
-  return new Response(response.body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers: nextHeaders,
-  });
-}
+type UmigameQueueMessage =
+  | {
+      type: "puzzle_review";
+      revisionId: string;
+    }
+  | {
+      type: "comment_review";
+      commentId: string;
+    };
 
 export default {
   async fetch(request, env, ctx) {
+    const cspNonce = crypto.randomUUID().replaceAll("-", "");
     // 通常のReact Routerリクエスト処理
     const response = await requestHandler(request, {
+      cspNonce,
       cloudflare: { env, ctx },
     });
-    return withSecurityHeaders(response);
+    return withSecurityHeaders(request, response, cspNonce);
   },
-} satisfies ExportedHandler<Env>;
+
+  async queue(batch: MessageBatch<UmigameQueueMessage>, env) {
+    const umigameEnv = getUmigameEnvFromBindings(env);
+    for (const message of batch.messages) {
+      try {
+        if (message.body?.type === "puzzle_review" && message.body.revisionId) {
+          await reviewPuzzleRevision(
+            umigameEnv,
+            message.body.revisionId,
+          );
+          message.ack();
+          continue;
+        }
+
+        if (message.body?.type === "comment_review" && message.body.commentId) {
+          await reviewComment(
+            umigameEnv,
+            message.body.commentId,
+          );
+          message.ack();
+          continue;
+        }
+
+        message.ack();
+      } catch (error) {
+        console.error("Umigame queue job failed.", error);
+        message.retry();
+      }
+    }
+  },
+} satisfies ExportedHandler<Env, UmigameQueueMessage>;

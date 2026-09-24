@@ -1,0 +1,13 @@
+/* Native modal behavior retains the existing overlay layout. */
+dialog.umigame-dialog {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  border: 0;
+  color: inherit;
+  box-sizing: border-box;
+}
+dialog.umigame-dialog:not([open]) { display: none; }
+dialog.umigame-dialog::backdrop { background: transparent; }

@@ -1,0 +1,35 @@
+/**
+ * assets.roseu.net path router.
+ *
+ * Cloudflare側で同名のR2 bucketを作るか、既存bucket名に合わせて
+ * bucket_nameを変更してからdeployする。
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "assets-router",
+	"compatibility_date": "2025-04-04",
+	"main": "./workers/assets.ts",
+	"observability": {
+		"enabled": true
+	},
+	"routes": [
+		{
+			"pattern": "assets.roseu.net",
+			"custom_domain": true
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "ASSETS_BUCKET",
+			"bucket_name": "assets"
+		},
+		{
+			"binding": "WEBGAME_BUCKET",
+			"bucket_name": "webgame"
+		},
+		{
+			"binding": "RG_BUCKET",
+			"bucket_name": "rg-assets"
+		}
+	]
+}

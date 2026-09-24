@@ -1,0 +1,408 @@
+/* Umigame licenses */
+.umigame-licenses-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.umigame-licenses-head > div {
+  max-width: 54rem;
+}
+
+.umigame-licenses-head h2 {
+  margin: 0.25rem 0 0;
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.umigame-licenses-head p {
+  margin: 0.65rem 0 0;
+  color: var(--ink-2);
+  line-height: 1.75;
+}
+
+.umigame-license-section {
+  display: grid;
+  gap: 0.9rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-license-section--empty {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.umigame-license-section .umigame-section-head > div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.umigame-license-section .umigame-section-head h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.umigame-license-section .umigame-section-head p {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 0.86rem;
+}
+
+.umigame-license-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.umigame-license-card {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+  border: 1px solid var(--line-soft);
+}
+
+.umigame-license-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.umigame-license-card__head > div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.umigame-license-card__id {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.umigame-license-card__head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.umigame-license-card > p {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+
+.umigame-license-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.umigame-license-card__actions .site-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.umigame-license-original-list {
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--line-soft);
+  background: var(--line-soft);
+}
+
+.umigame-license-original {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  background: var(--page-bg);
+  text-decoration: none;
+}
+
+.umigame-license-original span {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+.umigame-license-original strong {
+  font-weight: 500;
+}
+
+.umigame-license-note {
+  display: grid;
+  gap: 0.45rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-license-note h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.umigame-license-note p {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+
+.umigame-license-note a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+@media (max-width: 680px) {
+  .umigame-license-card__head {
+    flex-direction: column;
+  }
+
+  .umigame-license-card__actions {
+    justify-content: flex-start;
+  }
+}
+
+/* next_task UI pass 1 */
+.umigame-page-head {
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.umigame-page-head h2 {
+  flex: none;
+  white-space: nowrap;
+}
+
+.umigame-page-head__account {
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+}
+
+.umigame-page-head__account .umigame-account-bar__actions {
+  flex-wrap: nowrap;
+}
+
+.umigame-account-bar__user {
+  color: inherit;
+  font-size: 1.05rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.umigame-account-bar__user:hover span {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.umigame-section-head,
+.umigame-list-head__title,
+.umigame-account-bar__user,
+.umigame-account-bar__actions,
+.umigame-detail-head__toolbar,
+.umigame-detail-head__stats,
+.umigame-detail-head__actions,
+.umigame-hint-head {
+  align-items: center;
+}
+
+.umigame-detail-head__title h2,
+.umigame-play-head h2,
+.umigame-profile-head h2,
+.umigame-submit-head h2,
+.umigame-public-profile-head h2,
+.umigame-about-head h2,
+.umigame-admin-head h2,
+.umigame-favorites-head h2,
+.umigame-rankings-head h2,
+.umigame-recommend-head h2,
+.umigame-licenses-head h2 {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.umigame-detail-head__main {
+  display: grid;
+  gap: 1rem;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.umigame-detail-head__title {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.umigame-detail-head__toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  flex-wrap: wrap;
+}
+
+.umigame-detail-head__stats,
+.umigame-detail-head__actions {
+  display: flex;
+  gap: 0.55rem 0.75rem;
+  flex-wrap: wrap;
+}
+
+.umigame-detail-head__actions {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.umigame-detail-head__main .umigame-primary-action {
+  margin-left: 0;
+}
+
+.umigame-turn {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  animation: umigame-turn-arrive 260ms ease-out both;
+}
+
+.umigame-turn__answer {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  justify-content: flex-end;
+  min-width: 7rem;
+  text-align: right;
+}
+
+@keyframes umigame-turn-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-0.8rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.umigame-hint-button--warning,
+.umigame-hint-button--warning.btn {
+  border-color: #c89922;
+  background: #d9ad38;
+  color: #211a08;
+}
+
+.umigame-hint-button--warning:hover {
+  border-color: #b98918;
+  background: #c99b24;
+  color: #171205;
+}
+
+.umigame-give-up-button,
+.umigame-give-up-button.btn {
+  border-color: #a83d3d;
+  background: #b84a4a;
+  color: #fff;
+}
+
+.umigame-give-up-button:hover {
+  border-color: #913333;
+  background: #9f3c3c;
+  color: #fff;
+}
+
+@media (max-width: 760px) {
+  .umigame-page-head {
+    align-items: flex-start;
+  }
+
+  .umigame-page-head__account {
+    flex-wrap: wrap;
+  }
+
+  .umigame-page-head__account .umigame-account-bar__actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 560px) {
+  .umigame-detail-head__toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .umigame-detail-head__actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .umigame-turn {
+    animation: none;
+  }
+}
+
+/* next_task about rewrite */
+.umigame-about-intro {
+  display: grid;
+  gap: 0.9rem;
+  max-width: 58rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.umigame-about-intro h2 {
+  margin: 0;
+  color: var(--ink-1);
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.umigame-about-intro p {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.85;
+}
+
+.umigame-about-intro code {
+  color: var(--ink-1);
+  font-weight: 500;
+}
+
+.umigame-about-use-list--plain li {
+  display: block;
+  padding: 0.72rem 0;
+}
+
+.umigame-about-use-list--plain li::before {
+  content: "- ";
+  color: var(--ink-3);
+}
+
+.umigame-about-reference__links {
+  display: flex;
+  gap: 0.65rem 1rem;
+  flex-wrap: wrap;
+}
+
+.umigame-about-reference__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--ink-1);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}

@@ -1,0 +1,16 @@
+.projects-board,
+.about-board,
+.tool-layout,
+.empty-state {
+  position: relative;
+}
+
+.projects-board,
+.about-board,
+.tool-directory,
+.solver-attempts,
+.solver-lists,
+.info-stack,
+.control-actions {
+  display: grid;
+}

@@ -1,0 +1,176 @@
+/* Keep visible Lucide labels centered against their square icon boxes. */
+:where(a:not([aria-label]), button:not([aria-label])):has(> svg.lucide) {
+  display: inline-flex;
+  align-items: center;
+  line-height: calc(1em + 1px);
+}
+
+:where(
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide) {
+  align-items: center;
+  line-height: 1;
+}
+
+/* Keep label font-size equal to the SVG's declared height. */
+:where(
+  a:not([aria-label]),
+  button:not([aria-label]),
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide[height="12"]) {
+  font-size: 12px;
+}
+
+:where(
+  a:not([aria-label]),
+  button:not([aria-label]),
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide[height="13"]) {
+  font-size: 13px;
+}
+
+:where(
+  a:not([aria-label]),
+  button:not([aria-label]),
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide[height="14"]) {
+  font-size: 14px;
+}
+
+:where(
+  a:not([aria-label]),
+  button:not([aria-label]),
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide[height="15"]) {
+  font-size: 15px;
+}
+
+:where(
+  a:not([aria-label]),
+  button:not([aria-label]),
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide[height="16"]) {
+  font-size: 16px;
+}
+
+:where(
+  a:not([aria-label]),
+  button:not([aria-label]),
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide[height="17"]) {
+  font-size: 17px;
+}
+
+:where(
+  a:not([aria-label]),
+  button:not([aria-label]),
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide[height="18"]) {
+  font-size: 18px;
+}
+
+:where(
+  a:not([aria-label]),
+  button:not([aria-label]),
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide[height="20"]) {
+  font-size: 20px;
+}
+
+:where(
+  a:not([aria-label]),
+  button:not([aria-label]),
+  .umigame-icon-label,
+  .umigame-about-section__title,
+  .umigame-history-head__title
+):has(> svg.lucide[height="22"]) {
+  font-size: 22px;
+}
+
+.umigame-icon-label {
+  display: inline-flex;
+  gap: 0.65rem;
+}
+
+.umigame-section-head:has(.umigame-icon-label) > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.umigame-icon-label.umigame-icon-label > svg.lucide {
+  flex: none;
+}
+
+.umigame-icon-label.umigame-icon-label > h2 {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.umigame-about-section__title:has(> svg.lucide) > h2,
+.umigame-history-head__title:has(> svg.lucide) > h2 {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* These metadata icons use a shared CSS size from the surrounding card. */
+.umigame-play-count:has(> svg.lucide),
+.umigame-difficulty:has(> svg.lucide) {
+  font-size: var(--umigame-puzzle-meta-icon-size, 17px);
+}
+
+.umigame-vote-summary:has(> svg.lucide) {
+  font-size: var(--umigame-puzzle-meta-icon-size, 15px);
+}
+
+.umigame-vote-summary:has(> svg.lucide) > svg.lucide {
+  width: var(--umigame-puzzle-meta-icon-size, 15px);
+  height: var(--umigame-puzzle-meta-icon-size, 15px);
+}
+
+/* Use the same CSS size for card labels as for their Lucide SVG icons. */
+.umigame-card__stats .umigame-play-count:has(> svg.lucide),
+.umigame-card__stats .umigame-vote-summary:has(> svg.lucide) {
+  font-size: var(--umigame-puzzle-meta-icon-size, 12px);
+}
+
+.umigame-detail-head__stats .umigame-play-count:has(> svg.lucide),
+.umigame-detail-head__stats .umigame-difficulty:has(> svg.lucide) {
+  font-size: var(--umigame-puzzle-meta-icon-size, 17px);
+}
+
+.umigame-comments__login:has(> svg.lucide[height="17"]) {
+  align-items: center;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.umigame-comment__spoiler > div > strong:has(> svg.lucide[height="17"]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.umigame-comment__spoiler:has(strong > svg.lucide) {
+  grid-template-columns: minmax(0, 1fr);
+}

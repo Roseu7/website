@@ -1,0 +1,255 @@
+/* Umigame routing-era UI refinements */
+.umigame-card__actions {
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.umigame-play-count {
+  gap: 0.42rem;
+  font-size: var(--umigame-puzzle-meta-size, 0.92rem);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+
+.umigame-play-count svg {
+  width: var(--umigame-puzzle-meta-icon-size, 17px);
+  height: var(--umigame-puzzle-meta-icon-size, 17px);
+}
+
+.umigame-detail-head__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.umigame-detail-head__footer .umigame-primary-action {
+  margin-left: auto;
+}
+
+.umigame-detail-tags {
+  margin: 0.15rem 0 0;
+}
+
+.umigame-comment-form__footer {
+  justify-content: flex-end;
+}
+
+.umigame-play-grid {
+  align-items: start;
+}
+
+.umigame-transcript {
+  display: block;
+  height: auto;
+  min-height: 0;
+}
+
+.umigame-transcript__scroll {
+  min-height: 0;
+  max-height: min(36rem, 62vh);
+  overflow-y: auto;
+  overscroll-behavior: auto;
+  padding-right: 0;
+  scrollbar-gutter: auto;
+}
+
+@media (max-width: 860px) {
+  .umigame-transcript {
+    height: auto;
+  }
+
+  .umigame-transcript__scroll {
+    max-height: min(34rem, 65vh);
+  }
+}
+
+@media (max-width: 560px) {
+  .umigame-detail-head__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .umigame-detail-head__footer .umigame-primary-action {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .umigame-card__actions .site-button {
+    flex: 1 1 auto;
+  }
+}
+
+.umigame-comments {
+  scroll-margin-top: 7rem;
+}
+
+/* Umigame fine-tuning */
+.umigame-card__expand-inner > .umigame-tag-list {
+  margin-block: 1rem;
+}
+
+.umigame-card__expand-inner > .umigame-tag-list + .umigame-card__source,
+.umigame-card__expand-inner > .umigame-tag-list + .umigame-card__actions {
+  margin-top: 0;
+}
+
+.umigame-card__actions {
+  justify-content: space-between;
+}
+
+.umigame-detail-head__main {
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+.umigame-detail-head__main h2 {
+  flex: 0 1 auto;
+}
+
+.umigame-detail-head__main .umigame-primary-action {
+  margin-left: auto;
+}
+
+.umigame-detail-tags {
+  margin: 0;
+}
+
+@media (max-width: 560px) {
+  .umigame-detail-head__main {
+    flex-direction: row;
+  }
+
+  .umigame-detail-head__main h2 {
+    flex-basis: 100%;
+  }
+
+  .umigame-detail-head__main .umigame-primary-action {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
+}
+
+/* Latest Umigame layout refinements */
+.umigame-new-puzzle-button:hover,
+.umigame-new-puzzle-button.btn:hover {
+  background: transparent;
+  color: var(--ink-1);
+}
+
+.umigame-problem-panel + .umigame-attribution {
+  margin-top: calc(-1 * var(--section-gap));
+}
+
+.umigame-attribution {
+  gap: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.umigame-attribution > .umigame-detail-tags {
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-attribution > .umigame-attribution__meta {
+  display: grid;
+  gap: 0.45rem;
+  padding-top: 1rem;
+}
+
+.umigame-attribution__meta > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.umigame-play-grid {
+  --umigame-yes-border: #5c8a62;
+  --umigame-yes-bg: #d9ead7;
+  --umigame-yes-ink: #203b24;
+  --umigame-depends-border: #b58a2d;
+  --umigame-depends-bg: #f2e4b9;
+  --umigame-depends-ink: #443614;
+  align-items: stretch;
+}
+
+.dark .umigame-play-grid {
+  --umigame-yes-border: #9dcc9f;
+  --umigame-yes-bg: #294b30;
+  --umigame-yes-ink: #e4f5e2;
+  --umigame-depends-border: #d9b25b;
+  --umigame-depends-bg: #4b3d20;
+  --umigame-depends-ink: #fff0bd;
+}
+
+.umigame-turn {
+  --umigame-answer-tone: var(--ink-3);
+  --umigame-answer-bg: transparent;
+  border-left-color: var(--line-soft);
+  background: var(--umigame-answer-bg);
+}
+
+.umigame-turn[data-answer="YES"] {
+  --umigame-answer-tone: var(--umigame-yes-ink);
+  --umigame-answer-bg: var(--umigame-yes-bg);
+  border-left-color: var(--umigame-yes-border);
+}
+
+.umigame-turn[data-answer="DEPENDS"] {
+  --umigame-answer-tone: var(--umigame-depends-ink);
+  --umigame-answer-bg: var(--umigame-depends-bg);
+  border-left-color: var(--umigame-depends-border);
+}
+
+.umigame-turn[data-answer="NO"],
+.umigame-turn[data-answer="IRRELEVANT"],
+.umigame-turn[data-answer="UNDEFINED"] {
+  --umigame-answer-tone: var(--ink-3);
+  --umigame-answer-bg: transparent;
+  border-left-color: var(--line-soft);
+}
+
+.umigame-turn__answer strong {
+  margin-top: 0;
+  color: var(--umigame-answer-tone);
+}
+
+.umigame-transcript {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.umigame-transcript__scroll {
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overscroll-behavior: auto;
+  padding-right: 0.65rem;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 860px) {
+  .umigame-play-grid {
+    align-items: start;
+  }
+
+  .umigame-transcript {
+    display: block;
+    height: auto;
+  }
+
+  .umigame-transcript__scroll {
+    max-height: min(34rem, 65vh);
+    padding-right: 0;
+    scrollbar-gutter: auto;
+  }
+}

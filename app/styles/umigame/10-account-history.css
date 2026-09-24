@@ -1,0 +1,254 @@
+/* Account / modal refinements */
+.umigame-account-bar__login {
+  margin-left: auto;
+}
+
+.umigame-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: transparent;
+  backdrop-filter: blur(10px);
+}
+
+.umigame-modal {
+  width: min(48rem, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: 1.2rem;
+  border: 1px solid var(--line-soft);
+  background: var(--bg-strong);
+
+}
+
+.umigame-modal__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: -1.2rem -1.2rem 1rem;
+  padding: 1.2rem;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--bg-strong);
+}
+
+.umigame-modal__head .umigame-profile-head h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 1.7rem);
+  font-weight: 400;
+}
+
+.umigame-modal__close {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--line-soft);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.umigame-modal__close:hover {
+  border-color: var(--line-strong);
+  color: var(--ink-1);
+}
+
+.umigame-profile-form.is-compact {
+  max-width: none;
+  gap: 1.4rem;
+}
+.umigame-modal--status {
+  width: min(30rem, 100%);
+  overflow: hidden;
+}
+
+.umigame-modal--status h2 {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  font-weight: 400;
+}
+
+.umigame-modal--status p {
+  margin: 0.6rem 0 1.25rem;
+  color: var(--ink-2);
+}
+
+.umigame-status-line {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  background: var(--line-soft);
+}
+
+.umigame-status-line::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 38%;
+  background: var(--ink-1);
+  animation: umigameStatusLine 1.1s ease-in-out infinite;
+}
+
+@keyframes umigameStatusLine {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(360%); }
+}
+
+/* Play history */
+.umigame-play-grid {
+  align-items: stretch;
+}
+
+.umigame-transcript {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  height: 100%;
+}
+.umigame-transcript__scroll {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.65rem;
+  scrollbar-gutter: stable;
+}
+
+.umigame-turn {
+  --umigame-answer-tone: var(--ink-3);
+  --umigame-answer-soft: color-mix(
+    in srgb,
+    var(--umigame-answer-tone) 10%,
+    transparent
+  );
+  padding-inline: 0.8rem;
+  border-left: 2px solid var(--umigame-answer-tone);
+  background: linear-gradient(
+    90deg,
+    var(--umigame-answer-soft),
+    transparent 58%
+  );
+}
+
+.umigame-turn[data-answer="YES"] {
+  --umigame-answer-tone: color-mix(in srgb, #658174 70%, var(--ink-1));
+}
+
+.umigame-turn[data-answer="NO"] {
+  --umigame-answer-tone: color-mix(in srgb, #866c6c 70%, var(--ink-1));
+}
+
+.umigame-turn[data-answer="DEPENDS"] {
+  --umigame-answer-tone: color-mix(in srgb, #84785f 72%, var(--ink-1));
+}
+
+.umigame-turn[data-answer="IRRELEVANT"] {
+  --umigame-answer-tone: var(--ink-3);
+}
+
+.umigame-turn[data-answer="UNDEFINED"] {
+  --umigame-answer-tone: color-mix(in srgb, #756d82 70%, var(--ink-1));
+}
+
+.umigame-turn__answer strong {
+  color: var(--umigame-answer-tone);
+}
+@media (max-width: 860px) {
+  .umigame-transcript {
+    height: min(34rem, 65vh);
+  }
+}
+
+@media (max-width: 560px) {
+  .umigame-account-bar__login {
+    align-self: flex-end;
+    margin-left: 0;
+  }
+
+  .umigame-modal-backdrop {
+    padding: 0.75rem;
+  }
+
+  .umigame-modal {
+    max-height: calc(100vh - 1.5rem);
+    padding: 1rem;
+  }
+
+  .umigame-modal__head {
+    margin: -1rem -1rem 1rem;
+    padding: 1rem;
+  }
+}
+
+/* Profile modal fine-tuning */
+.umigame-modal {
+  overflow-x: hidden;
+}
+
+.umigame-profile-form.is-compact {
+  gap: 1rem;
+}
+
+.umigame-profile-form.is-compact .umigame-fieldset {
+  padding-top: 0.65rem;
+}
+
+.umigame-profile-form.is-compact .umigame-field,
+.umigame-profile-form.is-compact .umigame-fieldset {
+  gap: 0.55rem;
+}
+
+/* Profile settings interaction refinements */
+.umigame-profile-form.is-compact {
+  padding-top: 0.45rem;
+}
+
+.umigame-profile-form__custom-toggle {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.84rem;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.umigame-profile-form__custom-toggle:hover {
+  color: var(--ink-1);
+}
+
+.umigame-custom-avatar-options {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.umigame-custom-avatar-options.is-collapsed {
+  display: none;
+}
+
+.umigame-profile-error {
+  margin: 0;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink-2);
+  font-size: 0.88rem;
+}
+
+.umigame-play-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}

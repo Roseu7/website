@@ -1,0 +1,688 @@
+/* Puzzle submission */
+.umigame-submit-head {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 52rem;
+}
+
+.umigame-submit-head h2 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.umigame-submit-head p,
+.umigame-field-help {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.umigame-submit-head p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.umigame-submit-form {
+  display: grid;
+  gap: 1.6rem;
+  max-width: 52rem;
+}
+
+.umigame-submit-textarea {
+  min-height: 0;
+}
+
+.umigame-field-help,
+.umigame-field-error {
+  font-size: 0.8rem;
+}
+
+.umigame-submit-form .umigame-field-help {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.umigame-submit-form .umigame-field__label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: fit-content;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  line-height: 1.35;
+}
+
+.umigame-submit-tags > legend {
+  font-size: 1.125rem;
+  line-height: 1.35;
+}
+
+.umigame-field__required {
+  color: #b42318;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.dark .umigame-field__required {
+  color: #ff7777;
+}
+
+.umigame-field-error {
+  color: var(--ink-1);
+}
+
+.umigame-required-error {
+  justify-self: start;
+  max-width: 100%;
+  margin-top: -0.25rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid #b42318;
+  background: #fff4f2;
+  color: #b42318;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
+  animation: umigame-required-error-in 160ms ease-out both;
+}
+
+.dark .umigame-required-error {
+  border-color: #ff7777;
+  background: #321b1b;
+  color: #ff9999;
+}
+
+@keyframes umigame-required-error-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .umigame-required-error {
+    animation: none;
+  }
+}
+
+.umigame-submit-tags {
+  padding-top: 1rem;
+}
+
+.umigame-tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.umigame-tag-options label {
+  position: relative;
+  cursor: pointer;
+}
+
+.umigame-tag-options input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.umigame-tag-options span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.3rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--line-soft);
+  color: var(--ink-2);
+  font-size: 0.82rem;
+}
+
+.umigame-tag-options label:has(input:checked) span {
+  border-color: var(--ink-1);
+  color: var(--ink-1);
+}
+
+.umigame-tag-options label:has(input:focus-visible) span {
+  outline: 2px solid var(--line-strong);
+  outline-offset: 2px;
+}
+
+.umigame-submit-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.umigame-submit-notice {
+  margin: 0;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink-2);
+}
+
+/* Puzzle filters */
+.umigame-list-filter-toggle,
+.umigame-list-filter-toggle.btn {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.5rem;
+  width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0;
+  color: var(--ink-2);
+}
+
+.umigame-list-filter-toggle.is-active,
+.umigame-list-filter-toggle.is-active.btn,
+.umigame-list-filter-toggle.is-active:hover {
+  border-color: var(--ink-1);
+  background: var(--ink-1);
+  color: var(--bg-base);
+}
+
+.umigame-puzzle-filters-shell {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-block-start: 0;
+  opacity: 0;
+  transition:
+    grid-template-rows 260ms ease,
+    margin-block-start 260ms ease,
+    opacity 180ms ease;
+}
+
+.umigame-puzzle-filters-shell.is-open {
+  grid-template-rows: 1fr;
+  margin-block-start: 1rem;
+  opacity: 1;
+}
+
+.umigame-puzzle-filters-shell__inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.umigame-puzzle-filters {
+  display: grid;
+  grid-template-columns:
+    minmax(9rem, 1fr)
+    minmax(8rem, 0.8fr)
+    minmax(8rem, 0.75fr)
+    minmax(11rem, 1.1fr)
+    auto;
+  gap: 0.75rem;
+  align-items: end;
+  margin: 0;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-filter-field {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.umigame-filter-field > span {
+  color: var(--ink-3);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.umigame-filter-field select,
+.umigame-filter-field input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: var(--bg-base);
+  color: var(--ink-1);
+  font-size: 0.84rem;
+}
+
+.umigame-filter-field select:hover,
+.umigame-filter-field input:hover {
+  border-color: var(--line-strong);
+}
+
+.umigame-filter-field input::placeholder {
+  color: var(--ink-3);
+}
+
+.umigame-puzzle-filters__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .umigame-puzzle-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .umigame-puzzle-filters__actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .umigame-puzzle-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .umigame-puzzle-filters__actions {
+    grid-column: auto;
+  }
+}
+
+/* Puzzle grid / expandable cards */
+.umigame-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  border-top: 0;
+}
+
+.umigame-card {
+  overflow: hidden;
+  border: 1px solid var(--line-soft);
+}
+
+.umigame-card__summary {
+  display: grid;
+  align-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 7.2rem;
+  padding: 1.15rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink-1);
+  text-align: left;
+  cursor: pointer;
+}
+
+.umigame-card__summary:hover h3 {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.umigame-difficulty {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 1.75rem;
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--umigame-puzzle-meta-size, 0.92rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.umigame-difficulty svg {
+  flex: none;
+  width: var(--umigame-puzzle-meta-icon-size, 17px);
+  height: var(--umigame-puzzle-meta-icon-size, 17px);
+}
+
+.umigame-difficulty[data-difficulty="VERY_EASY"] {
+  color: #247a48;
+}
+
+.umigame-difficulty[data-difficulty="EASY"] {
+  color: #5b751f;
+}
+
+.umigame-difficulty[data-difficulty="MEDIUM"] {
+  color: #856400;
+}
+
+.umigame-difficulty[data-difficulty="HARD"] {
+  color: #984b18;
+}
+
+.umigame-difficulty[data-difficulty="VERY_HARD"] {
+  color: #b84a4a;
+}
+
+.dark .umigame-difficulty[data-difficulty="VERY_EASY"] {
+  color: #75d69a;
+}
+
+.dark .umigame-difficulty[data-difficulty="EASY"] {
+  color: #add36f;
+}
+
+.dark .umigame-difficulty[data-difficulty="MEDIUM"] {
+  color: #e1c45d;
+}
+
+.dark .umigame-difficulty[data-difficulty="HARD"] {
+  color: #e69a58;
+}
+
+.dark .umigame-difficulty[data-difficulty="VERY_HARD"] {
+  color: #e58282;
+}
+
+.umigame-card__summary .umigame-card__meta {
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.umigame-puzzle-id {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+}
+
+.umigame-card__chevron {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--ink-3);
+  transition: transform 220ms ease;
+}
+
+.umigame-card.is-expanded .umigame-card__chevron {
+  transform: rotate(180deg);
+}
+
+.umigame-card__expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 260ms ease,
+    opacity 180ms ease;
+}
+
+.umigame-card.is-expanded .umigame-card__expand {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.umigame-card__expand-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.umigame-card.is-expanded .umigame-card__expand-inner {
+  padding: 0 1.15rem 1.15rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-card__statement {
+  padding-top: 1rem;
+  line-height: 1.75;
+}
+
+.umigame-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.umigame-tag-list > span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.8rem;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--line-soft);
+  color: var(--ink-2);
+  font-size: 0.75rem;
+}
+
+.umigame-card__source,
+.umigame-attribution {
+  color: var(--ink-3);
+  font-size: 0.74rem;
+  line-height: 1.65;
+}
+
+.umigame-card__source {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+}
+
+.umigame-card__source a,
+.umigame-attribution a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: fit-content;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.umigame-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.umigame-card__actions .site-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.umigame-attribution {
+  display: grid;
+  gap: 0.45rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-attribution p {
+  margin: 0;
+}
+
+.umigame-attribution > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+@media (max-width: 980px) {
+  .umigame-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .umigame-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Umigame list/header refinements */
+.umigame-page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.umigame-page-head h2 {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(2.6rem, 8vw, 5.8rem);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+}
+
+.umigame-page-head__account {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.umigame-page-head__account .umigame-account-bar__user,
+.umigame-page-head__account .umigame-account-bar__actions {
+  flex: none;
+}
+
+.umigame-page-head__account form {
+  margin: 0;
+}
+
+.umigame-page-head__account .umigame-icon-button,
+.umigame-page-head__account .umigame-icon-button.btn {
+  border-color: var(--line-soft);
+  color: var(--ink-2);
+}
+
+.umigame-page-head__account .umigame-icon-button:hover,
+.umigame-page-head__account .umigame-icon-button.btn:hover {
+  border-color: var(--ink-1);
+  background: var(--ink-1);
+  color: var(--bg-base);
+}
+
+.umigame-list-head {
+  align-items: center;
+}
+
+.umigame-list-head__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.umigame-list-head__title h2 {
+  margin: 0;
+}
+
+.umigame-list-head__title .umigame-count {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.umigame-new-puzzle-button,
+.umigame-new-puzzle-button.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  flex: none;
+  background: var(--ink-1);
+  color: var(--bg-base);
+  line-height: calc(1em + 1px);
+}
+
+.umigame-new-puzzle-button svg,
+.umigame-card__actions .site-button svg {
+  display: block;
+  flex: none;
+}
+
+.umigame-card__expand-inner {
+  box-sizing: border-box;
+  padding-inline: 1.15rem;
+  padding-bottom: 0;
+  border-top: 1px solid transparent;
+  transition:
+    padding-bottom 260ms ease,
+    border-color 180ms ease;
+}
+
+.umigame-card.is-expanded .umigame-card__expand-inner {
+  padding: 0 1.15rem 1.15rem;
+  border-top-color: var(--line-soft);
+}
+
+.umigame-card__actions .site-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  line-height: calc(1em + 1px);
+}
+
+@media (max-width: 760px) {
+  .umigame-page-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .umigame-page-head__account {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 560px) {
+  .umigame-page-head__account {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .umigame-page-head__account .umigame-account-bar__actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .umigame-list-head {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .umigame-list-head__actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: thin;
+  }
+
+  .umigame-list-head__actions .site-button {
+    flex: 0 0 auto;
+  }
+
+  .umigame-new-puzzle-button,
+  .umigame-new-puzzle-button.btn {
+    min-height: 2.45rem;
+    padding-inline: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .umigame-card__chevron,
+  .umigame-card__expand,
+  .umigame-card__expand-inner,
+  .umigame-puzzle-filters-shell {
+    transition: none;
+  }
+}

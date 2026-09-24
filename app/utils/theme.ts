@@ -17,7 +17,11 @@ function updateThemeIcons(
 
 function applyTheme(htmlEl: HTMLElement, nextTheme: "light" | "dark") {
   htmlEl.classList.toggle("dark", nextTheme === "dark");
-  localStorage.setItem("theme", nextTheme);
+  try {
+    localStorage.setItem("theme", nextTheme);
+  } catch {
+    // Theme switching still works when browser storage is unavailable.
+  }
 }
 
 function finishThemeTransition(
@@ -38,12 +42,6 @@ function finishThemeTransition(
   overlay?.replaceChildren();
   htmlEl.style.removeProperty("--theme-simple-duration");
   body.classList.remove("theme-transition-active");
-}
-
-function wait(ms: number) {
-  return new Promise<void>((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
 }
 
 function toViewportPercent(value: number, size: number) {
@@ -154,13 +152,10 @@ function playThemeTransition(
     };
   };
   const useViewTransition =
-    typeof doc.startViewTransition === "function" &&
-    !isMobileViewport;
-  const useSimpleMobileTransition = isMobileViewport;
+    typeof doc.startViewTransition === "function";
   const effectiveDuration = metrics.duration;
-  const mobileSimpleDuration = 920;
 
-  if (prefersReducedMotion) {
+  if (prefersReducedMotion || isMobileViewport) {
     applyTheme(htmlEl, nextTheme);
     return Promise.resolve();
   }
@@ -172,65 +167,11 @@ function playThemeTransition(
     const transition = doc.startViewTransition!(() => {
       applyTheme(htmlEl, nextTheme);
     });
+    // Navigation can skip the animation while the theme update still succeeds.
+    void transition.ready.catch(() => undefined);
 
     return transition.finished.catch(() => undefined).finally(() => {
       finishThemeTransition(htmlEl, body, overlay);
-    });
-  }
-
-  if (useSimpleMobileTransition) {
-    body.classList.add("theme-transition-active");
-    htmlEl.classList.add("theme-transition-running");
-    htmlEl.style.setProperty("--theme-simple-duration", `${mobileSimpleDuration}ms`);
-
-    if (!overlay) {
-      htmlEl.classList.add("theme-transition-simple");
-      applyTheme(htmlEl, nextTheme);
-      return wait(mobileSimpleDuration).finally(() => {
-        finishThemeTransition(htmlEl, body, overlay);
-      });
-    }
-
-    overlay.hidden = false;
-    const snapshotViewport = buildThemeSnapshot(overlay, metrics.bounds, {
-      includeMobileMenu: true,
-    });
-    overlay.setAttribute("data-theme", nextTheme);
-    overlay.setAttribute("data-mode", "snapshot-fade");
-    overlay.classList.add("is-prepared");
-    void overlay.getBoundingClientRect();
-
-    return new Promise<void>((resolve) => {
-      let settled = false;
-
-      const settle = () => {
-        if (settled) return;
-        settled = true;
-        overlay.removeEventListener("transitionend", handleOverlayEnd);
-        window.clearTimeout(timeoutId);
-        requestAnimationFrame(() => {
-          finishThemeTransition(htmlEl, body, overlay);
-          resolve();
-        });
-      };
-
-      const handleOverlayEnd = (event: TransitionEvent) => {
-        if (event.target === overlay && event.propertyName === "opacity") {
-          settle();
-        }
-      };
-
-      const timeoutId = window.setTimeout(settle, mobileSimpleDuration + 180);
-      overlay.addEventListener("transitionend", handleOverlayEnd);
-
-      requestAnimationFrame(() => {
-        applyTheme(htmlEl, nextTheme);
-        if (!snapshotViewport) {
-          htmlEl.classList.add("theme-transition-simple");
-        }
-        overlay.classList.remove("is-prepared");
-        overlay.classList.add("is-fading");
-      });
     });
   }
 
@@ -314,6 +255,13 @@ export function attachThemeToggle(options: {
 
   const handleThemeToggle = (event?: MouseEvent) => {
     if (isTransitioning || htmlEl.classList.contains("theme-transition-running")) {
+      return;
+    }
+
+    if (window.matchMedia("(max-width: 640px), (prefers-reduced-motion: reduce)").matches) {
+      const nextTheme = htmlEl.classList.contains("dark") ? "light" : "dark";
+      applyTheme(htmlEl, nextTheme);
+      updateThemeIcons(nextTheme === "dark", button, sunIcon, moonIcon);
       return;
     }
 
@@ -402,8 +350,13 @@ export function attachThemeToggle(options: {
     moonIcon
   );
   button?.addEventListener("click", handleThemeToggle);
+  const observer = new MutationObserver(() => {
+    updateThemeIcons(htmlEl.classList.contains("dark"), button, sunIcon, moonIcon);
+  });
+  observer.observe(htmlEl, { attributes: true, attributeFilter: ["class"] });
 
   return () => {
+    observer.disconnect();
     button?.removeEventListener("click", handleThemeToggle);
   };
 }

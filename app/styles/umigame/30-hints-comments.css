@@ -1,0 +1,234 @@
+/* Play hints */
+.umigame-hint-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.umigame-hint-head h2 {
+  margin: 0;
+}
+
+.umigame-hints {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-hints li {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr);
+  gap: 0.7rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-hints li > span {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--line-soft);
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+.umigame-hints p {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+
+.umigame-hint-button,
+.umigame-hint-button.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  line-height: calc(1em + 1px);
+}
+
+.umigame-hint-button svg {
+  display: block;
+  flex: none;
+}
+
+/* Puzzle comments */
+.umigame-comments {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.umigame-comments__head > div,
+.umigame-comment-form__footer,
+.umigame-comments__login,
+.umigame-comment__author,
+.umigame-comment__status {
+  display: flex;
+  align-items: center;
+}
+
+.umigame-comments__head > div {
+  gap: 0.55rem;
+}
+
+.umigame-comments__head h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+.umigame-comments__head span,
+.umigame-comment-form__footer > span,
+.umigame-comment__author time,
+.umigame-comment__status {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.umigame-comment-form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.umigame-comment-form__footer {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.umigame-comment-form__footer .site-button,
+.umigame-comment-form__footer .site-button.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  flex: none;
+  line-height: calc(1em + 1px);
+}
+
+.umigame-comments__login {
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  color: var(--ink-2);
+}
+
+.umigame-comments__login .site-button {
+  margin-left: auto;
+}
+
+.umigame-comments__empty {
+  margin: 0;
+  color: var(--ink-3);
+}
+
+.umigame-comment-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-comment {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-comment__author {
+  gap: 0.65rem;
+}
+
+.umigame-comment__author > div {
+  display: grid;
+  gap: 0.12rem;
+}
+
+.umigame-comment__author strong {
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+.umigame-comment__body {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--ink-2);
+  line-height: 1.75;
+}
+
+.umigame-comment__status {
+  gap: 0.75rem;
+  min-height: 1.4rem;
+}
+
+.umigame-comment__status button,
+.umigame-comment__spoiler button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+}
+
+.umigame-comment__status button:disabled {
+  color: var(--ink-3);
+  cursor: default;
+  text-decoration: none;
+}
+
+.umigame-comment__spoiler {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: start;
+  padding: 0.85rem;
+  border: 1px solid var(--line-soft);
+  color: var(--ink-2);
+}
+
+.umigame-comment__spoiler > div {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.umigame-comment__spoiler strong {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.umigame-comment__spoiler button {
+  width: fit-content;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+@media (max-width: 560px) {
+  .umigame-comment-form__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .umigame-comment-form__footer .site-button,
+  .umigame-comments__login .site-button {
+    width: 100%;
+    margin-left: 0;
+  }
+}

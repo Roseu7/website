@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Link, NavLink, useLocation } from "react-router";
+import { Menu, X } from "lucide-react";
+import { Link, NavLink, useLocation, useRouteLoaderData } from "react-router";
 import { SiteBrand } from "~/components/brand/SiteBrand";
 import { SiteThemeToggle } from "~/components/layout/SiteThemeToggle";
 import { isRouteActive, isRouteNavItem, siteConfig } from "~/utils/site";
@@ -15,11 +16,17 @@ function cx(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(" ");
 }
 
+function isExternalHref(href: string) {
+  return /^https?:\/\//.test(href);
+}
+
 export function SiteHeader({
   showLogo = true,
   variant = "default",
 }: SiteHeaderProps) {
+  const rootData = useRouteLoaderData("root") as { topPageHref?: string } | undefined;
   const location = useLocation();
+  const topPageHref = rootData?.topPageHref ?? "/";
   const navItems = siteConfig.primaryNav.filter(isRouteNavItem);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [mobileMenuClosing, setMobileMenuClosing] = React.useState(false);
@@ -109,11 +116,11 @@ export function SiteHeader({
           <div className="site-header__topline">
             <div className="site-header__lead">
               {showLogo ? (
-                <Link to="/" className="site-header__brand-link" viewTransition>
+                <Link to={topPageHref} className="site-header__brand-link" prefetch="intent" viewTransition>
                   <SiteBrand compact />
                 </Link>
               ) : (
-                <Link to="/" className="site-header__wordmark" viewTransition>
+                <Link to={topPageHref} className="site-header__wordmark" prefetch="intent" viewTransition>
                   <span className="site-header__wordmark-name">{siteConfig.name}</span>
                 </Link>
               )}
@@ -150,7 +157,7 @@ export function SiteHeader({
                           (isActive || isGroupActive) && "is-active"
                         )
                       }
-                      viewTransition
+                      prefetch="intent" viewTransition
                     >
                       <span>{groupLabel}</span>
                     </NavLink>
@@ -163,7 +170,7 @@ export function SiteHeader({
                           className={({ isActive }) =>
                             cx("site-nav-group__link", isActive && "is-active")
                           }
-                          viewTransition
+                          prefetch="intent" viewTransition
                         >
                           {child.label}
                         </NavLink>
@@ -174,16 +181,26 @@ export function SiteHeader({
               }
 
               return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    cx("site-tabs__link", isActive && "is-active")
-                  }
-                  viewTransition
-                >
-                  {item.label}
-                </NavLink>
+                item.to === "/" && isExternalHref(topPageHref) ? (
+                  <a
+                    key={item.to}
+                    href={topPageHref}
+                    className="site-tabs__link"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={({ isActive }) =>
+                      cx("site-tabs__link", isActive && "is-active")
+                    }
+                    prefetch="intent" viewTransition
+                  >
+                    {item.label}
+                  </NavLink>
+                )
               );
             })}
           </nav>
@@ -192,11 +209,11 @@ export function SiteHeader({
         <div className="site-header__mobile-bar">
           <div className="site-header__lead">
             {showLogo ? (
-              <Link to="/" className="site-header__brand-link" viewTransition>
+              <Link to={topPageHref} className="site-header__brand-link" prefetch="intent" viewTransition>
                 <SiteBrand compact />
               </Link>
             ) : (
-              <Link to="/" className="site-header__wordmark" viewTransition>
+              <Link to={topPageHref} className="site-header__wordmark" prefetch="intent" viewTransition>
                 <span className="site-header__wordmark-name">{siteConfig.name}</span>
               </Link>
             )}
@@ -204,15 +221,17 @@ export function SiteHeader({
 
           <button
             type="button"
-            className={cx("site-menu-toggle", mobileMenuOpen && "is-open")}
+            className={cx("btn site-menu-toggle", mobileMenuOpen && "is-open")}
             aria-expanded={mobileMenuOpen}
             aria-controls="site-mobile-menu"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             onClick={toggleMobileMenu}
           >
-            <span className="site-menu-toggle__line" />
-            <span className="site-menu-toggle__line" />
-            <span className="site-menu-toggle__line" />
+            {mobileMenuOpen ? (
+              <X className="site-menu-icon" size={18} aria-hidden="true" />
+            ) : (
+              <Menu className="site-menu-icon" size={18} aria-hidden="true" />
+            )}
           </button>
         </div>
       </div>
@@ -237,11 +256,11 @@ export function SiteHeader({
           <div className="site-mobile-menu__header">
             <div className="site-header__lead">
               {showLogo ? (
-                <Link to="/" className="site-header__brand-link" viewTransition>
+                <Link to={topPageHref} className="site-header__brand-link" prefetch="intent" viewTransition>
                   <SiteBrand compact />
                 </Link>
               ) : (
-                <Link to="/" className="site-header__wordmark" viewTransition>
+                <Link to={topPageHref} className="site-header__wordmark" prefetch="intent" viewTransition>
                   <span className="site-header__wordmark-name">{siteConfig.name}</span>
                 </Link>
               )}
@@ -251,12 +270,11 @@ export function SiteHeader({
               <SiteThemeToggle />
               <button
                 type="button"
-                className="site-menu-close"
+                className="btn site-menu-close"
                 aria-label="Close menu"
                 onClick={closeMobileMenu}
               >
-                <span className="site-menu-close__line" />
-                <span className="site-menu-close__line" />
+                <X className="site-menu-icon" size={18} aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -276,7 +294,7 @@ export function SiteHeader({
                       className={({ isActive }) =>
                         cx("site-mobile-nav__link", (isActive || isGroupActive) && "is-active")
                       }
-                      viewTransition
+                      prefetch="intent" viewTransition
                     >
                       {item.label}
                     </NavLink>
@@ -289,7 +307,7 @@ export function SiteHeader({
                           className={({ isActive }) =>
                             cx("site-mobile-nav__link", "site-mobile-nav__link--child", isActive && "is-active")
                           }
-                          viewTransition
+                          prefetch="intent" viewTransition
                         >
                           {child.label}
                         </NavLink>
@@ -300,16 +318,26 @@ export function SiteHeader({
               }
 
               return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    cx("site-mobile-nav__link", isActive && "is-active")
-                  }
-                  viewTransition
-                >
-                  {item.label}
-                </NavLink>
+                item.to === "/" && isExternalHref(topPageHref) ? (
+                  <a
+                    key={item.to}
+                    href={topPageHref}
+                    className="site-mobile-nav__link"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={({ isActive }) =>
+                      cx("site-mobile-nav__link", isActive && "is-active")
+                    }
+                    prefetch="intent" viewTransition
+                  >
+                    {item.label}
+                  </NavLink>
+                )
               );
             })}
           </nav>

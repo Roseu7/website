@@ -1,0 +1,193 @@
+/* Umigame Jev observability */
+.umigame-admin-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.umigame-admin-head__actions .site-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.umigame-admin-jev-nav {
+  display: flex;
+  align-items: center;
+}
+.umigame-jev-config {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line-soft);
+  background: var(--line-soft);
+}
+.umigame-jev-config > div {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+  background: var(--page-bg);
+}
+.umigame-jev-config span {
+  color: var(--ink-3);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.umigame-jev-config strong {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.umigame-jev-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+.umigame-jev-provider-card {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+  border: 1px solid var(--line-soft);
+}
+.umigame-jev-provider-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+.umigame-jev-provider-card__head strong {
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+.umigame-jev-provider-card__head span {
+  color: var(--ink-3);
+  font-size: 0.8rem;
+}
+.umigame-jev-provider-card dl {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+.umigame-jev-provider-card dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 0.45rem;
+}
+.umigame-jev-provider-card dt {
+  color: var(--ink-3);
+}
+.umigame-jev-provider-card dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.umigame-jev-purpose-table,
+.umigame-jev-run-table {
+  display: grid;
+  border: 1px solid var(--line-soft);
+  overflow-x: auto;
+}
+.umigame-jev-purpose-row {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1.5fr) repeat(4, minmax(5rem, 0.7fr));
+  gap: 0.75rem;
+  align-items: center;
+  min-width: 42rem;
+  padding: 0.65rem 0.8rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+.umigame-jev-purpose-row:last-child {
+  border-bottom: 0;
+}
+.umigame-jev-purpose-row.is-head,
+.umigame-jev-run-row.is-head {
+  color: var(--ink-3);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.umigame-jev-purpose-row strong {
+  font-weight: 500;
+}
+.umigame-jev-daily {
+  display: grid;
+  gap: 0.65rem;
+}
+.umigame-jev-daily__row {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(6rem, 1fr) 2.5rem minmax(8rem, auto);
+  gap: 0.75rem;
+  align-items: center;
+}
+.umigame-jev-daily__row > span {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+.umigame-jev-daily__row > strong {
+  text-align: right;
+  font-weight: 500;
+}
+.umigame-jev-daily__row > small {
+  color: var(--ink-3);
+}
+.umigame-jev-daily__bar {
+  height: 0.55rem;
+  background: var(--line-soft);
+  overflow: hidden;
+}
+.umigame-jev-daily__bar > span {
+  display: block;
+  height: 100%;
+  background: currentColor;
+}
+.umigame-jev-model-list {
+  display: grid;
+  border-top: 1px solid var(--line-soft);
+}
+.umigame-jev-model-list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.umigame-jev-model-list span {
+  color: var(--ink-3);
+}
+.umigame-jev-run-row {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(8rem, 1.2fr) minmax(7rem, 1fr) 5rem 5rem 5rem;
+  gap: 0.65rem;
+  align-items: center;
+  min-width: 50rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 0.82rem;
+}
+.umigame-jev-run-row:last-child {
+  border-bottom: 0;
+}
+.umigame-jev-run-row__error {
+  grid-column: 2 / -1;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+.umigame-jev-pricing-note {
+  color: var(--ink-2);
+}
+@media (max-width: 720px) {
+  .umigame-jev-config,
+  .umigame-jev-provider-grid {
+    grid-template-columns: 1fr;
+  }
+  .umigame-admin-head__actions {
+    align-items: flex-end;
+    flex-direction: column-reverse;
+  }
+  .umigame-jev-daily__row {
+    grid-template-columns: 3rem 1fr 2rem;
+  }
+  .umigame-jev-daily__row > small {
+    grid-column: 2 / -1;
+  }
+}

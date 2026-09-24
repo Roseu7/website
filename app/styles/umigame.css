@@ -1,0 +1,41 @@
+/* 共通要素・初期レイアウト・アバター */
+@import "./umigame/00-base.css";
+
+/* アカウント・設定・履歴 */
+@import "./umigame/10-account-history.css";
+
+/* 問題投稿・問題一覧 */
+@import "./umigame/20-submission-list.css";
+
+/* ヒント・コメント */
+@import "./umigame/30-hints-comments.css";
+
+/* 一覧・詳細・プレイのレイアウト調整 */
+@import "./umigame/40-layout.css";
+
+/* 投票・公開プロフィール */
+@import "./umigame/50-votes-profiles.css";
+
+/* 情報・管理・お気に入り・ランキング */
+@import "./umigame/60-about-community.css";
+
+/* おすすめ */
+@import "./umigame/70-recommendations.css";
+
+/* Jev監視 */
+@import "./umigame/80-observability.css";
+
+/* ライセンス・共通表示の調整 */
+@import "./umigame/90-licenses-layout.css";
+
+/* 退会・Golden Test */
+@import "./umigame/100-account-golden.css";
+
+/* プレイ履歴・結果表示 */
+@import "./umigame/110-play-results.css";
+
+/* 類似問題・作者向け品質分析 */
+@import "./umigame/120-author-quality.css";
+
+/* 共通ダイアログ */
+@import "./umigame/130-dialog.css";

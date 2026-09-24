@@ -7,8 +7,89 @@
   "name": "website",
   "compatibility_date": "2025-04-04",
   "main": "./workers/app.ts",
+  "workers_dev": false,
+  "preview_urls": false,
+  "keep_vars": true,
+  "ratelimits": [
+    {
+      "name": "WORDLE_RATE_LIMITER",
+      "namespace_id": "2026090801",
+      "simple": { "limit": 60, "period": 60 }
+    },
+    {
+      "name": "UMIGAME_QUESTION_RATE_LIMITER",
+      "namespace_id": "2026092101",
+      "simple": { "limit": 3, "period": 10 }
+    },
+    {
+      "name": "UMIGAME_GUESS_RATE_LIMITER",
+      "namespace_id": "2026092102",
+      "simple": { "limit": 2, "period": 10 }
+    },
+    {
+      "name": "UMIGAME_RECOMMEND_RATE_LIMITER",
+      "namespace_id": "2026092201",
+      "simple": { "limit": 2, "period": 10 }
+    },
+    {
+      "name": "UMIGAME_QUESTION_USER_RATE_LIMITER",
+      "namespace_id": "2026092302",
+      "simple": { "limit": 3, "period": 10 }
+    },
+    {
+      "name": "UMIGAME_QUESTION_ANON_IP_RATE_LIMITER",
+      "namespace_id": "2026092303",
+      "simple": { "limit": 6, "period": 10 }
+    },
+    {
+      "name": "UMIGAME_GUESS_USER_RATE_LIMITER",
+      "namespace_id": "2026092304",
+      "simple": { "limit": 2, "period": 10 }
+    },
+    {
+      "name": "UMIGAME_GUESS_ANON_IP_RATE_LIMITER",
+      "namespace_id": "2026092305",
+      "simple": { "limit": 4, "period": 10 }
+    },
+    {
+      "name": "UMIGAME_RECOMMEND_USER_RATE_LIMITER",
+      "namespace_id": "2026092306",
+      "simple": { "limit": 2, "period": 10 }
+    },
+    {
+      "name": "UMIGAME_RECOMMEND_ANON_IP_RATE_LIMITER",
+      "namespace_id": "2026092307",
+      "simple": { "limit": 4, "period": 10 }
+    },
+    {
+      "name": "UMIGAME_SESSION_START_USER_RATE_LIMITER",
+      "namespace_id": "2026092308",
+      "simple": { "limit": 30, "period": 60 }
+    },
+    {
+      "name": "UMIGAME_SESSION_START_ANON_IP_RATE_LIMITER",
+      "namespace_id": "2026092309",
+      "simple": { "limit": 20, "period": 60 }
+    },
+    {
+      "name": "JEV_TOOL_RATE_LIMITER",
+      "namespace_id": "2026092310",
+      "simple": { "limit": 2, "period": 10 }
+    },
+    {
+      "name": "CONTACT_RATE_LIMITER",
+      "namespace_id": "2026092401",
+      "simple": { "limit": 2, "period": 60 }
+    }
+  ],
   "vars": {
-    "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare"
+    "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare",
+    "CF_ACCESS_TEAM_DOMAIN": "roseu.cloudflareaccess.com",
+    "CF_ACCESS_AUD": "96b9c9c9fd0eb49cdba0eab8b3fd4f3b987e89f5972bbfb8ec953d8f81e70549",
+    "UMIGAME_ACCESS_AUD": "be861d10bd1c5a96e3b9e3120cc86803111421eca67fa4e1fa711927901bb344",
+    "JEV_VERCEL_INPUT_USD_PER_MILLION": "0.04",
+    "JEV_TYPESAFE_INPUT_USD_PER_MILLION": "0.042",
+    "JEV_DAILY_QUOTA_STARTS_AT": "2026-09-26T12:00:00.000Z"
   },
   "observability": {
     "enabled": true
@@ -21,8 +102,53 @@
     {
       "pattern": "home.roseu.net",
       "custom_domain": true
+    },
+    {
+      "pattern": "mc.roseu.net",
+      "custom_domain": true
     }
-  ]
+  ],
+  "services": [
+    {
+      "binding": "API_SERVICE",
+      "service": "api"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mc-dashboard",
+      "database_id": "a1feedb9-f4ca-47aa-a4a3-507692c9d300",
+      "migrations_dir": "db/migrations"
+    },
+    {
+      "binding": "UMIGAME_DB",
+      "database_name": "umigame",
+      "database_id": "20b0d67b-0d82-4a59-ad55-a98f2b5a702a",
+      "migrations_dir": "db/umigame-migrations"
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "UMIGAME_AI_QUEUE",
+        "queue": "umigame-ai"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "umigame-ai",
+        "max_batch_size": 5,
+        "max_batch_timeout": 2,
+        "max_retries": 3,
+        "dead_letter_queue": "umigame-ai-dlq",
+        "max_concurrency": 2
+      }
+    ]
+  }
   /**
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

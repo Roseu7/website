@@ -1,0 +1,246 @@
+.dashboard-shell {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.dashboard-grid--primary,
+.dashboard-grid--secondary {
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.9fr);
+}
+
+.dashboard-shell--narrow {
+  width: min(100%, 46rem);
+  margin: 0 auto;
+}
+
+.dashboard-hero,
+.dashboard-map-panel,
+.dashboard-linked-panel,
+.dashboard-players-panel {
+  align-content: start;
+}
+
+.dashboard-hero__copy {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.dashboard-hero__title,
+.dashboard-map-panel__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.dashboard-link-form,
+.dashboard-field {
+  display: grid;
+}
+
+.dashboard-link-form {
+  gap: 0.9rem;
+}
+
+.dashboard-field {
+  gap: 0.45rem;
+}
+
+.dashboard-field__label {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+}
+
+.dashboard-field__input,
+.dashboard-field__input.input {
+  min-height: 2.9rem;
+  height: auto;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-1);
+}
+
+.dashboard-field__input:focus {
+  outline: none;
+  border-color: var(--line-strong);
+}
+
+.dashboard-notice {
+  color: var(--ink-1);
+}
+
+.dashboard-player-grid {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.dashboard-player-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.7rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.dashboard-player-card__rank {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.dashboard-player-card__name {
+  min-width: 0;
+  color: var(--ink-1);
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-metric-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+
+.dashboard-metric-separator,
+.dashboard-metric-subtle {
+  color: var(--ink-3);
+}
+
+.apply-heading {
+  display: grid;
+  gap: 0.65rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.apply-heading__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(2rem, 7vw, 4.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+}
+
+.apply-heading__lead,
+.apply-panel p,
+.apply-panel h2,
+.apply-result {
+  margin: 0;
+}
+
+.apply-heading__lead {
+  max-width: 38rem;
+  color: var(--ink-2);
+}
+
+.apply-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.apply-panel--error,
+.apply-result.apply-result--error {
+  color: #ff7b72;
+}
+
+.apply-identity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.apply-identity div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.apply-identity span {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+}
+
+.apply-discord-username {
+  margin-left: 0.5rem;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  font-weight: 400;
+}
+
+.apply-logout {
+  min-height: 2.25rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.apply-logout:hover {
+  border-color: var(--line-strong);
+  color: var(--ink-1);
+}
+
+.apply-field-label {
+  color: #9ee7ff;
+}
+
+.apply-code-input {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.apply-result {
+  padding: 0.9rem 0;
+  color: var(--ink-1);
+}
+
+.apply-result--success {
+  color: #66d9a5;
+}
+
+@media (max-width: 720px) {
+  .dashboard-grid--primary,
+  .dashboard-grid--secondary {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-actions {
+    display: grid;
+  }
+
+  .dashboard-shell--narrow {
+    width: 100%;
+  }
+}

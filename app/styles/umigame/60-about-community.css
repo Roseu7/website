@@ -1,0 +1,337 @@
+/* Jev transparency / about */
+.umigame-list-head__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.umigame-list-head__actions .site-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  line-height: calc(1em + 1px);
+}
+
+.umigame-about-head {
+  display: grid;
+  gap: 1.4rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.umigame-about-head > div {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 58rem;
+}
+
+.umigame-about-head h2 {
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.umigame-about-head p,
+.umigame-about-section p,
+.umigame-about-card p {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.8;
+}
+
+.umigame-about-section {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-about-section > h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 400;
+}
+
+.umigame-about-section__title {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.umigame-about-section__title h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+.umigame-about-use-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-about-use-list li {
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: start;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink-2);
+}
+
+.umigame-about-use-list svg {
+  margin-top: 0.18rem;
+}
+
+.umigame-about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.umigame-about-card {
+  display: grid;
+  align-content: start;
+  gap: 0.9rem;
+  padding: 1.15rem;
+  border: 1px solid var(--line-soft);
+}
+
+@media (max-width: 680px) {
+  .umigame-about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .umigame-list-head__actions {
+    justify-content: flex-end;
+  }
+}
+
+/* Umigame admin */
+.umigame-admin-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line-strong);
+}
+.umigame-admin-head h2 {
+  margin: 0.25rem 0 0;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+}
+.umigame-admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line-soft);
+  background: var(--line-soft);
+}
+.umigame-admin-stats > div {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: var(--page-bg);
+}.umigame-admin-stats strong { font-size: 1.35rem; font-weight: 500; }
+.umigame-admin-stats span, .umigame-admin-meta { color: var(--ink-3); font-size: 0.84rem; }
+.umigame-admin-section { display: grid; gap: 1rem; padding-top: 1.25rem; border-top: 1px solid var(--line-soft); }
+.umigame-admin-section > h2 { margin: 0; font-size: 1.25rem; font-weight: 400; }
+.umigame-admin-list { display: grid; gap: 0.85rem; }
+.umigame-admin-card { display: grid; gap: 0.8rem; padding: 1rem; border: 1px solid var(--line-soft); }
+.umigame-admin-card p { margin: 0; color: var(--ink-2); line-height: 1.65; }
+.umigame-admin-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.umigame-admin-card__head > div { display: grid; gap: 0.45rem; }
+.umigame-admin-card__head h3 { margin: 0; font-size: 1.08rem; font-weight: 500; }
+.umigame-admin-card__head a { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--ink-3); }
+.umigame-admin-secret { display: grid; gap: 0.7rem; padding: 0.85rem 0 0; }
+.umigame-admin-secret pre { margin: 0; padding: 0.8rem; overflow: auto; border: 1px solid var(--line-soft); font-size: 0.76rem; }
+.umigame-admin-actions { display: flex; flex-wrap: wrap; gap: 0.65rem 1rem; align-items: center; }
+.umigame-admin-actions .site-button { display: inline-flex; align-items: center; gap: 0.35rem; }
+.umigame-admin-actions__primary,
+.umigame-admin-actions__danger {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.umigame-admin-actions__danger {
+  margin-left: auto;
+  padding-left: 1rem;
+  border-left: 1px solid var(--line-soft);
+}
+.umigame-admin-danger-button,
+.umigame-admin-danger-button.btn {
+  border-color: #a83d3d;
+  color: #a83d3d;
+}
+.umigame-admin-danger-button:hover,
+.umigame-admin-danger-button.btn:hover {
+  border-color: #a83d3d;
+  background: #a83d3d;
+  color: #fff;
+}
+.dark .umigame-admin-danger-button,
+.dark .umigame-admin-danger-button.btn {
+  border-color: #e58282;
+  color: #e58282;
+}
+.dark .umigame-admin-danger-button:hover,
+.dark .umigame-admin-danger-button.btn:hover {
+  border-color: #e58282;
+  background: #e58282;
+  color: #211;
+}
+.umigame-admin-run-list { display: grid; border-top: 1px solid var(--line-soft); }
+.umigame-admin-run { display: grid; grid-template-columns: auto 1fr 1fr auto; gap: 0.75rem; align-items: center; padding: 0.65rem 0; border-bottom: 1px solid var(--line-soft); }
+.umigame-admin-run code { grid-column: 2 / -1; font-size: 0.76rem; color: var(--ink-3); }
+@media (max-width: 720px) {
+  .umigame-admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .umigame-admin-card__head { flex-direction: column; }
+  .umigame-admin-actions__danger {
+    width: 100%;
+    margin-left: 0;
+    padding-top: 0.65rem;
+    padding-left: 0;
+    border-top: 1px solid var(--line-soft);
+    border-left: 0;
+  }
+  .umigame-admin-run { grid-template-columns: auto 1fr; }
+  .umigame-admin-run code { grid-column: 1 / -1; }
+}
+/* Umigame favorites */
+.umigame-favorite { display: inline-flex; align-items: center; gap: 0.5rem; }
+.umigame-favorite__button { display: inline-flex; align-items: center; gap: 0.4rem; }
+.umigame-favorite__button.is-selected { border-color: var(--ink-2); }
+.umigame-favorite__error { color: var(--error); font-size: 0.78rem; }
+.umigame-empty-state {
+  display: grid;
+  justify-items: start;
+  gap: 0.7rem;
+}
+.umigame-empty-state p {
+  margin: 0;
+  color: var(--ink-2);
+}
+.umigame-favorites-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding-top: 1.15rem; border-top: 1px solid var(--line-strong); }
+.umigame-favorites-head h2 { margin: 0.25rem 0 0; font-size: clamp(2rem, 6vw, 4rem); font-weight: 400; letter-spacing: -0.05em; }
+.umigame-favorite-list { display: grid; gap: 0.85rem; }
+.umigame-favorite-card { display: grid; gap: 0.85rem; padding: 1rem; border: 1px solid var(--line-soft); }
+.umigame-favorite-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.umigame-favorite-card__head > div { display: grid; gap: 0.45rem; }
+.umigame-favorite-card__head h2 { margin: 0; font-size: 1.15rem; font-weight: 500; }
+.umigame-favorite-card > p { margin: 0; color: var(--ink-2); line-height: 1.65; }
+.umigame-favorite-card__footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; }
+.umigame-favorite-card__meta { --umigame-puzzle-meta-size: 0.85rem; --umigame-puzzle-meta-icon-size: 15px; display: flex; align-items: center; flex-wrap: wrap; gap: 0.8rem; color: var(--ink-3); font-size: var(--umigame-puzzle-meta-size); line-height: 1; }
+.umigame-favorite-card__meta > span { display: inline-flex; align-items: center; font-size: var(--umigame-puzzle-meta-size); font-weight: 500; letter-spacing: 0.03em; line-height: 1; }
+.umigame-favorite-card__actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 0.5rem; }
+@media (max-width: 680px) { .umigame-favorite-card__head { flex-direction: column; } }
+/* Umigame rankings */
+.umigame-rankings-page { gap: 1.5rem; }
+.umigame-rankings-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding-top: 1.15rem; border-top: 1px solid var(--line-strong); }
+.umigame-rankings-head h2 { margin: 0.25rem 0 0; font-size: clamp(2rem, 6vw, 4rem); font-weight: 400; letter-spacing: -0.05em; }
+.umigame-rankings-grid { display: grid; gap: 1.25rem; }
+.umigame-ranking-section { display: grid; gap: 0.85rem; padding-top: 1.1rem; border-top: 1px solid var(--line-soft); }
+.umigame-ranking-section .umigame-section-head { align-items: center; flex-wrap: wrap; }
+.umigame-ranking-section .umigame-section-head h2 { margin: 0; font-size: 1.25rem; font-weight: 500; }
+.umigame-ranking-section .umigame-section-head p { max-width: 65%; margin: 0 0 0 auto; color: var(--ink-3); font-size: 0.86rem; text-align: right; }
+.umigame-ranking-list { display: grid; gap: 1px; border: 1px solid var(--line-soft); background: var(--line-soft); }
+.umigame-ranking-empty { margin: 0; padding: 0.85rem 1rem; background: var(--page-bg); color: var(--ink-3); font-size: 0.9rem; }
+.umigame-ranking-card { --umigame-puzzle-meta-size: 0.82rem; --umigame-puzzle-meta-icon-size: 13px; display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) auto; gap: 0.9rem; align-items: center; padding: 0.85rem 1rem; background: var(--page-bg); }
+.umigame-ranking-card__rank { font-size: 1.25rem; color: var(--ink-3); text-align: center; font-variant-numeric: tabular-nums; }
+.umigame-ranking-card__body { display: grid; gap: 0.4rem; min-width: 0; }
+.umigame-ranking-card__head { display: flex; align-items: center; gap: 0.55rem; min-width: 0; }
+.umigame-ranking-card__head h3 { margin: 0; font-size: 1rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.umigame-ranking-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; color: var(--ink-3); font-size: 0.82rem; }
+.umigame-ranking-card > .site-button { display: inline-flex; align-items: center; gap: 0.35rem; }
+.umigame-ranking-card__detail-link {
+  display: none;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--ink-3);
+}
+.umigame-ranking-card__detail-link:hover {
+  color: var(--ink-1);
+}
+@media (max-width: 680px) {
+  .umigame-ranking-card {
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    min-height: 0;
+    padding-block: 0.7rem;
+  }
+  .umigame-ranking-card__play { display: none !important; }
+  .umigame-ranking-card__detail-link { display: inline-grid; }
+  .umigame-ranking-card__head { align-items: center; flex-direction: row; flex-wrap: wrap; }
+  .umigame-ranking-card__head h3 { white-space: normal; }
+}
+/* next_task UI refinements */
+.umigame-list-head__title h2,
+.umigame-list-head__title .umigame-count {
+  line-height: 1;
+}
+
+.umigame-icon-button,
+.umigame-icon-button.btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+}
+
+.umigame-list-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+}
+
+.umigame-list-footer__pagination,
+.umigame-list-footer__links {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.umigame-list-footer__links {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.umigame-list-footer .site-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.umigame-list-footer__page {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+@media (max-width: 620px) {
+  .umigame-list-footer {
+    align-items: flex-end;
+    flex-direction: column;
+  }
+
+  .umigame-list-footer__links {
+    width: 100%;
+  }
+}

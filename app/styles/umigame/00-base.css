@@ -1,0 +1,498 @@
+.umigame-kicker {
+  display: block;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+}
+
+.umigame-section-head,
+.umigame-card__top,
+.umigame-detail-head__main {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.umigame-section-head,
+.umigame-detail-head__main {
+  align-items: flex-start;
+}
+
+.umigame-card__top {
+  align-items: center;
+}
+
+.umigame-section-head h2,
+.umigame-control-block h2,
+.umigame-truth h2 {
+  margin: 0.15rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+.umigame-count {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+.umigame-list {
+  display: grid;
+  margin-top: 1.2rem;
+  border-top: 1px solid var(--line-strong);
+}
+.umigame-card {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-card__link {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.35rem 0;
+}
+
+.umigame-card__link:hover h3 {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.umigame-card h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 400;
+}
+
+.umigame-card__statement {
+  max-width: 52rem;
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.umigame-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+}
+.umigame-note,
+.umigame-jev-note,
+.umigame-detail-actions,
+.umigame-truth {
+  border-top: 1px solid var(--line-soft);
+  padding-top: 1.2rem;
+}
+
+.umigame-note p,
+.umigame-jev-note p,
+.umigame-detail-actions p,
+.umigame-truth p {
+  max-width: 48rem;
+  margin: 0.55rem 0 0;
+  color: var(--ink-2);
+}
+
+.umigame-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+.umigame-back-link:hover {
+  color: var(--ink-1);
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+}
+
+.umigame-detail-head,
+.umigame-play-head {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.umigame-detail-head h2,
+.umigame-play-head h2 {
+  margin: 0.2rem 0 0;
+  font-size: clamp(2.1rem, 6vw, 4.4rem);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.umigame-problem-panel {
+  display: grid;
+  gap: 0.65rem;
+  padding: clamp(1.4rem, 4vw, 2.4rem) 0;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-soft);
+}
+.umigame-problem-panel p {
+  max-width: 54rem;
+  margin: 0;
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  line-height: 2;
+}
+
+.umigame-problem-panel--compact {
+  padding-block: 1.25rem;
+}
+
+.umigame-detail-actions {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.umigame-primary-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: fit-content;
+}
+
+.umigame-play-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 23rem);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.umigame-transcript,
+.umigame-controls {
+  min-width: 0;
+}
+.umigame-empty {
+  margin: 1.2rem 0 0;
+  color: var(--ink-3);
+}
+
+.umigame-turns {
+  display: grid;
+  gap: 0;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-strong);
+}
+
+.umigame-turn {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(8rem, 12rem);
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-turn__question span,
+.umigame-turn__answer span {
+  display: block;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+}
+
+.umigame-turn__question p {
+  margin: 0.3rem 0 0;
+  color: var(--ink-2);
+}
+.umigame-turn__answer {
+  text-align: right;
+}
+
+.umigame-turn__answer strong,
+.umigame-turn__answer small {
+  display: block;
+}
+
+.umigame-turn__answer strong {
+  margin-top: 0.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.umigame-turn__answer small {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+}
+
+.umigame-controls {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.umigame-control-block {
+  display: grid;
+  gap: 0.8rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.umigame-control-block--minor {
+  border-top-color: var(--line-soft);
+}
+
+.umigame-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 7rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-1);
+  line-height: 1.7;
+}
+
+.umigame-textarea:focus {
+  border-color: var(--line-strong);
+  outline: none;
+}
+
+.umigame-textarea:disabled {
+  opacity: 0.5;
+}
+
+.umigame-error,
+.umigame-result,
+.umigame-truth {
+  padding: 0.9rem 0;
+}
+
+.umigame-error {
+  margin-top: 1rem;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink-1);
+}
+
+.umigame-result {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.umigame-result.is-finished {
+  color: var(--ink-1);
+  font-weight: 500;
+}
+
+@media (max-width: 860px) {
+  .umigame-play-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .umigame-turn {
+    grid-template-columns: 1fr;
+  }
+
+  .umigame-turn__answer {
+    text-align: left;
+  }
+}
+
+@media (max-width: 560px) {
+  .umigame-section-head,
+  .umigame-detail-head__main {
+    align-items: flex-start;
+  }
+
+  .umigame-detail-head__main {
+    flex-direction: column;
+  }
+}
+
+.umigame-account-bar,
+.umigame-profile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.umigame-account-bar {
+  padding-block: 0.9rem;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-account-bar__user,
+.umigame-account-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.umigame-avatar {
+  flex: none;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.umigame-avatar--icon {
+  display: inline-grid;
+  place-items: center;
+  background: var(--avatar-color);
+  color: #fff;
+}
+
+.umigame-account-bar,
+.umigame-profile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.umigame-account-bar {
+  padding-block: 0.9rem;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.umigame-account-bar__user,
+.umigame-account-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.umigame-avatar {
+  flex: none;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.umigame-avatar--icon {
+  display: inline-grid;
+  place-items: center;
+  background: var(--avatar-color);
+  color: #fff;
+}
+
+.umigame-profile-head {
+  justify-content: flex-start;
+}
+
+.umigame-profile-head h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400;
+}
+
+.umigame-profile-form {
+  display: grid;
+  gap: 2rem;
+  max-width: 52rem;
+}
+
+.umigame-field,
+.umigame-fieldset {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.umigame-field > span,
+.umigame-fieldset > legend {
+  color: var(--ink-2);
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+}
+
+.umigame-fieldset {
+  margin: 0;
+  padding: 1rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--line-soft);
+  background: transparent;
+  color: var(--ink-1);
+}
+
+.umigame-input:focus {
+  border-color: var(--line-strong);
+  outline: none;
+}
+
+.umigame-avatar-types,
+.umigame-avatar-grid,
+.umigame-color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.umigame-avatar-types label,
+.umigame-avatar-choice,
+.umigame-color-choice {
+  position: relative;
+  cursor: pointer;
+}
+
+.umigame-avatar-types input,
+.umigame-avatar-choice input,
+.umigame-color-choice input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.umigame-avatar-types span,
+.umigame-avatar-choice,
+.umigame-color-choice > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--line-soft);
+}
+
+.umigame-avatar-choice {
+  width: 3.2rem;
+  height: 3.2rem;
+  padding: 0;
+}
+
+.umigame-avatar-types label:has(input:checked) span,
+.umigame-avatar-choice:has(input:checked),
+.umigame-color-choice:has(input:checked) > span {
+  border-color: var(--ink-1);
+}
+
+.umigame-color-choice > span {
+  min-width: 4.8rem;
+  color: #fff;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+}
+
+.umigame-color-choice [data-avatar-color="slate"] { background: #64748b; }
+.umigame-color-choice [data-avatar-color="gray"] { background: #6b7280; }
+.umigame-color-choice [data-avatar-color="red"] { background: #ef4444; }
+.umigame-color-choice [data-avatar-color="orange"] { background: #f97316; }
+.umigame-color-choice [data-avatar-color="amber"] { background: #f59e0b; }
+.umigame-color-choice [data-avatar-color="green"] { background: #22c55e; }
+.umigame-color-choice [data-avatar-color="emerald"] { background: #10b981; }
+.umigame-color-choice [data-avatar-color="cyan"] { background: #06b6d4; }
+.umigame-color-choice [data-avatar-color="blue"] { background: #3b82f6; }
+.umigame-color-choice [data-avatar-color="indigo"] { background: #6366f1; }
+.umigame-color-choice [data-avatar-color="violet"] { background: #8b5cf6; }
+.umigame-color-choice [data-avatar-color="pink"] { background: #ec4899; }
+
+@media (max-width: 560px) {
+  .umigame-account-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
