@@ -38,6 +38,9 @@ npm-debug.log*
 .codex/
 .codex-qa-*/
 
+# Local test suites and browser fixtures
+tests/
+
 # Local draft pages
 my-design-pages/
 
