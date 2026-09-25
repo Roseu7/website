@@ -125,6 +125,45 @@
   justify-content: flex-end;
 }
 
+@media (min-width: 841px) and (max-width: 1020px) {
+  .umigame-page-head {
+    column-gap: clamp(0.75rem, 2vw, 1.25rem);
+  }
+
+  .umigame-page-head h2 {
+    font-size: 7vw;
+  }
+
+  .umigame-page-head__account {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 840px) {
+  .umigame-page-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .umigame-page-head__account {
+    width: 100%;
+    justify-content: start;
+    justify-items: start;
+  }
+
+  .umigame-page-head__account .umigame-account-bar__actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 360px) {
+  .umigame-page-head h2 {
+    font-size: clamp(2.2rem, 11vw, 2.6rem);
+  }
+}
+
 .umigame-detail-head,
 .umigame-play-head {
   gap: 0.75rem;
@@ -388,14 +427,6 @@
 }
 
 @media (max-width: 760px) {
-  .umigame-page-head__account {
-    justify-items: start;
-  }
-
-  .umigame-page-head__account .umigame-account-bar__actions {
-    justify-content: flex-start;
-  }
-
   .umigame-detail-head__toolbar {
     flex-wrap: wrap;
   }

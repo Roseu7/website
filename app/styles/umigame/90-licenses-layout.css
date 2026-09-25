@@ -357,7 +357,6 @@
 .umigame-about-intro {
   display: grid;
   gap: 0.9rem;
-  max-width: 58rem;
   padding-top: 1.15rem;
   border-top: 1px solid var(--line-strong);
 }
@@ -373,6 +372,7 @@
 
 .umigame-about-intro p {
   margin: 0;
+  max-width: 58rem;
   color: var(--ink-2);
   line-height: 1.85;
 }

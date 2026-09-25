@@ -289,6 +289,7 @@
 .umigame-list {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: repeat(5, minmax(calc(7.2rem + 2px), auto));
+  scroll-margin-top: 7rem;
   align-items: start;
   gap: 1rem;
   margin-top: 1.2rem;
@@ -510,14 +511,14 @@
 @media (max-width: 980px) {
   .umigame-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(8, minmax(calc(7.2rem + 2px), auto));
+    grid-template-rows: none;
   }
 }
 
 @media (max-width: 620px) {
   .umigame-list {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(15, minmax(calc(7.2rem + 2px), auto));
+    scroll-margin-top: 5rem;
   }
 }
 
@@ -632,42 +633,14 @@
   line-height: calc(1em + 1px);
 }
 
-@media (max-width: 760px) {
-  .umigame-page-head {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .umigame-page-head__account {
-    width: 100%;
-    justify-content: space-between;
-  }
-}
-
 @media (max-width: 560px) {
   .umigame-page-head__account {
     align-items: flex-start;
-    flex-direction: column;
   }
 
   .umigame-page-head__account .umigame-account-bar__actions {
     width: 100%;
     flex-wrap: wrap;
-  }
-
-  .umigame-list-head {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-
-  .umigame-list-head__actions {
-    width: 100%;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 0.2rem;
-    scrollbar-width: thin;
   }
 
   .umigame-list-head__actions .site-button {
@@ -678,6 +651,20 @@
   .umigame-new-puzzle-button.btn {
     min-height: 2.45rem;
     padding-inline: 0.75rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .umigame-section-head.umigame-list-head {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .umigame-list-head__actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }
 

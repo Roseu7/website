@@ -193,7 +193,7 @@ export default function UmigameIndexPage() {
     if (filters.minVote !== null) params.set("minVote", String(filters.minVote));
     if (filters.sort !== "newest") params.set("sort", filters.sort);
     params.set("page", String(targetPage));
-    return `/games/umigame?${params.toString()}`;
+    return `/games/umigame?${params.toString()}#umigame-puzzle-list`;
   };
 
 
@@ -410,6 +410,7 @@ export default function UmigameIndexPage() {
           </p>
         ) : (
           <div
+            id="umigame-puzzle-list"
             className="umigame-list"
             onClick={() => setExpandedPuzzleId(null)}
           >

@@ -69,6 +69,31 @@
   font-weight: 400;
 }
 
+.umigame-about-flow {
+  display: grid;
+  margin: 0;
+  padding-left: 1.8rem;
+  list-style: decimal;
+  border-top: 1px solid var(--line-soft);
+}
+
+.umigame-about-flow li {
+  padding: 0.75rem 0.25rem;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.umigame-about-flow li::marker {
+  color: var(--ink-3);
+}
+
+.umigame-about-flow strong {
+  margin-right: 0.8rem;
+  color: var(--ink-1);
+  font-weight: 500;
+}
+
 .umigame-about-use-list {
   display: grid;
   gap: 0;
@@ -112,7 +137,7 @@
   }
 
   .umigame-list-head__actions {
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 }
 
@@ -320,14 +345,15 @@
 }
 
 .umigame-list-footer__page {
-  color: var(--ink-3);
+  color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 0.76rem;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 @media (max-width: 620px) {
   .umigame-list-footer {
-    align-items: flex-end;
+    align-items: flex-start;
     flex-direction: column;
   }
 
