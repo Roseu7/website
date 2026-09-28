@@ -67,7 +67,7 @@ export default function AboutPage() {
                 rel="noopener noreferrer"
                 className="about-link"
               >
-                X / @Roseu_7
+                X / @roseudot
               </a>
               <a
                 href={siteConfig.social.github}

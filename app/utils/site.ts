@@ -31,7 +31,7 @@ export const siteConfig = {
     holder: "Roseu",
   },
   social: {
-    x: "https://x.com/Roseu_7",
+    x: "https://x.com/roseudot",
     github: "https://github.com/Roseu7",
   },
   primaryNav: [
