@@ -33,8 +33,11 @@ export function PageLayout({
 
   return (
     <div className="page-frame">
+      <a href="#main-content" className="skip-link">本文へ移動</a>
       <SiteHeader variant={headerVariant} showLogo={showHeaderLogo} />
       <main
+        id="main-content"
+        tabIndex={-1}
         className={cx(
           "page-layout",
           bleed && "page-layout--bleed",

@@ -16,7 +16,7 @@
 		"deploy:assets:dry-run": "cd workers/assets-router && cf deploy --dry-run",
 		"cf": "cf",
 		"cf:tail": "wrangler tail website",
-		"cf:secret:put": "wrangler secret put --name website",
+		"cf:secret:put": "cf workers secrets update --worker website --type secret_text",
 		"db:mc:list": "cf d1 migrations list a1feedb9-f4ca-47aa-a4a3-507692c9d300 --dir db/migrations",
 		"db:mc:apply": "cf d1 migrations apply a1feedb9-f4ca-47aa-a4a3-507692c9d300 --dir db/migrations",
 		"db:umigame:list": "cf d1 migrations list 20b0d67b-0d82-4a59-ad55-a98f2b5a702a --dir db/umigame-migrations",

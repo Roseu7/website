@@ -31,6 +31,8 @@ export function SiteHeader({
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [mobileMenuClosing, setMobileMenuClosing] = React.useState(false);
   const closeTimerRef = React.useRef<number | null>(null);
+  const menuPanelRef = React.useRef<HTMLDivElement>(null);
+  const menuToggleRef = React.useRef<HTMLButtonElement>(null);
 
   const clearCloseTimer = React.useCallback(() => {
     if (closeTimerRef.current !== null) {
@@ -46,7 +48,7 @@ export function SiteHeader({
     closeTimerRef.current = window.setTimeout(() => {
       setMobileMenuClosing(false);
       closeTimerRef.current = null;
-    }, 320);
+    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 240);
   }, [clearCloseTimer]);
 
   const openMobileMenu = React.useCallback(() => {
@@ -80,21 +82,42 @@ export function SiteHeader({
   }, [mobileMenuVisible]);
 
   React.useEffect(() => {
-    if (!mobileMenuVisible) {
+    if (!mobileMenuOpen) {
       return;
     }
-
+    const panel = menuPanelRef.current;
+    const background = Array.from(document.querySelectorAll<HTMLElement>("main, .site-footer, .site-header__frame"));
+    const priorInert = background.map(element => element.inert);
+    background.forEach(element => { element.inert = true; });
+    panel?.querySelector<HTMLButtonElement>(".site-menu-close")?.focus();
+    const focusable = () => Array.from(panel?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]') ?? []);
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        event.preventDefault();
         closeMobileMenu();
       }
+      if (event.key === "Tab") {
+        const items = focusable();
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault(); last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault(); first?.focus();
+        }
+      }
     };
-
+    const wideScreen = window.matchMedia("(min-width: 641px)");
+    const closeOnResize = () => { if (wideScreen.matches) closeMobileMenu(); };
+    wideScreen.addEventListener("change", closeOnResize);
     window.addEventListener("keydown", handleKeyDown);
     return () => {
+      wideScreen.removeEventListener("change", closeOnResize);
       window.removeEventListener("keydown", handleKeyDown);
+      background.forEach((element, index) => { element.inert = priorInert[index]; });
+      menuToggleRef.current?.focus();
     };
-  }, [closeMobileMenu, mobileMenuVisible]);
+  }, [closeMobileMenu, mobileMenuOpen]);
 
   React.useEffect(() => {
     return () => {
@@ -138,7 +161,7 @@ export function SiteHeader({
               );
 
               if (item.children?.length) {
-                const isGroupActive = isRouteActive(location.pathname, item.to);
+                const isGroupActive = isRouteActive(location.pathname, item.to) || item.children?.some(child => isRouteActive(location.pathname, child.to)) === true;
                 const groupLabel = activeChild
                   ? `${item.label} > ${activeChild.label}`
                   : item.label;
@@ -220,6 +243,7 @@ export function SiteHeader({
           </div>
 
           <button
+            ref={menuToggleRef}
             type="button"
             className={cx("btn site-menu-toggle", mobileMenuOpen && "is-open")}
             aria-expanded={mobileMenuOpen}
@@ -238,6 +262,7 @@ export function SiteHeader({
 
       <div
         id="site-mobile-menu"
+        inert={!mobileMenuOpen}
         className={cx(
           "site-mobile-menu",
           mobileMenuVisible && "is-visible",
@@ -252,7 +277,7 @@ export function SiteHeader({
           onClick={closeMobileMenu}
         />
 
-        <div className="site-mobile-menu__panel">
+        <div ref={menuPanelRef} className="site-mobile-menu__panel" role={mobileMenuOpen ? "dialog" : undefined} aria-modal={mobileMenuOpen ? true : undefined} aria-label="サイトメニュー">
           <div className="site-mobile-menu__header">
             <div className="site-header__lead">
               {showLogo ? (
@@ -281,7 +306,7 @@ export function SiteHeader({
 
           <nav className="site-mobile-nav" aria-label="Mobile primary">
             {navItems.map((item) => {
-              const isGroupActive = isRouteActive(location.pathname, item.to);
+              const isGroupActive = isRouteActive(location.pathname, item.to) || item.children?.some(child => isRouteActive(location.pathname, child.to)) === true;
 
               if (item.children?.length) {
                 return (

@@ -16,6 +16,7 @@ import { Route as ApplyRouteImport } from './start-routes/apply'
 import { Route as ContactRouteImport } from './start-routes/contact'
 import { Route as GamesRouteImport } from './start-routes/games'
 import { Route as HomeControlRouteImport } from './start-routes/home-control'
+import { Route as LabRouteImport } from './start-routes/lab'
 import { Route as LicensesRouteImport } from './start-routes/licenses'
 import { Route as MapRouteImport } from './start-routes/map'
 import { Route as PrivacyRouteImport } from './start-routes/privacy'
@@ -105,6 +106,11 @@ const GamesRoute = GamesRouteImport.update({
 const HomeControlRoute = HomeControlRouteImport.update({
   id: '/home-control',
   path: '/home-control',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LabRoute = LabRouteImport.update({
+  id: '/lab',
+  path: '/lab',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LicensesRoute = LicensesRouteImport.update({
@@ -401,6 +407,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
   '/home-control': typeof HomeControlRoute
+  '/lab': typeof LabRoute
   '/licenses': typeof LicensesRoute
   '/map': typeof MapRoute
   '/privacy': typeof PrivacyRoute
@@ -465,6 +472,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
   '/home-control': typeof HomeControlRoute
+  '/lab': typeof LabRoute
   '/licenses': typeof LicensesRoute
   '/map': typeof MapRoute
   '/privacy': typeof PrivacyRoute
@@ -530,6 +538,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
   '/home-control': typeof HomeControlRoute
+  '/lab': typeof LabRoute
   '/licenses': typeof LicensesRoute
   '/map': typeof MapRoute
   '/privacy': typeof PrivacyRoute
@@ -596,6 +605,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/games'
     | '/home-control'
+    | '/lab'
     | '/licenses'
     | '/map'
     | '/privacy'
@@ -660,6 +670,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/games'
     | '/home-control'
+    | '/lab'
     | '/licenses'
     | '/map'
     | '/privacy'
@@ -724,6 +735,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/games'
     | '/home-control'
+    | '/lab'
     | '/licenses'
     | '/map'
     | '/privacy'
@@ -789,6 +801,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   GamesRoute: typeof GamesRoute
   HomeControlRoute: typeof HomeControlRoute
+  LabRoute: typeof LabRoute
   LicensesRoute: typeof LicensesRoute
   MapRoute: typeof MapRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -895,6 +908,13 @@ declare module '@tanstack/react-router' {
       path: '/home-control'
       fullPath: '/home-control'
       preLoaderRoute: typeof HomeControlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lab': {
+      id: '/lab'
+      path: '/lab'
+      fullPath: '/lab'
+      preLoaderRoute: typeof LabRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/licenses': {
@@ -1293,6 +1313,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   GamesRoute: GamesRoute,
   HomeControlRoute: HomeControlRoute,
+  LabRoute: LabRoute,
   LicensesRoute: LicensesRoute,
   MapRoute: MapRoute,
   PrivacyRoute: PrivacyRoute,

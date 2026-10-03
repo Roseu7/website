@@ -14,10 +14,18 @@ export default function GamesPage() {
     <PageLayout contentClassName="page-stack">
       <PageIntro title="Games" />
 
-      <section className="tool-directory">
+      <GamesDirectory />
+    </PageLayout>
+  );
+}
+
+export function GamesDirectory({ headingLevel = "h2" }: { headingLevel?: "h2" | "h3" }) {
+  const Heading = headingLevel;
+  return (
+    <section className="tool-directory">
         <article className="tool-card">
           <div className="tool-card__body">
-            <h2 className="tool-card__title">ウミガメのスープ</h2>
+            <Heading className="tool-card__title">ウミガメのスープ</Heading>
             <p className="tool-card__copy">
               JevがGMや判定を担当するウミガメのスープ
             </p>
@@ -38,6 +46,5 @@ export default function GamesPage() {
           </div>
         </article>
       </section>
-    </PageLayout>
   );
 }
