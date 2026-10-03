@@ -12,7 +12,6 @@ interface JevProxyEnv {
   UMIGAME_DB?: D1Database;
   UMIGAME_SESSION_SECRET?: string;
   JEV_TOOL_RATE_LIMITER?: RateLimit;
-  JEV_DAILY_QUOTA_STARTS_AT?: string;
 }
 
 const JEV_API_URL = "https://api.roseu.net/jev";

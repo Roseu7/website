@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { requireSameOriginRequest } from "~/utils/request-origin.server";
-import { MAX_FORM_BODY_BYTES, readLimitedFormData } from "~/utils/request-body.server";
 import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
 import {
   getAdminJevAnalytics,
@@ -58,13 +57,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 export async function action({ request, context }: ActionFunctionArgs) {
   requireSameOriginRequest(request);
   await requireUmigameAdmin(request, context);
-  const form = await readLimitedFormData(request, MAX_FORM_BODY_BYTES);
-  const provider = String(form.get("provider") ?? "");
-  if (provider !== "vercel" && provider !== "typesafe") {
-    throw new Response("Unknown provider.", { status: 400 });
-  }
-
-  await runGoldenTestBatch(getUmigameEnv(context), provider);
+  await runGoldenTestBatch(getUmigameEnv(context));
   return redirect("/games/umigame/admin/jev?golden=done");
 }
 
@@ -97,9 +90,7 @@ function dateTime(value: number) {
 export default function UmigameAdminJevPage() {
   const { analytics, golden, goldenNotice } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
-  const goldenRunning =
-    navigation.state === "submitting" &&
-    navigation.formData?.has("provider");
+  const goldenRunning = navigation.state === "submitting";
   const latestGoldenBatchId = golden.batches[0]?.batchId ?? null;
   const latestGoldenRuns = latestGoldenBatchId
     ? golden.latestRuns.filter((run) => run.batchId === latestGoldenBatchId)
@@ -131,10 +122,6 @@ export default function UmigameAdminJevPage() {
           <strong>{analytics.currentProvider}</strong>
         </div>
         <div>
-          <span>Fallback</span>
-          <strong>{analytics.fallbackProvider}</strong>
-        </div>
-        <div>
           <span>Model</span>
           <strong>{analytics.configuredModel}</strong>
         </div>
@@ -145,7 +132,7 @@ export default function UmigameAdminJevPage() {
           <div>
             <h2>Golden Test</h2>
             <p>
-              seed問題のGM質問を再実行し、期待値との一致率やProvider差を確認します。
+              seed問題のGM質問をTypeSafeで再実行し、期待値との一致率を確認します。
             </p>
           </div>
           <span className="umigame-count">{golden.caseCount} cases</span>
@@ -157,44 +144,19 @@ export default function UmigameAdminJevPage() {
 
         <div className="umigame-golden-actions">
           <Form method="post">
-            <input type="hidden" name="provider" value="vercel" />
             <button
               type="submit"
               className="btn site-button"
-              disabled={!golden.providers.vercel || goldenRunning}
+              disabled={!golden.configured || goldenRunning}
+              title={golden.configured ? undefined : "JEV_API_TOKENが未設定です"}
             >
-              {goldenRunning ? "実行中…" : "Vercelで実行"}
+              {goldenRunning ? "実行中…" : "Golden Testを実行"}
             </button>
           </Form>
-          <Form method="post">
-            <input type="hidden" name="provider" value="typesafe" />
-            <button
-              type="submit"
-              className="btn site-button site-button--ghost"
-              disabled={!golden.providers.typesafe || goldenRunning}
-              title={
-                golden.providers.typesafe
-                  ? undefined
-                  : "TYPESAFE_API_KEYが未設定です"
-              }
-            >
-              TypeSafeで実行
-            </button>
-          </Form>
-          <span>
-            Vercel: {golden.providers.vercel ? "利用可" : "未設定"} /
-            TypeSafe: {golden.providers.typesafe ? "利用可" : "未設定"}
-          </span>
+          <span>TypeSafe: {golden.configured ? "利用可" : "未設定"}</span>
         </div>
 
-        {golden.comparison.averageExpectedProbabilityDifference !== null ? (
-          <p className="umigame-golden-comparison">
-            最新Vercel / TypeSafeバッチ間の期待回答probability平均差:
-            {" "}
-            {(golden.comparison.averageExpectedProbabilityDifference * 100).toFixed(1)}
-            pt
-          </p>
-        ) : null}
+
 
         {golden.batches.length > 0 ? (
           <div className="umigame-golden-batches">
@@ -283,10 +245,6 @@ export default function UmigameAdminJevPage() {
           <span>成功率</span>
         </div>
         <div>
-          <strong>{number(analytics.fallbacks)}</strong>
-          <span>fallback</span>
-        </div>
-        <div>
           <strong>{analytics.avgLatency}ms</strong>
           <span>平均latency</span>
         </div>
@@ -328,7 +286,6 @@ export default function UmigameAdminJevPage() {
               <dl>
                 <div><dt>成功率</dt><dd>{percent(provider.calls ? (provider.calls - provider.errors) / provider.calls : 1)}</dd></div>
                 <div><dt>平均latency</dt><dd>{provider.avgLatency}ms</dd></div>
-                <div><dt>fallback</dt><dd>{number(provider.fallbacks)}</dd></div>
                 <div><dt>input</dt><dd>{number(provider.inputTokens)}</dd></div>
                 <div><dt>output</dt><dd>{number(provider.outputTokens)}</dd></div>
                 <div><dt>推定cost</dt><dd>{cost(provider.estimatedCostUsd)}</dd></div>
@@ -376,7 +333,7 @@ export default function UmigameAdminJevPage() {
               <AlertTriangle size={20} aria-hidden="true" />
               <h2>エラー内訳</h2>
             </div>
-            <p>Primary Providerの失敗理由を分類します。</p>
+            <p>Jev実行の失敗理由を分類します。</p>
           </div>
         </div>
 
@@ -465,7 +422,6 @@ export default function UmigameAdminJevPage() {
               <strong>{run.purpose}</strong>
               <span>
                 {run.provider}
-                {run.fallback_used ? " / fallback" : ""}
               </span>
               <span className="status-pill">{run.status}</span>
               <span>{run.latency_ms}ms</span>
@@ -486,8 +442,8 @@ export default function UmigameAdminJevPage() {
           <h2>推定costについて</h2>
         </div>
         <p>
-          表示額はWranglerに設定したProvider別input単価と記録済みtoken数から算出した概算です。
-          プロモーション、無料枠、請求調整は反映しないため、実請求額はProvider側のUsageを正とします。
+          表示額はWranglerに設定したTypeSafeのinput単価と記録済みtoken数から算出した概算です。
+          プロモーション、無料枠、請求調整は反映しないため、実請求額はTypeSafe側のUsageを正とします。
         </p>
       </section>
     </PageLayout>

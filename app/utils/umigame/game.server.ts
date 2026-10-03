@@ -1,10 +1,6 @@
 ﻿import type { UmigameEnv } from "./env.server";
 import type { PlaySessionState } from "./db.server";
-import {
-  evaluateWithJev,
-  evaluateWithJevProvider,
-  type JevProviderName,
-} from "./jev.server";
+import { evaluateWithJev } from "./jev.server";
 
 export const GM_CODES = [
   "YES",
@@ -58,7 +54,6 @@ export async function evaluateGmQuestion(
   options?: {
     purpose?: string;
     targetId?: string;
-    provider?: JevProviderName;
   },
 ) {
   const request = {
@@ -83,15 +78,7 @@ export async function evaluateGmQuestion(
 
   const purpose = options?.purpose ?? "gm";
   const targetId = options?.targetId ?? session.sessionId;
-  const result = options?.provider
-    ? await evaluateWithJevProvider(
-        env,
-        purpose,
-        targetId,
-        request,
-        options.provider,
-      )
-    : await evaluateWithJev(env, purpose, targetId, request);
+  const result = await evaluateWithJev(env, purpose, targetId, request);
 
   const answer = result.response.answers?.q0;
   const code = resolveChoice(answer?.choice, answer?.probabilities);
@@ -107,7 +94,6 @@ export async function evaluateGmQuestion(
     outputTokens: result.response.usage?.outputTokens ?? null,
     latencyMs: result.latencyMs,
     provider: result.provider,
-    fallbackUsed: result.fallbackUsed,
   };
 }
 
@@ -195,6 +181,5 @@ export async function evaluateFinalAnswer(
     model: result.response.model ?? null,
     inputTokens: result.response.usage?.inputTokens ?? null,
     provider: result.provider,
-    fallbackUsed: result.fallbackUsed,
   };
 }

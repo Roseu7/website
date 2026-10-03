@@ -4,13 +4,7 @@ export interface UmigameEnv {
   DB: D1Database;
   API_SERVICE?: Fetcher;
   JEV_API_TOKEN?: string;
-  TYPESAFE_API_KEY?: string;
-  JEV_PROVIDER?: string;
-  JEV_FALLBACK_PROVIDER?: string;
-  JEV_MODEL?: string;
-  JEV_DAILY_QUOTA_STARTS_AT?: string;
-  JEV_VERCEL_INPUT_USD_PER_MILLION?: string;
-  JEV_TYPESAFE_INPUT_USD_PER_MILLION?: string;
+  JEV_INPUT_USD_PER_MILLION?: string;
   UMIGAME_SESSION_SECRET?: string;
   CF_ACCESS_TEAM_DOMAIN?: string;
   UMIGAME_ACCESS_AUD?: string;

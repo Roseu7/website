@@ -3,14 +3,24 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "react-router build",
-		"cf-typegen": "wrangler types",
-		"deploy": "npm run build && wrangler deploy",
-		"deploy:assets": "wrangler deploy --config wrangler.assets.jsonc",
-		"dev": "react-router dev",
+		"build": "cf build",
+		"cf-typegen": "cf workers types",
+		"deploy": "cf deploy",
+		"deploy:assets": "cd workers/assets-router && cf deploy",
+		"dev": "cf dev",
 		"postinstall": "npm run cf-typegen",
 		"preview": "npm run build && vite preview",
-		"typecheck": "npm run cf-typegen && react-router typegen && tsc -b"
+		"typecheck": "npm run cf-typegen && react-router typegen && tsc -b",
+		"deploy:dry-run": "cf deploy --dry-run",
+		"build:assets": "cd workers/assets-router && cf build",
+		"deploy:assets:dry-run": "cd workers/assets-router && cf deploy --dry-run",
+		"cf": "cf",
+		"cf:tail": "wrangler tail website",
+		"cf:secret:put": "wrangler secret put --name website",
+		"db:mc:list": "cf d1 migrations list a1feedb9-f4ca-47aa-a4a3-507692c9d300 --dir db/migrations",
+		"db:mc:apply": "cf d1 migrations apply a1feedb9-f4ca-47aa-a4a3-507692c9d300 --dir db/migrations",
+		"db:umigame:list": "cf d1 migrations list 20b0d67b-0d82-4a59-ad55-a98f2b5a702a --dir db/umigame-migrations",
+		"db:umigame:apply": "cf d1 migrations apply 20b0d67b-0d82-4a59-ad55-a98f2b5a702a --dir db/umigame-migrations"
 	},
 	"dependencies": {
 		"isbot": "^5.1.35",
@@ -21,17 +31,21 @@
 		"react-router": "^7.18.2"
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "^1.54.6",
+		"@cloudflare/vite-plugin": "2.0.0-beta.sha-52b0dc0e9",
 		"@react-router/dev": "^7.18.2",
 		"@tailwindcss/vite": "^4.2.1",
 		"@types/node": "^22.19.11",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
+		"cf": "1.0.0-beta.12",
 		"daisyui": "^5.5.23",
 		"tailwindcss": "^4.2.1",
 		"typescript": "^5.9.3",
-		"vite": "^6.4.3",
+		"vite": "7.3.6",
 		"vite-tsconfig-paths": "^6.1.1",
 		"wrangler": "^4.130.0"
+	},
+	"engines": {
+		"node": ">=22.18.0"
 	}
 }

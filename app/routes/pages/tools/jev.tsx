@@ -81,7 +81,6 @@ function percent(value: number | undefined) {
 
 function sourceLabel(source: string | undefined) {
   if (source === "cloudflare_workers_ai") return "Cloudflare Workers AI";
-  if (source === "vercel_ai_gateway") return "Vercel AI Gateway";
   if (source === "jev") return "Jev";
   if (source === "website_proxy") return "website proxy";
   return source ?? "API";

@@ -83,13 +83,10 @@
     }
   ],
   "vars": {
-    "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare",
     "CF_ACCESS_TEAM_DOMAIN": "roseu.cloudflareaccess.com",
     "CF_ACCESS_AUD": "96b9c9c9fd0eb49cdba0eab8b3fd4f3b987e89f5972bbfb8ec953d8f81e70549",
     "UMIGAME_ACCESS_AUD": "be861d10bd1c5a96e3b9e3120cc86803111421eca67fa4e1fa711927901bb344",
-    "JEV_VERCEL_INPUT_USD_PER_MILLION": "0.04",
-    "JEV_TYPESAFE_INPUT_USD_PER_MILLION": "0.042",
-    "JEV_DAILY_QUOTA_STARTS_AT": "2026-09-26T12:00:00.000Z"
+    "JEV_INPUT_USD_PER_MILLION": "0.042"
   },
   "observability": {
     "enabled": true

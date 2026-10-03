@@ -119,14 +119,6 @@ export default function UmigameAboutPage() {
             Cloudflare Jev docs
             <ExternalLink size={13} aria-hidden="true" />
           </a>
-          <a
-            href="https://vercel.com/docs/ai-gateway/getting-started"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Vercel AI Gateway docs
-            <ExternalLink size={13} aria-hidden="true" />
-          </a>
         </div>
       </section>
     </PageLayout>

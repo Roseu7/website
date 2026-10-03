@@ -350,7 +350,6 @@ export async function reviewPuzzleRevision(
     },
     model: result.response.model ?? null,
     provider: result.provider,
-    fallbackUsed: result.fallbackUsed,
   };
 
   const currentPendingReview =

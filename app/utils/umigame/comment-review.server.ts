@@ -176,7 +176,6 @@ export async function reviewComment(env: UmigameEnv, commentId: string) {
         hateOrThreat,
         model: result.response.model ?? null,
         provider: result.provider,
-        fallbackUsed: result.fallbackUsed,
       }),
       now,
     ),

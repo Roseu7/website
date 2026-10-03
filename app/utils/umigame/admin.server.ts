@@ -308,7 +308,6 @@ export interface AdminJevProviderStats {
   provider: string;
   calls: number;
   errors: number;
-  fallbacks: number;
   inputTokens: number;
   outputTokens: number;
   avgLatency: number;
@@ -335,12 +334,8 @@ function estimateProviderCost(
   inputTokens: number,
   env: UmigameEnv,
 ) {
-  const price =
-    provider === "vercel"
-      ? parsePrice(env.JEV_VERCEL_INPUT_USD_PER_MILLION)
-      : provider === "typesafe"
-        ? parsePrice(env.JEV_TYPESAFE_INPUT_USD_PER_MILLION)
-        : null;
+  if (provider !== "typesafe") return null;
+  const price = parsePrice(env.JEV_INPUT_USD_PER_MILLION);
   return price === null ? null : (inputTokens / 1_000_000) * price;
 }
 
@@ -357,7 +352,6 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
       db.prepare(
         `SELECT COUNT(*) AS total,
                 SUM(CASE WHEN status = 'error' THEN 1 ELSE 0 END) AS errors,
-                SUM(CASE WHEN fallback_used = 1 THEN 1 ELSE 0 END) AS fallbacks,
                 COALESCE(SUM(input_tokens), 0) AS input_tokens,
                 COALESCE(SUM(output_tokens), 0) AS output_tokens,
                 COALESCE(AVG(latency_ms), 0) AS avg_latency
@@ -366,8 +360,7 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
       ).bind(todayStart).first<{
         total: number;
         errors: number;
-        fallbacks: number;
-        input_tokens: number;
+              input_tokens: number;
         output_tokens: number;
         avg_latency: number;
       }>(),
@@ -375,7 +368,6 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
         `SELECT provider,
                 COUNT(*) AS calls,
                 SUM(CASE WHEN status = 'error' THEN 1 ELSE 0 END) AS errors,
-                SUM(CASE WHEN fallback_used = 1 THEN 1 ELSE 0 END) AS fallbacks,
                 COALESCE(SUM(input_tokens), 0) AS input_tokens,
                 COALESCE(SUM(output_tokens), 0) AS output_tokens,
                 COALESCE(AVG(latency_ms), 0) AS avg_latency
@@ -387,8 +379,7 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
         provider: string;
         calls: number;
         errors: number;
-        fallbacks: number;
-        input_tokens: number;
+              input_tokens: number;
         output_tokens: number;
         avg_latency: number;
       }>(),
@@ -448,7 +439,7 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
         input_tokens: number;
       }>(),
       db.prepare(
-        `SELECT purpose, provider, model, status, fallback_used, primary_error,
+        `SELECT purpose, provider, model, status, primary_error,
                 input_tokens, output_tokens, latency_ms, created_at
          FROM jev_runs
          ORDER BY created_at DESC
@@ -458,7 +449,6 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
         provider: string;
         model: string | null;
         status: string;
-        fallback_used: number;
         primary_error: string | null;
         input_tokens: number;
         output_tokens: number;
@@ -472,7 +462,6 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
       provider: row.provider,
       calls: row.calls ?? 0,
       errors: row.errors ?? 0,
-      fallbacks: row.fallbacks ?? 0,
       inputTokens: row.input_tokens ?? 0,
       outputTokens: row.output_tokens ?? 0,
       avgLatency: Math.round(row.avg_latency ?? 0),
@@ -497,17 +486,14 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
   const errorCount = summary?.errors ?? 0;
 
   return {
-    currentProvider: env.JEV_PROVIDER?.trim() || "vercel",
-    fallbackProvider: env.JEV_FALLBACK_PROVIDER?.trim() || "none",
+    currentProvider: "typesafe",
     configuredModel:
-      env.JEV_MODEL?.trim() ||
       (models.results ?? [])[0]?.model ||
       "provider default",
     todayStart,
     total,
     errors: errorCount,
     successRate: total > 0 ? (total - errorCount) / total : 1,
-    fallbacks: summary?.fallbacks ?? 0,
     inputTokens: summary?.input_tokens ?? 0,
     outputTokens: summary?.output_tokens ?? 0,
     avgLatency: Math.round(summary?.avg_latency ?? 0),

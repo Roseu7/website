@@ -1,11 +1,7 @@
 import type { PlaySessionState } from "./db.server";
 import type { UmigameEnv } from "./env.server";
 import { evaluateGmQuestion, GM_CODES, type GmAnswerCode } from "./game.server";
-import {
-  getJevErrorKind,
-  isJevProviderConfigured,
-  type JevProviderName,
-} from "./jev.server";
+import { getJevErrorKind, isJevConfigured } from "./jev.server";
 
 interface GoldenCaseRow {
   id: string;
@@ -120,7 +116,7 @@ async function insertGoldenRun(
   input: {
     batchId: string;
     caseId: string;
-    provider: JevProviderName;
+    provider: string;
     model: string | null;
     expectedCode: GmAnswerCode;
     actualCode: GmAnswerCode | null;
@@ -156,17 +152,10 @@ async function insertGoldenRun(
   ).run();
 }
 
-export async function runGoldenTestBatch(
-  env: UmigameEnv,
-  provider: JevProviderName,
-) {
-  if (!isJevProviderConfigured(env, provider)) {
-    throw new Response(
-      provider === "typesafe"
-        ? "TYPESAFE_API_KEYが設定されていません。"
-        : "JEV_API_TOKENが設定されていません。",
-      { status: 503 },
-    );
+export async function runGoldenTestBatch(env: UmigameEnv) {
+  const provider = "typesafe";
+  if (!isJevConfigured(env)) {
+    throw new Response("JEV_API_TOKENが設定されていません。", { status: 503 });
   }
 
   const cases = await loadGoldenCases(env.DB);
@@ -191,7 +180,6 @@ export async function runGoldenTestBatch(
             {
               purpose: "golden_test",
               targetId: testCase.id,
-              provider,
             },
           );
           await insertGoldenRun(env.DB, {
@@ -214,7 +202,7 @@ export async function runGoldenTestBatch(
             batchId,
             caseId: testCase.id,
             provider,
-            model: env.JEV_MODEL ?? null,
+            model: null,
             expectedCode: testCase.expectedCode,
             actualCode: null,
             probabilities: null,
@@ -242,76 +230,9 @@ export async function runGoldenTestBatch(
   };
 }
 
-async function latestBatchForProvider(
-  db: D1Database,
-  provider: JevProviderName,
-) {
-  return db.prepare(
-    `SELECT batch_id
-     FROM golden_test_runs
-     WHERE provider = ?
-     ORDER BY created_at DESC
-     LIMIT 1`,
-  ).bind(provider).first<{ batch_id: string }>();
-}
-
-async function probabilityDifference(
-  db: D1Database,
-  vercelBatchId: string | null,
-  typesafeBatchId: string | null,
-) {
-  if (!vercelBatchId || !typesafeBatchId) return null;
-  const [vercel, typesafe] = await Promise.all([
-    db.prepare(
-      `SELECT case_id, expected_code, probabilities_json
-       FROM golden_test_runs WHERE batch_id = ? AND status = 'ok'`,
-    ).bind(vercelBatchId).all<{
-      case_id: string;
-      expected_code: GmAnswerCode;
-      probabilities_json: string | null;
-    }>(),
-    db.prepare(
-      `SELECT case_id, expected_code, probabilities_json
-       FROM golden_test_runs WHERE batch_id = ? AND status = 'ok'`,
-    ).bind(typesafeBatchId).all<{
-      case_id: string;
-      expected_code: GmAnswerCode;
-      probabilities_json: string | null;
-    }>(),
-  ]);
-
-  const right = new Map(
-    (typesafe.results ?? []).map((row) => [row.case_id, row]),
-  );
-  const differences: number[] = [];
-
-  for (const left of vercel.results ?? []) {
-    const other = right.get(left.case_id);
-    if (!other) continue;
-    let leftProbabilities: Record<string, number> | null = null;
-    let rightProbabilities: Record<string, number> | null = null;
-    try {
-      leftProbabilities = left.probabilities_json
-        ? JSON.parse(left.probabilities_json)
-        : null;
-      rightProbabilities = other.probabilities_json
-        ? JSON.parse(other.probabilities_json)
-        : null;
-    } catch {
-      continue;
-    }
-    const a = probabilityForCode(leftProbabilities, left.expected_code);
-    const b = probabilityForCode(rightProbabilities, other.expected_code);
-    if (a !== null && b !== null) differences.push(Math.abs(a - b));
-  }
-
-  if (differences.length === 0) return null;
-  return differences.reduce((sum, value) => sum + value, 0) / differences.length;
-}
-
 export async function getGoldenTestOverview(env: UmigameEnv) {
   const db = env.DB;
-  const [caseCount, batchRows, latestRuns, vercelLatest, typesafeLatest] =
+  const [caseCount, batchRows, latestRuns] =
     await Promise.all([
       db.prepare(
         "SELECT COUNT(*) AS count FROM golden_test_cases WHERE active = 1",
@@ -362,16 +283,11 @@ export async function getGoldenTestOverview(env: UmigameEnv) {
         public_id: number;
         title: string;
       }>(),
-      latestBatchForProvider(db, "vercel"),
-      latestBatchForProvider(db, "typesafe"),
     ]);
 
   return {
     caseCount: caseCount?.count ?? 0,
-    providers: {
-      vercel: isJevProviderConfigured(env, "vercel"),
-      typesafe: isJevProviderConfigured(env, "typesafe"),
-    },
+    configured: isJevConfigured(env),
     batches: (batchRows.results ?? []).map((row) => ({
       batchId: row.batch_id,
       provider: row.provider,
@@ -418,14 +334,5 @@ export async function getGoldenTestOverview(env: UmigameEnv) {
         title: row.title,
       };
     }),
-    comparison: {
-      vercelBatchId: vercelLatest?.batch_id ?? null,
-      typesafeBatchId: typesafeLatest?.batch_id ?? null,
-      averageExpectedProbabilityDifference: await probabilityDifference(
-        db,
-        vercelLatest?.batch_id ?? null,
-        typesafeLatest?.batch_id ?? null,
-      ),
-    },
   };
 }

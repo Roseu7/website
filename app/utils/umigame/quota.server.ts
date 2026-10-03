@@ -14,11 +14,6 @@ export const UMIGAME_DAILY_QUOTAS = {
   jevTool: 300,
 } as const;
 
-// Vercel publishes September 25, 2026 as the promo end date, but no time or
-// timezone. This UTC cutoff keeps the promo day free worldwide, then enables
-// daily caps. Wrangler config sets the same value for both Workers.
-export const JEV_DAILY_QUOTA_DEFAULT_STARTS_AT = "2026-09-26T12:00:00.000Z";
-
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RETAIN_DAYS = 8;
 const encoder = new TextEncoder();
@@ -176,27 +171,6 @@ function getUmigameBindings(env: UmigameEnv) {
   };
 }
 
-function isDailyQuotaStarted(
-  env: Pick<UmigameEnv, "JEV_DAILY_QUOTA_STARTS_AT">,
-  now: number,
-) {
-  const startsAt = Date.parse(
-    env.JEV_DAILY_QUOTA_STARTS_AT ?? JEV_DAILY_QUOTA_DEFAULT_STARTS_AT,
-  );
-  return !Number.isFinite(startsAt) || now >= startsAt;
-}
-
-export function isJevDailyQuotaActive(
-  env: Pick<UmigameEnv, "JEV_DAILY_QUOTA_STARTS_AT" | "JEV_PROVIDER" | "JEV_FALLBACK_PROVIDER">,
-  now = Date.now(),
-) {
-  // TypeSafe is a separate, paid provider path, so it keeps the daily cap.
-  if (env.JEV_PROVIDER === "typesafe" || env.JEV_FALLBACK_PROVIDER === "typesafe") {
-    return true;
-  }
-  return isDailyQuotaStarted(env, now);
-}
-
 export async function reserveUmigameDailyQuota(
   env: UmigameEnv,
   request: Request,
@@ -205,8 +179,6 @@ export async function reserveUmigameDailyQuota(
   units: number,
   now = Date.now(),
 ): Promise<DailyQuotaResult> {
-  if (kind === "ai" && !isJevDailyQuotaActive(env, now)) return "reserved";
-
   const { db, secret } = getUmigameBindings(env);
   if (!db || !secret) return "unavailable";
 
@@ -233,10 +205,6 @@ export async function reserveJevToolDailyQuota(
   units: number,
   now = Date.now(),
 ): Promise<DailyQuotaResult> {
-  if (!isDailyQuotaStarted(env, now)) {
-    return Number.isSafeInteger(units) && units > 0 ? "reserved" : "unavailable";
-  }
-
   const { db, secret } = getUmigameBindings(env);
   if (!db || !secret || !accessUserId) return "unavailable";
   return reserveDailyQuota(

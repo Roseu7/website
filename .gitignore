@@ -59,3 +59,6 @@ config.yml
 *.dll
 .DS_Store
 Thumbs.db
+
+# Cloudflare CLI build output, types, and local state
+**/.cloudflare/
