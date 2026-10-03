@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "~/framework/http";
 import { readLimitedText } from "~/utils/request-body.server";
 
 const MAX_INTERACTION_BODY_BYTES = 64 * 1024;

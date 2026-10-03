@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "~/framework/http";
 
 interface LinkStatusBody {
   minecraftUuid?: unknown;

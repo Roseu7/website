@@ -1,65 +1,21 @@
-import {
-  Form,
-  Link,
-  redirect,
-  useLoaderData,
-  useNavigation,
-  type ActionFunctionArgs,
-  type LoaderFunctionArgs,
-} from "react-router";
-import { Activity, ArrowLeft, ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
+import { Form, Link, useLoaderData, useNavigation } from "~/framework/navigation";
+
+import { Activity, ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
+
 import { PageLayout } from "~/components/layout/PageLayout";
-import { requireSameOriginRequest } from "~/utils/request-origin.server";
-import { MAX_FORM_BODY_BYTES, readLimitedFormData } from "~/utils/request-body.server";
+
 import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
-import {
-  applyAdminCommentAction,
-  applyAdminPuzzleAction,
-  getAdminJevSummary,
-  listAdminFlaggedComments,
-  listAdminPuzzleReviews,
-  requireUmigameAdmin,
-} from "~/utils/umigame/admin.server";
-import { getUmigameEnv, requireUmigameDb } from "~/utils/umigame/env.server";
+
 import { siteConfig } from "~/utils/site";
 
 export const meta = () => [
   { title: `管理 | ウミガメのスープ | ${siteConfig.fullName}` },
 ];
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
-  await requireUmigameAdmin(request, context);
-  const db = requireUmigameDb(getUmigameEnv(context));  const [puzzles, comments, jev] = await Promise.all([
-    listAdminPuzzleReviews(db),
-    listAdminFlaggedComments(db),
-    getAdminJevSummary(db),
-  ]);
-  return { puzzles, comments, jev };
-}
-
-export async function action({ request, context }: ActionFunctionArgs) {
-  requireSameOriginRequest(request);
-  const admin = await requireUmigameAdmin(request, context);
-  const env = getUmigameEnv(context);
-  const form = await readLimitedFormData(request, MAX_FORM_BODY_BYTES);
-  const target = String(form.get("target") ?? "");
-  const id = String(form.get("id") ?? "");
-  const actionName = String(form.get("action") ?? "");
-
-  if (target === "puzzle" && ["publish", "hide", "reject", "restore", "rerun"].includes(actionName)) {
-    await applyAdminPuzzleAction(env, admin.id, id, actionName as "publish" | "hide" | "reject" | "restore" | "rerun");
-    return redirect("/games/umigame/admin");
-  }
-  if (target === "comment" && ["show", "spoiler", "hide", "rerun"].includes(actionName)) {
-    await applyAdminCommentAction(env, admin.id, id, actionName as "show" | "spoiler" | "hide" | "rerun");
-    return redirect("/games/umigame/admin");
-  }
-  throw new Response("Invalid admin action.", { status: 400 });
-}
-
 function statusLabel(status: string) {
   return status.replaceAll("_", " ");
-}export default function UmigameAdminPage() {
+}
+export default function UmigameAdminPage() {
   const { puzzles, comments, jev } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const busy = navigation.state === "submitting";
@@ -266,3 +222,4 @@ function statusLabel(status: string) {
     </PageLayout>
   );
 }
+import type { loader } from './admin.server';

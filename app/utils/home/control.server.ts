@@ -1,4 +1,4 @@
-import type { AppLoadContext } from "react-router";
+import type { AppLoadContext } from "~/framework/http";
 import type { HomeControlActionResult, PcPowerState, PcStatePayload } from "~/utils/home/types";
 
 type MaybeString = string | undefined;

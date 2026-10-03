@@ -62,3 +62,6 @@ Thumbs.db
 
 # Cloudflare CLI build output, types, and local state
 **/.cloudflare/
+
+# TanStack Start generated intermediate output
+.tanstack/

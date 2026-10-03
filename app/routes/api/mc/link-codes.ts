@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from "react-router";
+import type { ActionFunctionArgs } from "~/framework/http";
 
 interface RegisterLinkCodeBody {
   code?: unknown;

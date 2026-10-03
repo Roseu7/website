@@ -1,23 +1,9 @@
-import { createRequestHandler } from "react-router";
+import handler from "@tanstack/react-start/server-entry";
 import { reviewComment } from "../app/utils/umigame/comment-review.server";
 import { reviewPuzzleRevision } from "../app/utils/umigame/puzzle-review.server";
 import { getUmigameEnvFromBindings } from "../app/utils/umigame/env.server";
 import { withSecurityHeaders } from "./security-headers";
 
-declare module "react-router" {
-  export interface AppLoadContext {
-    cspNonce: string;
-    cloudflare: {
-      env: Env;
-      ctx: ExecutionContext;
-    };
-  }
-}
-
-const requestHandler = createRequestHandler(
-  () => import("virtual:react-router/server-build"),
-  import.meta.env.MODE
-);
 
 
 type UmigameQueueMessage =
@@ -33,11 +19,14 @@ type UmigameQueueMessage =
 export default {
   async fetch(request, env, ctx) {
     const cspNonce = crypto.randomUUID().replaceAll("-", "");
-    // 通常のReact Routerリクエスト処理
-    const response = await requestHandler(request, {
+    const headers = new Headers(request.headers);
+    // The nonce is generated here; never trust an incoming value of this header.
+    headers.set("X-Website-Nonce", cspNonce);
+    const response = await handler.fetch(new Request(request, { headers }), { context: {
       cspNonce,
+      nonce: cspNonce,
       cloudflare: { env, ctx },
-    });
+    } });
     return withSecurityHeaders(request, response, cspNonce);
   },
 

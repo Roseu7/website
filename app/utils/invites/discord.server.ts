@@ -5,7 +5,7 @@ const KNOWN_MINECRAFT_PROFILES = new Map<string, { uuid: string; name: string }>
 ]);
 
 export async function isDiscordGuildMember(
-  context: import("react-router").AppLoadContext,
+  context: import("~/framework/http").AppLoadContext,
   discordId: string,
   guildId: string
 ) {
@@ -23,7 +23,7 @@ export async function isDiscordGuildMember(
 }
 
 export async function isDiscordGuildMemberOfAny(
-  context: import("react-router").AppLoadContext,
+  context: import("~/framework/http").AppLoadContext,
   discordId: string,
   guildIds: readonly string[]
 ) {
@@ -48,7 +48,7 @@ async function openDmChannel(botToken: string, discordId: string) {
 }
 
 export async function sendDiscordDm(
-  context: import("react-router").AppLoadContext,
+  context: import("~/framework/http").AppLoadContext,
   discordId: string,
   content: string,
   components?: unknown[]
@@ -77,7 +77,7 @@ export async function sendDiscordDm(
 }
 
 export async function editDiscordDm(
-  context: import("react-router").AppLoadContext,
+  context: import("~/framework/http").AppLoadContext,
   channelId: string,
   messageId: string,
   content: string,

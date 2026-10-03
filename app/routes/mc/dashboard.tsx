@@ -1,4 +1,4 @@
-import { Form } from "react-router";
+import { Form } from "~/framework/navigation";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { PageIntro } from "~/components/layout/PageIntro";
 import type { McDashboardLoaderData } from "~/utils/mc/dashboard";

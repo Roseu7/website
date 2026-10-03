@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "~/framework/http";
 import { readLimitedJson } from "~/utils/request-body.server";
 import { resolveUmigameActor } from "~/utils/umigame/actor.server";
 import {

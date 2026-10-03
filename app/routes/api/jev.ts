@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "~/framework/http";
 import { getJevAccessIdentity } from "~/utils/jev/access.server";
 import { readLimitedJson } from "~/utils/request-body.server";
 import { isSameOriginRequest } from "~/utils/request-origin.server";

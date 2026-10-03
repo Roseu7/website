@@ -1,10 +1,9 @@
-import { isRouteErrorResponse, useRouteError } from "react-router";
+import { isNotFound } from "@tanstack/react-router";
 import { NotFoundPage } from "~/routes/$";
 
-export function NotFoundBoundary() {
-  const error = useRouteError();
+export function NotFoundBoundary({ error }: { error: Error }) {
 
-  if (isRouteErrorResponse(error) && error.status === 404) {
+  if (isNotFound(error) || ("status" in error && error.status === 404)) {
     return <NotFoundPage />;
   }
 

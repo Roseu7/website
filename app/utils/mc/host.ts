@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { redirect } from "~/framework/http";
 import {
   MC_DASHBOARD_HOST,
   isCanonicalMcDashboardHost,

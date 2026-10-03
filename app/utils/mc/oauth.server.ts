@@ -18,7 +18,7 @@ function buildAuthorizeUrl(clientId: string, redirectUri: string, state: string)
   return url.toString();
 }
 
-export function createDiscordLoginUrl(context: import("react-router").AppLoadContext, state: string) {
+export function createDiscordLoginUrl(context: import("~/framework/http").AppLoadContext, state: string) {
   const env = getMcDashboardEnv(context);
   const clientId = requireMcEnvValue(env, "SURVCORE_DISCORD_CLIENT_ID");
   const redirectUri = requireMcEnvValue(env, "SURVCORE_DISCORD_REDIRECT_URI");
@@ -26,7 +26,7 @@ export function createDiscordLoginUrl(context: import("react-router").AppLoadCon
 }
 
 export async function exchangeDiscordCode(
-  context: import("react-router").AppLoadContext,
+  context: import("~/framework/http").AppLoadContext,
   code: string
 ) {
   const env = getMcDashboardEnv(context);

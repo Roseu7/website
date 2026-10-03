@@ -4,6 +4,7 @@ export default defineConfig({
 	worker: {
 		name: "website",
 		compatibilityDate: "2025-04-04",
+		compatibilityFlags: ["nodejs_compat"],
 		entrypoint: "./workers/app.ts",
 		workersDev: false,
 		previewUrls: false,
@@ -33,6 +34,8 @@ export default defineConfig({
 			CF_ACCESS_AUD: bindings.text("96b9c9c9fd0eb49cdba0eab8b3fd4f3b987e89f5972bbfb8ec953d8f81e70549"),
 			UMIGAME_ACCESS_AUD: bindings.text("be861d10bd1c5a96e3b9e3120cc86803111421eca67fa4e1fa711927901bb344"),
 			JEV_INPUT_USD_PER_MILLION: bindings.text("0.042"),
+			UMIGAME_SESSION_SECRET: bindings.secret(),
+			SURVCORE_SESSION_SECRET: bindings.secret(),
 
 			DB: bindings.d1({
 				name: "mc-dashboard",

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { AlertTriangle, ChevronDown, MessageSquare, Send } from "lucide-react";
-import { Link } from "react-router";
+import { Link } from "~/framework/navigation";
 import { LegalConsentCheckbox } from "~/components/LegalConsentCheckbox";
 import { UmigameAuthor } from "~/components/umigame/UmigameAuthor";
 import type { PuzzleComment } from "~/utils/umigame/comments.server";

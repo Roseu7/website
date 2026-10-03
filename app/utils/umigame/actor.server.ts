@@ -1,4 +1,4 @@
-import type { AppLoadContext } from "react-router";
+import type { AppLoadContext } from "~/framework/http";
 import { createAnonymousActor, ensureAnonymousActor, requireAnonymousActor } from "./anon.server";
 import { getOptionalUmigameUser } from "./auth.server";
 import { getUmigameEnv, requireUmigameDb } from "./env.server";

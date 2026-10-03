@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from "react-router";
-import { redirect } from "react-router";
+import type { LoaderFunctionArgs } from "~/framework/http";
+import { redirect } from "~/framework/http";
 import { NotFoundBoundary } from "~/components/routing/NotFoundBoundary";
 import { rewriteMapLocation } from "~/utils/map/proxy.server";
 

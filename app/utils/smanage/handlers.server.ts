@@ -1,4 +1,4 @@
-import type { AppLoadContext } from "react-router";
+import type { AppLoadContext } from "~/framework/http";
 import type { McDashboardEnv } from "~/utils/mc/env.server";
 import { requireStrings, type ServiceBody } from "~/utils/smanage/payload.server";
 

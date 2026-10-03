@@ -1,4 +1,4 @@
-import type { AppLoadContext } from "react-router";
+import type { AppLoadContext } from "~/framework/http";
 
 export interface McDashboardEnv {
   DB: D1Database;

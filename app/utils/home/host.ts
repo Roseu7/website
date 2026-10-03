@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { redirect } from "~/framework/http";
 import { HOME_CONTROL_HOST } from "~/utils/host-config";
 const LOCAL_DEV_HOSTS = new Set(["localhost", "127.0.0.1"]);
 const LOCAL_DEV_ORIGINS = new Set([

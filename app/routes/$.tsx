@@ -1,10 +1,8 @@
-import { data, Link } from "react-router";
-import { PageLayout } from "~/components/layout/PageLayout";
-import { siteConfig } from "~/utils/site";
+import { Link } from "~/framework/navigation";
 
-export function loader() {
-  return data(null, { status: 404 });
-}
+import { PageLayout } from "~/components/layout/PageLayout";
+
+import { siteConfig } from "~/utils/site";
 
 export const meta = () => {
   return [

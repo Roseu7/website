@@ -1,9 +1,13 @@
 import { useMemo, useRef, useState, type DragEvent, type FormEvent } from "react";
+
 import { ChevronDown, ChevronUp, Copy, GripVertical, Triangle, X } from "lucide-react";
-import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+
+import { useLoaderData } from "~/framework/navigation";
+
 import { PageIntro } from "~/components/layout/PageIntro";
+
 import { PageLayout } from "~/components/layout/PageLayout";
-import { isJevAuthenticated } from "~/utils/jev/access.server";
+
 import { siteConfig } from "~/utils/site";
 
 type AnswerType = "boolean" | "choice" | "score";
@@ -55,12 +59,6 @@ export const meta = () => [
   { name: "description", content: "Jev evaluation tool" },
   { name: "robots", content: "noindex, nofollow" },
 ];
-
-export async function loader({ request, context }: LoaderFunctionArgs) {
-  return {
-    authenticated: await isJevAuthenticated(request, context),
-  };
-}
 
 const INITIAL_CHOICE: CriterionItem[] = [
   { id: 1, text: "" },
@@ -580,3 +578,4 @@ export default function JevPage() {
     </PageLayout>
   );
 }
+import type { loader } from './jev.server';

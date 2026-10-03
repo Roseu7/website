@@ -1,4 +1,4 @@
-import { Link, useRouteLoaderData } from "react-router";
+import { Link, useRouteLoaderData } from "~/framework/navigation";
 import { PageIntro } from "~/components/layout/PageIntro";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { siteConfig } from "~/utils/site";

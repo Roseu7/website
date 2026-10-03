@@ -14,11 +14,10 @@ export default function LicensesPage() {
       <section className="license-block">
         <h2>ソフトウェア</h2>
         <ul>
-          <li>isbot — Unlicense</li>
           <li>jose — MIT</li>
           <li>lucide-react — ISC</li>
           <li>Feather-derived icons (Lucide) — MIT</li>
-          <li>React、React DOM、React Router — MIT</li>
+          <li>React、React DOM、TanStack Router、TanStack Start — MIT</li>
           <li>cookie、scheduler、set-cookie-parser — MIT</li>
         </ul>
       </section>

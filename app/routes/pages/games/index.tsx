@@ -1,5 +1,5 @@
 import { Info } from "lucide-react";
-import { Link } from "react-router";
+import { Link } from "~/framework/navigation";
 import { PageIntro } from "~/components/layout/PageIntro";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { siteConfig } from "~/utils/site";

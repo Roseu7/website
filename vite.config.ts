@@ -1,16 +1,18 @@
-import { reactRouter } from "@react-router/dev/vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import react from "@vitejs/plugin-react";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { reactRouter7BuildOutput } from "./build-support/react-router7-build-output";
 
 export default defineConfig({
+  server: { cors: false },
+  preview: { cors: false },
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tailwindcss(),
-    reactRouter(),
+    tanstackStart({ srcDirectory: "app", router: { routesDirectory: "start-routes" } }),
+    react(),
     tsconfigPaths(),
-    reactRouter7BuildOutput(),
   ],
 });

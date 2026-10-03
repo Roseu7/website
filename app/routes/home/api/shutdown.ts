@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "~/framework/http";
 import { shutdownPc } from "~/utils/home/control.server";
 import { requireHomeControlHost, requireHomeMutationOrigin } from "~/utils/home/host";
 

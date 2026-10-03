@@ -1,5 +1,5 @@
 import { BrainCircuit, ExternalLink } from "lucide-react";
-import { Link } from "react-router";
+import { Link } from "~/framework/navigation";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
 import { siteConfig } from "~/utils/site";

@@ -1,9 +1,11 @@
 import { ArrowRight, ExternalLink } from "lucide-react";
-import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
+
+import { Link, useLoaderData } from "~/framework/navigation";
+
 import { PageLayout } from "~/components/layout/PageLayout";
+
 import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
-import { listPublishedPuzzleLicenses } from "~/utils/umigame/db.server";
-import { getUmigameEnv, requireUmigameDb } from "~/utils/umigame/env.server";
+
 import { siteConfig } from "~/utils/site";
 
 export const meta = () => [
@@ -13,14 +15,6 @@ export const meta = () => [
     content: "ウミガメのスープで公開している問題の出典・ライセンス・帰属情報。",
   },
 ];
-
-export async function loader({ context }: LoaderFunctionArgs) {
-  const db = requireUmigameDb(getUmigameEnv(context));
-  const entries = await listPublishedPuzzleLicenses(db);
-  return {
-    licensed: entries.filter((entry) => entry.sourceType !== "original"),
-  };
-}
 
 function attributionText(text: string | null, licenseName: string | null) {
   if (!text) return null;
@@ -114,3 +108,4 @@ export default function UmigameLicensesPage() {
     </PageLayout>
   );
 }
+import type { loader } from './licenses.server';

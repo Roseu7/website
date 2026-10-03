@@ -1,7 +1,8 @@
-import { type LoaderFunctionArgs } from "react-router";
+
 import { NotFoundPage } from "../$";
 import { HomeControlPage } from "~/components/home/HomeControlPage";
-import { redirectHomeControlSubpathToRoot, requireHomeControlHost } from "~/utils/home/host";
+export default HomeControlPage;
+
 import { siteConfig } from "~/utils/site";
 
 export const meta = () => {
@@ -12,15 +13,6 @@ export const meta = () => {
   ];
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  requireHomeControlHost(request);
-  redirectHomeControlSubpathToRoot(request);
-  return null;
-}
-
 export function ErrorBoundary() {
   return <NotFoundPage />;
 }
-
-export { HomeControlPage };
-export default HomeControlPage;

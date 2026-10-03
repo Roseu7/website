@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link, useRouteLoaderData } from "react-router";
+import { Link, useRouteLoaderData } from "~/framework/navigation";
 
 interface LegalConsentCheckboxProps {
   id: string;

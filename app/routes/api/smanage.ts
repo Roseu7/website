@@ -1,5 +1,5 @@
 import { readLimitedText } from "~/utils/request-body.server";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "~/framework/http";
 import { handleSManageOperation } from "~/utils/smanage/handlers.server";
 import { requireStrings, type ServiceBody } from "~/utils/smanage/payload.server";
 

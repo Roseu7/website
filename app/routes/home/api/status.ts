@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { LoaderFunctionArgs } from "~/framework/http";
 import { fetchPcState } from "~/utils/home/control.server";
 import { requireHomeControlHost } from "~/utils/home/host";
 

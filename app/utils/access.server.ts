@@ -1,5 +1,5 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
-import type { AppLoadContext } from "react-router";
+import type { AppLoadContext } from "~/framework/http";
 
 interface AccessEnv {
   CF_ACCESS_TEAM_DOMAIN?: string;

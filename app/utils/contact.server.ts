@@ -1,4 +1,4 @@
-import type { AppLoadContext } from "react-router";
+import type { AppLoadContext } from "~/framework/http";
 import { hasFormLegalConsent } from "~/utils/legal-consent.server";
 
 export const CONTACT_BODY_LIMIT = 8 * 1024;

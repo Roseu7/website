@@ -66,7 +66,7 @@ export const projects: ProjectItem[] = [
       { label: "TypeScript", tone: "blue" },
       { label: "TailwindCSS", tone: "cyan" },
       { label: "DaisyUI", tone: "mono" },
-      { label: "React Router", tone: "sky" },
+      { label: "TanStack Router / Start", tone: "sky" },
       { label: "Cloudflare Workers", tone: "orange" },
     ],
   },

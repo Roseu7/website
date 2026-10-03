@@ -1,20 +1,14 @@
-import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
-import { PageLayout } from "~/components/layout/PageLayout";
-import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
-import { UmigameDifficulty } from "~/components/umigame/UmigameDifficulty";
-import { requireUmigameUser } from "~/utils/umigame/auth.server";
-import {
-  getAuthorQualityAnalytics,
-  type AuthorQualityReviewMetrics,
-} from "~/utils/umigame/author-quality.server";
-import { getUmigameEnv, requireUmigameDb } from "~/utils/umigame/env.server";
-import { siteConfig } from "~/utils/site";
+import { Link, useLoaderData } from "~/framework/navigation";
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
-  const user = await requireUmigameUser(request, context);
-  const db = requireUmigameDb(getUmigameEnv(context));
-  return getAuthorQualityAnalytics(db, user);
-}
+import { PageLayout } from "~/components/layout/PageLayout";
+
+import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
+
+import { UmigameDifficulty } from "~/components/umigame/UmigameDifficulty";
+
+import type { AuthorQualityReviewMetrics } from "~/utils/umigame/author-quality.server";
+
+import { siteConfig } from "~/utils/site";
 
 export const meta = () => [
   { title: `作者向け分析 | ウミガメのスープ | ${siteConfig.fullName}` },
@@ -337,3 +331,4 @@ export default function UmigameAuthorQualityPage() {
     </PageLayout>
   );
 }
+import type { loader } from './author-quality.server';

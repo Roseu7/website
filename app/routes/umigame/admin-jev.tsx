@@ -1,65 +1,16 @@
-import {
-  Form,
-  Link,
-  redirect,
-  useLoaderData,
-  useNavigation,
-  type ActionFunctionArgs,
-  type LoaderFunctionArgs,
-} from "react-router";
-import {
-  Activity,
-  AlertTriangle,
-  ArrowLeft,
-  Cpu,
-  Gauge,
-  Layers3,
-  RefreshCw,
-  Route,
-  ShieldCheck,
-} from "lucide-react";
+import { Form, Link, useLoaderData, useNavigation } from "~/framework/navigation";
+
+import { Activity, AlertTriangle, Cpu, Gauge, Layers3, RefreshCw, Route, ShieldCheck } from "lucide-react";
+
 import { PageLayout } from "~/components/layout/PageLayout";
-import { requireSameOriginRequest } from "~/utils/request-origin.server";
+
 import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
-import {
-  getAdminJevAnalytics,
-  requireUmigameAdmin,
-} from "~/utils/umigame/admin.server";
-import { getUmigameEnv } from "~/utils/umigame/env.server";
-import {
-  getGoldenTestOverview,
-  runGoldenTestBatch,
-} from "~/utils/umigame/golden-test.server";
+
 import { siteConfig } from "~/utils/site";
 
 export const meta = () => [
   { title: `Jev監視 | ウミガメ管理 | ${siteConfig.fullName}` },
 ];
-
-export async function loader({ request, context }: LoaderFunctionArgs) {
-  await requireUmigameAdmin(request, context);
-  const env = getUmigameEnv(context);
-  const [analytics, golden] = await Promise.all([
-    getAdminJevAnalytics(env),
-    getGoldenTestOverview(env),
-  ]);
-  const url = new URL(request.url);
-  return {
-    analytics,
-    golden,
-    goldenNotice:
-      url.searchParams.get("golden") === "done"
-        ? "Golden Testを実行しました。"
-        : null,
-  };
-}
-
-export async function action({ request, context }: ActionFunctionArgs) {
-  requireSameOriginRequest(request);
-  await requireUmigameAdmin(request, context);
-  await runGoldenTestBatch(getUmigameEnv(context));
-  return redirect("/games/umigame/admin/jev?golden=done");
-}
 
 function percent(value: number) {
   return new Intl.NumberFormat("ja-JP", {
@@ -87,6 +38,7 @@ function dateTime(value: number) {
     second: "2-digit",
   }).format(new Date(value));
 }
+
 export default function UmigameAdminJevPage() {
   const { analytics, golden, goldenNotice } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
@@ -155,8 +107,6 @@ export default function UmigameAdminJevPage() {
           </Form>
           <span>TypeSafe: {golden.configured ? "利用可" : "未設定"}</span>
         </div>
-
-
 
         {golden.batches.length > 0 ? (
           <div className="umigame-golden-batches">
@@ -449,3 +399,4 @@ export default function UmigameAdminJevPage() {
     </PageLayout>
   );
 }
+import type { loader } from './admin-jev.server';

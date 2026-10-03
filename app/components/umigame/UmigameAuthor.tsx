@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "~/framework/navigation";
 import { UmigameAvatar, type UmigameAvatarType } from "~/utils/umigame/avatar";
 
 export interface UmigameAuthorInfo {

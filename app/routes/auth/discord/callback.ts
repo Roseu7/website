@@ -1,4 +1,4 @@
-import { redirect, type LoaderFunctionArgs } from "react-router";
+import { redirect, type LoaderFunctionArgs } from "~/framework/http";
 import { safeReturnTo } from "~/utils/return-to";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {

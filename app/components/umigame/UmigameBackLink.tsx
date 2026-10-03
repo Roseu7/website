@@ -1,6 +1,6 @@
 import type { MouseEvent } from "react";
 import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "~/framework/navigation";
 import { usePreviousPage } from "~/components/routing/usePreviousPage";
 import { labelForPreviousPath } from "~/utils/umigame/navigation";
 

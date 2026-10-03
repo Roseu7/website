@@ -1,4 +1,4 @@
-import type { AppLoadContext } from "react-router";
+import type { AppLoadContext } from "~/framework/http";
 import { requireUmigameUser } from "./auth.server";
 import { getUmigameEnv, requireUmigameDb, type UmigameEnv } from "./env.server";
 import { enqueueCommentReview } from "./comments.server";

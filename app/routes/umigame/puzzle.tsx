@@ -1,44 +1,22 @@
-import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
-import { ArrowLeft, ArrowRight, ExternalLink, Pencil, Play } from "lucide-react";
+import { Link, useLoaderData } from "~/framework/navigation";
+
+import { ArrowRight, ExternalLink, Pencil, Play } from "lucide-react";
+
 import { PageLayout } from "~/components/layout/PageLayout";
+
 import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
+
 import { PuzzleComments } from "~/components/umigame/PuzzleComments";
+
 import { PuzzleFavorite } from "~/components/umigame/PuzzleFavorite";
+
 import { PuzzleVote } from "~/components/umigame/PuzzleVote";
+
 import { UmigameDifficulty } from "~/components/umigame/UmigameDifficulty";
+
 import { UmigameAuthor } from "~/components/umigame/UmigameAuthor";
-import { getOptionalUmigameUser } from "~/utils/umigame/auth.server";
-import { listPuzzleComments } from "~/utils/umigame/comments.server";
-import {
-  formatPuzzlePublicId,
-  getPublishedPuzzlePublicById,
-  getPuzzleFavoriteForUser,
-  getPuzzleVoteForUser,
-  parsePuzzlePublicId,
-} from "~/utils/umigame/db.server";
-import { getUmigameEnv, requireUmigameDb } from "~/utils/umigame/env.server";
+
 import { siteConfig } from "~/utils/site";
-
-export async function loader({ request, params, context }: LoaderFunctionArgs) {
-  const rawId = params.id?.trim() ?? "";
-  const publicId = parsePuzzlePublicId(rawId);
-  if (!publicId || rawId !== formatPuzzlePublicId(publicId)) {
-    throw new Response("Not Found", { status: 404 });
-  }
-
-  const db = requireUmigameDb(getUmigameEnv(context));
-  const [puzzle, user] = await Promise.all([
-    getPublishedPuzzlePublicById(db, publicId),
-    getOptionalUmigameUser(request, context),
-  ]);
-  if (!puzzle) throw new Response("Not Found", { status: 404 });
-  const [comments, viewerVote, viewerFavorite] = await Promise.all([
-    listPuzzleComments(db, puzzle.id, user?.id ?? null),
-    user ? getPuzzleVoteForUser(db, puzzle.id, user.id) : Promise.resolve(null),
-    user ? getPuzzleFavoriteForUser(db, puzzle.id, user.id) : Promise.resolve(false),
-  ]);
-  return { puzzle, user, comments, viewerVote, viewerFavorite };
-}
 
 export const meta = ({ data }: { data?: { puzzle?: { title?: string } } }) => [
   { title: `${data?.puzzle?.title ?? "問題"} | ウミガメのスープ | ${siteConfig.fullName}` },
@@ -158,3 +136,4 @@ export default function UmigamePuzzlePage() {
     </PageLayout>
   );
 }
+import type { loader } from './puzzle.server';

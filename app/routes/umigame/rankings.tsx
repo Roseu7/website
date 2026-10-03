@@ -1,23 +1,24 @@
 import type { ReactNode } from "react";
-import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
+
+import { Link, useLoaderData } from "~/framework/navigation";
+
 import { ArrowRight, Award, CheckCircle2, ChevronRight, Play } from "lucide-react";
+
 import { PageLayout } from "~/components/layout/PageLayout";
+
 import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
+
 import { UmigameAuthor } from "~/components/umigame/UmigameAuthor";
+
 import { UmigameDifficulty } from "~/components/umigame/UmigameDifficulty";
-import { listPublishedPuzzleRankings, type PuzzleSummary } from "~/utils/umigame/db.server";
-import { getUmigameEnv, requireUmigameDb } from "~/utils/umigame/env.server";
+
+import type { PuzzleSummary } from "~/utils/umigame/db.server";
+
 import { siteConfig } from "~/utils/site";
 
 export const meta = () => [
   { title: `ランキング | ウミガメのスープ | ${siteConfig.fullName}` },
 ];
-
-export async function loader({ context }: LoaderFunctionArgs) {
-  const db = requireUmigameDb(getUmigameEnv(context));
-  const rankings = await listPublishedPuzzleRankings(db, 10);
-  return { rankings };
-}
 
 function RankingSection({
   title,
@@ -88,6 +89,7 @@ function RankingSection({
     </section>
   );
 }
+
 export default function UmigameRankingsPage() {
   const { rankings } = useLoaderData<typeof loader>();
 
@@ -128,3 +130,4 @@ export default function UmigameRankingsPage() {
     </PageLayout>
   );
 }
+import type { loader } from './rankings.server';

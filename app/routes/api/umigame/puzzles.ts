@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "~/framework/http";
 import { getOptionalUmigameUser } from "~/utils/umigame/auth.server";
 import { listPublishedPuzzles } from "~/utils/umigame/db.server";
 import { getUmigameEnv, requireUmigameDb } from "~/utils/umigame/env.server";

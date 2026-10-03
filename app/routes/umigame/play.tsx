@@ -1,25 +1,15 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type FormEvent,
-} from "react";
-import {
-  ArrowRight,
-  History as HistoryIcon,
-  Lightbulb,
-  Send,
-} from "lucide-react";
-import { Link, useLoaderData, useNavigate, type LoaderFunctionArgs } from "react-router";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+
+import { ArrowRight, History as HistoryIcon, Lightbulb, Send } from "lucide-react";
+
+import { Link, useLoaderData, useNavigate } from "~/framework/navigation";
+
 import { PageLayout } from "~/components/layout/PageLayout";
+
 import { UmigameDialog } from "~/components/umigame/UmigameDialog";
+
 import { UmigameBackLink } from "~/components/umigame/UmigameBackLink";
-import {
-  formatPuzzlePublicId,
-  getPublishedPuzzlePublicById,
-  parsePuzzlePublicId,
-} from "~/utils/umigame/db.server";
-import { getUmigameEnv, requireUmigameDb } from "~/utils/umigame/env.server";
+
 import { siteConfig } from "~/utils/site";
 
 type GmAnswerCode =
@@ -97,19 +87,6 @@ const ANSWER_LABELS: Record<GmAnswerCode, string> = {
 const GM_CODES = new Set<GmAnswerCode>(
   Object.keys(ANSWER_LABELS) as GmAnswerCode[],
 );
-
-export async function loader({ params, context }: LoaderFunctionArgs) {
-  const rawId = params.id?.trim() ?? "";
-  const publicId = parsePuzzlePublicId(rawId);
-  if (!publicId || rawId !== formatPuzzlePublicId(publicId)) {
-    throw new Response("Not Found", { status: 404 });
-  }
-
-  const db = requireUmigameDb(getUmigameEnv(context));
-  const puzzle = await getPublishedPuzzlePublicById(db, publicId);
-  if (!puzzle) throw new Response("Not Found", { status: 404 });
-  return { puzzle };
-}
 
 export const meta = ({
   data,
@@ -684,3 +661,4 @@ function UmigamePlaySession({ puzzle }: { puzzle: Awaited<ReturnType<typeof load
     </PageLayout>
   );
 }
+import type { loader } from './play.server';

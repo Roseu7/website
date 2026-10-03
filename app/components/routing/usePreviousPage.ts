@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigationType } from "react-router";
+import { useLocation, useNavigationType } from "~/framework/navigation";
 import { parseNavigationHistory, recordNavigationEntry } from "~/utils/navigation-history";
 
 const STORAGE_KEY = "roseu:navigation-history";
@@ -15,7 +15,7 @@ export function usePreviousPage() {
   } | null>(null);
 
   useEffect(() => {
-    const index: unknown = window.history.state?.idx;
+    const index: unknown = window.history.state?.__TSR_index;
     if (typeof index !== "number" || !Number.isSafeInteger(index) || index < 0) {
       setPrevious({ key: location.key, path: null, available: false });
       return;
