@@ -71,6 +71,12 @@
     width: 100%;
   }
 
+  .game-card__actions .cta-link {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+  }
+
   .solver-draft__row {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));

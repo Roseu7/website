@@ -16,7 +16,7 @@ import { siteConfig } from "~/utils/site";
 
 const homeTitleLines = [
   "作ってみたいものを、",
-  "ちゃんと動く形で残していく。",
+  "動く形で残していく",
 ];
 
 const homeTitleText = homeTitleLines.join("");
@@ -171,13 +171,9 @@ export default function Home() {
           <span className="home-index__label">About me</span>
           <span className="home-index__copy">ろせ/Roseuについて</span>
         </Link>
-        <Link to="/games" className="home-index__link" prefetch="viewport" viewTransition>
-          <span className="home-index__label">Games</span>
-          <span className="home-index__copy">遊べるゲーム</span>
-        </Link>
-        <Link to="/tools" className="home-index__link" prefetch="viewport" viewTransition>
-          <span className="home-index__label">Tools</span>
-          <span className="home-index__copy">使えるかもしれないツール</span>
+        <Link to="/lab" className="home-index__link" prefetch="viewport" viewTransition>
+          <span className="home-index__label">Lab</span>
+          <span className="home-index__copy"><span>遊べるゲーム</span> / <span>使えるかもしれないツール</span></span>
         </Link>
       </section>
 

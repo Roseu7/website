@@ -20,10 +20,9 @@ function Document({ children }: { children: React.ReactNode }) {
   const [nonce] = useState(document?.cspNonce);
   return <html lang="ja" suppressHydrationWarning>
     <head><HeadContent />
-      <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `(function(){var dark=matchMedia('(prefers-color-scheme: dark)').matches;try{var saved=localStorage.getItem('theme');if(saved!==null)dark=saved==='dark'}catch(_){}document.documentElement.classList.toggle('dark',dark);function hide(){document.getElementById('app-loader')?.classList.add('is-hidden')}document.addEventListener('DOMContentLoaded',hide,{once:true});setTimeout(hide,8000)})();` }} />
+      <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `(function(){var dark=matchMedia('(prefers-color-scheme: dark)').matches;try{var saved=localStorage.getItem('theme');if(saved!==null)dark=saved==='dark'}catch(_){}document.documentElement.classList.toggle('dark',dark)})();` }} />
     </head>
     <body className="site-body theme-transition"><div id="theme-transition-layer" className="theme-transition-layer" aria-hidden="true" />
-      <div id="app-loader" className="app-loader" aria-hidden="true"><div className="app-loader__inner"><span className="app-loader__bar" aria-hidden="true" /><span className="sr-only">読み込み中</span></div></div>
       {children}<Scripts />
     </body>
   </html>;

@@ -39,18 +39,11 @@ export const siteConfig = {
     { label: "Projects", to: "/projects" },
     { label: "About me", to: "/about" },
     {
-      label: "Games",
-      to: "/games",
+      label: "Lab",
+      to: "/lab",
       children: [
-        { label: "ウミガメのスープ", to: "/games/umigame" },
-      ],
-    },
-    {
-      label: "Tools",
-      to: "/tools",
-      children: [
-        { label: "Wordle Solver", to: "/tools/wsolver" },
-        { label: "Jev", to: "/tools/jev" },
+        { label: "Games", to: "/games" },
+        { label: "Tools", to: "/tools" },
       ],
     },
   ] satisfies SiteNavItem[],

@@ -13,12 +13,20 @@ export const meta = () => {
 export default function ToolsPage() {
   return (
     <PageLayout contentClassName="page-stack">
-      <PageIntro title="Tools" headingLevel="h2" />
+      <PageIntro title="Tools" />
 
-      <section className="tool-directory">
+      <ToolsDirectory />
+    </PageLayout>
+  );
+}
+
+export function ToolsDirectory({ headingLevel = "h2" }: { headingLevel?: "h2" | "h3" }) {
+  const Heading = headingLevel;
+  return (
+    <section className="tool-directory">
         <article className="tool-card">
           <div className="tool-card__body">
-            <h2 className="tool-card__title">Wordle Solver</h2>
+            <Heading className="tool-card__title">Wordle Solver</Heading>
             <p className="tool-card__copy">
               Wordleの候補を絞り込み、次の推測候補を提示するツール
             </p>
@@ -30,7 +38,7 @@ export default function ToolsPage() {
 
         <article className="tool-card">
           <div className="tool-card__body">
-            <h2 className="tool-card__title">Jev</h2>
+            <Heading className="tool-card__title">Jev</Heading>
             <p className="tool-card__copy">状況や選択肢を確率で評価するツール (アクセス制限中)</p>
             <Link to="/tools/jev" className="btn cta-link" viewTransition>
               <span>ツールを開く</span>
@@ -38,6 +46,5 @@ export default function ToolsPage() {
           </div>
         </article>
       </section>
-    </PageLayout>
   );
 }
