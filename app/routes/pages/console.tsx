@@ -3,7 +3,7 @@ import { ArrowUp, ArrowDown, CornerDownLeft } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { OsCloseAppContext, OsWindowActiveContext } from "~/components/os/OsContext";
 import { useLoaderData } from "~/framework/navigation";
-import { CONSOLE_COMMAND_LIMIT, type ConsoleReply } from "~/utils/console";
+import { CONSOLE_COMMAND_LIMIT, type ConsoleCompletion, type ConsoleReply } from "~/utils/console";
 import { siteConfig } from "~/utils/site";
 import type { loader } from "./console.server";
 
@@ -35,16 +35,77 @@ export default function ConsolePage() {
   const draft = useRef("");
   const mounted = useRef(true);
   const controller = useRef<AbortController | null>(null);
+  const completion = useRef<(ConsoleCompletion & { command: string; caret: number; index: number }) | null>(null);
+  const completionRequest = useRef<{ controller: AbortController; offset: number } | null>(null);
   useEffect(() => {
     mounted.current = true;
-    return () => { mounted.current = false; controller.current?.abort(); };
+    return () => { mounted.current = false; controller.current?.abort(); resetCompletion(); };
   }, []);
   useEffect(() => {
     if (active) formRef.current?.scrollIntoView({ block: "nearest" });
   }, [entries, active]);
 
+  function resetCompletion() {
+    completion.current = null;
+    completionRequest.current?.controller.abort();
+    completionRequest.current = null;
+  }
+
+  function appendOutput(text: string) {
+    const entry = { id: ++sequence.current, text };
+    setEntries(current => {
+      const next = [...current, entry];
+      let size = next.reduce((total, item) => total + item.text.length, 0);
+      while (size > 64 * 1024 && next.length > 1) size -= next.shift()!.text.length;
+      return next;
+    });
+  }
+
+  async function complete(direction: number) {
+    const input = inputRef.current;
+    if (!input || inFlight.current) return;
+    const caret = input.selectionStart ?? command.length;
+    const cached = completion.current;
+    const apply = (state: NonNullable<typeof completion.current>) => {
+      const candidate = state.candidates[state.index];
+      const next = command.slice(0, state.start) + candidate + command.slice(state.end);
+      const nextCaret = state.start + candidate.length;
+      completion.current = { ...state, command: next, end: nextCaret, caret: nextCaret };
+      // Move the caret before React's controlled-value update so cycling also works mid-line.
+      input.value = next;
+      input.setSelectionRange(nextCaret, nextCaret);
+      setCommand(next);
+      cursor.current = history.current.length;
+    };
+    if (cached?.command === command && cached.caret === caret && input.selectionEnd === caret) {
+      if (cached.candidates.length) apply({ ...cached, index: (cached.index + direction + cached.candidates.length) % cached.candidates.length });
+      return;
+    }
+    if (completionRequest.current) { completionRequest.current.offset += direction; return; }
+    completion.current = null;
+    const request = { controller: new AbortController(), offset: direction > 0 ? 0 : -1 };
+    completionRequest.current = request;
+    try {
+      const response = await fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ operation: "complete", command, cwd, cursor: caret }), signal: request.controller.signal });
+      if (!response.ok) {
+        if (mounted.current && completionRequest.current === request) appendOutput(response.status === 429 ? "\nToo many commands. Try again in 60 seconds.\n" : `\nCompletion service error (${response.status}). Try again.\n`);
+        return;
+      }
+      const result = await response.json() as ConsoleCompletion;
+      if (!mounted.current || completionRequest.current !== request || input.value !== command || input.selectionStart !== caret) return;
+      const state = { ...result, command, caret, index: result.candidates.length ? ((request.offset % result.candidates.length) + result.candidates.length) % result.candidates.length : 0 };
+      completion.current = state;
+      if (result.candidates.length) apply(state);
+    } catch {
+      if (!request.controller.signal.aborted && mounted.current && completionRequest.current === request) appendOutput("\nThe completion service is unavailable. Try again.\n");
+    } finally {
+      if (completionRequest.current === request) completionRequest.current = null;
+    }
+  }
+
   function recall(delta: number) {
     if (inFlight.current) return;
+    resetCompletion();
     if (cursor.current === history.current.length) draft.current = command;
     cursor.current = Math.max(0, Math.min(history.current.length, cursor.current + delta));
     setCommand(cursor.current === history.current.length ? draft.current : history.current[cursor.current]);
@@ -54,6 +115,7 @@ export default function ConsolePage() {
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (inFlight.current || !command.trim()) return;
+    resetCompletion();
     const submitted = command;
     inFlight.current = true; setBusy(true); setCommand("");
     history.current = [...history.current, submitted].slice(-100);
@@ -73,13 +135,7 @@ export default function ConsolePage() {
     if (result.effect === "clear") setEntries([]);
     else if (result.effect === "exit") close?.();
     else {
-      const entry = { id: ++sequence.current, text: `${cwd}>${submitted}\n${result.output}\n` };
-      setEntries(current => {
-        const next = [...current, entry];
-        let size = next.reduce((total, item) => total + item.text.length, 0);
-        while (size > 64 * 1024 && next.length > 1) size -= next.shift()!.text.length;
-        return next;
-      });
+      appendOutput(`${cwd}>${submitted}\n${result.output}\n`);
     }
     inFlight.current = false; setBusy(false);
   }
@@ -94,8 +150,10 @@ export default function ConsolePage() {
       <form ref={formRef} className="os-console-command" onSubmit={submit} aria-busy={busy}>
         <div className="os-console-line">
         <span className="os-console-prompt">{cwd}&gt;</span>
-        <input ref={inputRef} className="os-console-input" aria-label="コマンド" value={command} maxLength={CONSOLE_COMMAND_LIMIT} readOnly={busy} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} enterKeyHint="send" onChange={event => { setCommand(event.target.value); cursor.current = history.current.length; }} onKeyDown={event => {
+        <input ref={inputRef} className="os-console-input" aria-label="コマンド" value={command} maxLength={CONSOLE_COMMAND_LIMIT} readOnly={busy} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} enterKeyHint="send" onChange={event => { resetCompletion(); setCommand(event.target.value); cursor.current = history.current.length; }} onPointerDown={resetCompletion} onBlur={resetCompletion} onKeyDown={event => {
           if (event.nativeEvent.isComposing) return;
+          if (event.key === "Tab" && !event.ctrlKey && !event.altKey && !event.metaKey) { event.preventDefault(); void complete(event.shiftKey ? -1 : 1); return; }
+          if (event.key !== "Shift") resetCompletion();
           if (event.key === "ArrowUp" || event.key === "ArrowDown") { event.preventDefault(); recall(event.key === "ArrowUp" ? -1 : 1); }
         }} />
         </div>

@@ -2,7 +2,7 @@ import type { ActionFunctionArgs } from "~/framework/http";
 import { readLimitedJsonObject } from "~/utils/request-body.server";
 import { isSameOriginRequest } from "~/utils/request-origin.server";
 import { CONSOLE_COMMAND_LIMIT } from "~/utils/console";
-import { executeConsole, getConsoleDirectory } from "~/utils/console.server";
+import { completeConsole, executeConsole, getConsoleDirectory } from "~/utils/console.server";
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const headers = { "Cache-Control": "no-store" };
@@ -23,6 +23,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
     || typeof body.cwd !== "string" || body.cwd.length > 260) return error(400, "Invalid command request.");
   const cwd = getConsoleDirectory(body.cwd);
   if (!cwd) return error(400, "Invalid working directory.");
+  if (body.operation !== undefined && body.operation !== "complete") return error(400, "Invalid command request.");
+  if (body.operation === "complete") {
+    if (!Number.isInteger(body.cursor) || (body.cursor as number) < 0 || (body.cursor as number) > body.command.length) return error(400, "Invalid completion cursor.");
+    return Response.json(completeConsole(body.command, cwd, body.cursor as number), { headers });
+  }
   const result = executeConsole(body.command, cwd);
   const bytes = new TextEncoder().encode(result.output);
   if (bytes.length > 16 * 1024) result.output = new TextDecoder().decode(bytes.slice(0, 16 * 1024 - 64)) + "\r\nOutput limit exceeded.";

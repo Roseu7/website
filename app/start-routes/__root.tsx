@@ -4,6 +4,7 @@ import { loadDocument, OsRouteDataContext } from "~/framework/page";
 import { OsShell } from "~/components/os/OsShell";
 import { useOsPage } from "~/components/os/OsContext";
 import { isOsPath } from "~/utils/os";
+import { handleContextMenu } from "~/utils/context-menu";
 import { NotFoundPage } from "~/routes/$";
 import { errorStatus, StopScreen, SystemErrorDialog } from "~/components/os/SystemError";
 import appCss from "~/styles/app.css?url";
@@ -33,7 +34,7 @@ function Document({ children }: { children: React.ReactNode }) {
     <head><HeadContent />
       <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: document?.initialOsPage ? `document.documentElement.classList.remove('dark');` : `(function(){var dark=matchMedia('(prefers-color-scheme: dark)').matches;try{var saved=localStorage.getItem('theme');if(saved!==null)dark=saved==='dark'}catch(_){}document.documentElement.classList.toggle('dark',dark)})();` }} />
     </head>
-    <body className="site-body theme-transition"><div id="theme-transition-layer" className="theme-transition-layer" aria-hidden="true" />
+    <body className="site-body theme-transition" onContextMenu={handleContextMenu}><div id="theme-transition-layer" className="theme-transition-layer" aria-hidden="true" />
       {children}<Scripts />
     </body>
   </html>;

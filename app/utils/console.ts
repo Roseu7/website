@@ -5,3 +5,9 @@ export type ConsoleReply = {
   output: string;
   effect?: "clear" | "exit";
 };
+
+export type ConsoleCompletion = {
+  start: number;
+  end: number;
+  candidates: string[];
+};
