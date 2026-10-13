@@ -52,11 +52,11 @@ export const projects: ProjectItem[] = [
     ],
   },
   {
-    id: "digitalsandbox",
-    alt: "Digital Sandbox project preview",
-    imagePng: "/images/digitalsandbox.png",
-    imageWebp: "/images/digitalsandbox.webp",
-    title: "Digital Sandbox",
+    id: "ros3u",
+    alt: "R OS.3u",
+    imagePng: "/images/R OS.3u.png",
+    imageWebp: "/images/R OS.3u.webp",
+    title: "R OS.3u",
     description: [
       "私がやりたい/作ってみたい機能を実際に作成して、記録に残すサイトです。",
     ],
@@ -64,10 +64,13 @@ export const projects: ProjectItem[] = [
     repoVisibility: "public",
     stack: [
       { label: "TypeScript", tone: "blue" },
-      { label: "TailwindCSS", tone: "cyan" },
-      { label: "DaisyUI", tone: "mono" },
-      { label: "TanStack Router / Start", tone: "sky" },
+      { label: "React", tone: "cyan" },
+      { label: "TanStack Router", tone: "sky" },
+      { label: "TanStack Start", tone: "violet" },
+      { label: "Vite", tone: "violet" },
       { label: "Cloudflare Workers", tone: "orange" },
+      { label: "Tailwind CSS", tone: "cyan" },
+      { label: "daisyUI", tone: "mono" },
     ],
   },
 ];

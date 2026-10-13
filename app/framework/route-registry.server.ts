@@ -6,6 +6,11 @@ export const routeModules = {
   "/privacy": { path: "/privacy", load: async () => ({}) },
   "/terms": { path: "/terms", load: async () => ({}) },
   "/contact": { path: "/contact", load: () => import("~/routes/pages/contact.server") },
+  "/settings": { path: "/settings", load: async () => ({}) },
+  "/settings/about": { path: "/settings/about", load: async () => ({}) },
+  "/settings/history": { path: "/settings/history", load: async () => ({}) },
+  "/console": { path: "/console", load: () => import("~/routes/pages/console.server") },
+  "/api/console": { path: "/api/console", load: () => import("~/routes/api/console") },
   "/tools": { path: "/tools", load: async () => ({}) },
   "/tools/wsolver": { path: "/tools/wsolver", load: async () => ({}) },
   "/tools/jev": { path: "/tools/jev", load: () => import("~/routes/pages/tools/jev.server") },
@@ -63,4 +68,4 @@ export const routeModules = {
   "/*": { path: "/*", load: () => import("~/routes/$.server") },
 };
 
-export const pageRoutes = new Set<string>(["/","/projects","/about","/licenses","/privacy","/terms","/contact","/tools","/tools/wsolver","/tools/jev","/games","/home-control","/auth/access/logout","/apply","/wsolver","/games/umigame","/games/umigame/about","/games/umigame/admin","/games/umigame/admin/jev","/games/umigame/favorites","/games/umigame/licenses","/games/umigame/rankings","/games/umigame/recommend","/games/umigame/results","/games/umigame/author/quality","/games/umigame/new","/games/umigame/p/:id","/games/umigame/p/:id/edit","/games/umigame/p/:id/play","/games/umigame/u/:username","/games/umigame/settings/profile","/*"]);
+export const pageRoutes = new Set<string>(["/","/projects","/about","/licenses","/privacy","/terms","/contact","/settings","/settings/about","/settings/history","/console","/tools","/tools/wsolver","/tools/jev","/games","/home-control","/auth/access/logout","/apply","/wsolver","/games/umigame","/games/umigame/about","/games/umigame/admin","/games/umigame/admin/jev","/games/umigame/favorites","/games/umigame/licenses","/games/umigame/rankings","/games/umigame/recommend","/games/umigame/results","/games/umigame/author/quality","/games/umigame/new","/games/umigame/p/:id","/games/umigame/p/:id/edit","/games/umigame/p/:id/play","/games/umigame/u/:username","/games/umigame/settings/profile","/*"]);

@@ -50,6 +50,12 @@ services/
 db/
 config.yml
 
+# Private virtual command environment and puzzle content
+/app/utils/console.server.ts
+
+# Local source font archive
+/assets/fonts/unused/
+
 # Local infra credentials
 .cloudflared/
 **/.cloudflared/

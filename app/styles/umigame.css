@@ -1,41 +1,160 @@
-/* 共通要素・初期レイアウト・アバター */
-@import "./umigame/00-base.css";
 
-/* アカウント・設定・履歴 */
-@import "./umigame/10-account-history.css";
+@import "./umigame/00-base.css" layer(feature);
+@import "./umigame/10-account-history.css" layer(feature);
+@import "./umigame/20-submission-list.css" layer(feature);
+@import "./umigame/30-hints-comments.css" layer(feature);
+@import "./umigame/40-layout.css" layer(feature);
+@import "./umigame/50-votes-profiles.css" layer(feature);
+@import "./umigame/60-about-community.css" layer(feature);
+@import "./umigame/70-recommendations.css" layer(feature);
+@import "./umigame/90-licenses-layout.css" layer(feature);
+@import "./umigame/100-account-golden.css" layer(feature);
+@import "./umigame/110-play-results.css" layer(feature);
+@import "./umigame/120-author-quality.css" layer(feature);
+@import "./umigame/130-dialog.css" layer(feature);
+@layer overrides {
 
-/* 問題投稿・問題一覧 */
-@import "./umigame/20-submission-list.css";
+.os-page-content :is(.umigame-card, .umigame-thread-item) { padding: 16px; border: 1px solid var(--os-shadow); background: var(--bg-base); }
+.os-page-content :is(.umigame-card__meta, .umigame-kicker, .umigame-count, .umigame-detail-meta, .umigame-back-link) { font-size: 14px; letter-spacing: 0; }
+.os-page-content .umigame-page-head { flex-wrap: wrap; }
 
-/* ヒント・コメント */
-@import "./umigame/30-hints-comments.css";
+.os-page-content .umigame-recommend-form { padding: 16px; border: 1px solid var(--os-shadow); background: var(--bg-base); }
+.os-page-content .umigame-recommend-note { font-size: 14px; }
+.os-page-content .umigame-field > span { font-size: 14px; }
+.os-page-content .umigame-recommend-form__actions .site-button { font-size: 14px; }
+.os-page-content :is(.umigame-input, .umigame-select, .umigame-textarea) { min-height: 44px; padding: 8px 12px; line-height: 1.5; }
+@media (max-width: 760px) {
+  .os-page-content .umigame-recommend-form { grid-template-columns: minmax(0, 1fr); grid-template-areas: "query" "note" "actions"; gap: 16px; }
+}
+.os-page-content :is(.umigame-about-section, .umigame-about-intro, .umigame-control-block, .umigame-truth, .umigame-filter-panel, .umigame-empty) { padding: 16px; border: 1px solid var(--os-shadow); background: var(--bg-base); }
+.os-page-content .umigame-about-flow { grid-template-columns: minmax(0, 1fr); }
+.os-page-content .umigame-about-flow li { border-radius: 0; border-color: var(--os-shadow); background: var(--os-face); }
+.os-page-content :is(.umigame-about-section__title, .umigame-section-head) { flex-wrap: wrap; }
+.os-page-content .umigame-about-reference__links a { font-size: 14px; }
 
-/* 一覧・詳細・プレイのレイアウト調整 */
-@import "./umigame/40-layout.css";
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide) {
+  align-items: center;
+  line-height: 1;
+}
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide[height="12"]) {
+  font-size: 12px;
+}
 
-/* 投票・公開プロフィール */
-@import "./umigame/50-votes-profiles.css";
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide[height="13"]) {
+  font-size: 13px;
+}
 
-/* 情報・管理・お気に入り・ランキング */
-@import "./umigame/60-about-community.css";
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide[height="14"]) {
+  font-size: 14px;
+}
 
-/* おすすめ */
-@import "./umigame/70-recommendations.css";
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide[height="15"]) {
+  font-size: 15px;
+}
 
-/* Jev監視 */
-@import "./umigame/80-observability.css";
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide[height="16"]) {
+  font-size: 16px;
+}
 
-/* ライセンス・共通表示の調整 */
-@import "./umigame/90-licenses-layout.css";
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide[height="17"]) {
+  font-size: 17px;
+}
 
-/* 退会・Golden Test */
-@import "./umigame/100-account-golden.css";
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide[height="18"]) {
+  font-size: 18px;
+}
 
-/* プレイ履歴・結果表示 */
-@import "./umigame/110-play-results.css";
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide[height="20"]) {
+  font-size: 20px;
+}
 
-/* 類似問題・作者向け品質分析 */
-@import "./umigame/120-author-quality.css";
+:where(.umigame-icon-label,
+.umigame-about-section__title,
+.umigame-history-head__title):has(> svg.lucide[height="22"]) {
+  font-size: 22px;
+}
 
-/* 共通ダイアログ */
-@import "./umigame/130-dialog.css";
+.umigame-icon-label {
+  display: inline-flex;
+  gap: 0.65rem;
+}
+
+.umigame-section-head:has(.umigame-icon-label) > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.umigame-icon-label.umigame-icon-label > svg.lucide {
+  flex: none;
+}
+
+.umigame-icon-label.umigame-icon-label > h2 {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.umigame-about-section__title:has(> svg.lucide) > h2,
+.umigame-history-head__title:has(> svg.lucide) > h2 {
+  font-size: inherit;
+  line-height: inherit;
+}
+.umigame-play-count:has(> svg.lucide),
+.umigame-difficulty:has(> svg.lucide) {
+  font-size: var(--umigame-puzzle-meta-icon-size, 17px);
+}
+
+.umigame-vote-summary:has(> svg.lucide) {
+  font-size: var(--umigame-puzzle-meta-icon-size, 15px);
+}
+
+.umigame-vote-summary:has(> svg.lucide) > svg.lucide {
+  width: var(--umigame-puzzle-meta-icon-size, 15px);
+  height: var(--umigame-puzzle-meta-icon-size, 15px);
+}
+.umigame-card__stats .umigame-play-count:has(> svg.lucide),
+.umigame-card__stats .umigame-vote-summary:has(> svg.lucide) {
+  font-size: var(--umigame-puzzle-meta-icon-size, 12px);
+}
+
+.umigame-detail-head__stats .umigame-play-count:has(> svg.lucide),
+.umigame-detail-head__stats .umigame-difficulty:has(> svg.lucide) {
+  font-size: var(--umigame-puzzle-meta-icon-size, 17px);
+}
+
+.umigame-comments__login:has(> svg.lucide[height="17"]) {
+  align-items: center;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.umigame-comment__spoiler > div > strong:has(> svg.lucide[height="17"]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.umigame-comment__spoiler:has(strong > svg.lucide) {
+  grid-template-columns: minmax(0, 1fr);
+}
+}

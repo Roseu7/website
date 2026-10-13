@@ -1,6 +1,6 @@
-import { useMemo, useState, useEffect, type AnchorHTMLAttributes, type FormHTMLAttributes, type ReactNode } from "react";
+import { useContext, useMemo, useState, useEffect, type AnchorHTMLAttributes, type FormHTMLAttributes, type ReactNode } from "react";
 import { Link as RouterLink, useRouter, useRouterState } from "@tanstack/react-router";
-import { usePageState } from "./page";
+import { OsRouteDataContext, usePageState } from "./page";
 import type { ResultData } from "./http";
 export type { AppLoadContext, LoaderFunctionArgs, ActionFunctionArgs } from "./http";
 
@@ -17,7 +17,9 @@ export function NavLink({ className, ...props }: Omit<LinkProps, "className"> & 
   return <Link {...props} aria-current={isActive ? "page" : undefined} className={typeof className === "function" ? className({ isActive }) : className} />;
 }
 export function useLoaderData<T>() {
-  return useRouterState({ select: s => s.matches[s.matches.length - 1]?.loaderData }) as ResultData<T>;
+  const retained = useContext(OsRouteDataContext);
+  const current = useRouterState({ select: s => s.matches[s.matches.length - 1]?.loaderData });
+  return (retained ? retained.data : current) as ResultData<T>;
 }
 export function useRouteLoaderData<T = unknown>(_id: string) {
   return useRouterState({ select: s => s.matches[0]?.loaderData }) as ResultData<T> | undefined;
@@ -29,7 +31,7 @@ export function useNavigation() {
   return { state: pending ? "submitting" : loading ? "loading" : "idle" };
 }
 export function useLocation() {
-  return useRouterState({ select: s => ({ pathname: s.location.pathname, search: s.location.searchStr, hash: s.location.hash ? "#" + s.location.hash : "", key: s.location.state.__TSR_key ?? "initial" }) });
+  return useRouterState({ select: s => ({ pathname: s.location.pathname, search: s.location.searchStr, hash: s.location.hash ? "#" + s.location.hash : "", key: s.location.state.__TSR_key ?? "initial", index: s.location.state.__TSR_index }) });
 }
 export function useNavigate() {
   const router = useRouter();
@@ -79,9 +81,9 @@ export function Form({ method = "get", action, onSubmit, preventScrollReset, rep
   }} />;
 }
 export function useFetcher<T>() {
-  const [result, setResult] = useState<T>(); const [pending, setPending] = useState(false);
+  const [result, setResult] = useState<ResultData<T>>(); const [pending, setPending] = useState(false);
   const FetcherForm = useMemo(() => function FetcherForm(props: FormProps) {
-    return <Form {...props} onResult={value => setResult(value as T)} onPending={setPending} />;
+    return <Form {...props} onResult={value => setResult(value as ResultData<T>)} onPending={setPending} />;
   }, []);
   return { Form: FetcherForm, data: result, state: pending ? "submitting" : "idle" };
 }

@@ -11,8 +11,8 @@
   --space-300: 1.5rem;
   --space-400: 2rem;
   --space-500: 2.5rem;
-  --font-body: "BIZ UDPGothic", "Noto Serif JP", "Noto Sans JP", serif;
-  --font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --font-body: "DotGothic16", monospace;
+  --font-mono: "DotGothic16", monospace;
   --bg-canvas: #f7f7f5;
   --bg-base: #f7f7f5;
   --bg-strong: #ffffff;
@@ -62,27 +62,11 @@ html.dark {
 }
 
 @font-face {
-  font-family: "Noto Sans JP";
-  font-style: normal;
-  font-weight: 100;
-  font-display: swap;
-  src: url("/fonts/NotoSansJP/NotoSansJP-Thin.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Noto Sans JP";
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/fonts/NotoSansJP/NotoSansJP-Light.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Noto Sans JP";
+  font-family: "DotGothic16";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/NotoSansJP/NotoSansJP-Regular.woff2") format("woff2");
+  src: url("/fonts/DotGothic16/DotGothic16-Regular.woff2") format("woff2");
 }
 
 *,
@@ -107,6 +91,26 @@ body {
   line-height: 1.85;
   letter-spacing: 0.012em;
   text-rendering: optimizeLegibility;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+main:not(.os-stage),
+.os-window-content {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+:where(h1, h2, h3, h4, h5, h6, button, label, summary, nav, .btn, .site-header, .site-footer, .os-titlebar, .tech-tag) {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 *::-webkit-scrollbar {

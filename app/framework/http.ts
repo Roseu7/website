@@ -2,6 +2,7 @@ export interface AppLoadContext {
   cspNonce: string;
   cloudflare: { env: Env; ctx: ExecutionContext };
   pageAction?: { route: string; data: unknown };
+  pageResponse?: { status?: number };
 }
 
 export interface LoaderFunctionArgs {

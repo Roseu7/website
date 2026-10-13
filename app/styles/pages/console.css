@@ -1,0 +1,27 @@
+@layer overrides {
+  .os-window[data-app="console"] .os-window-content { padding: 0; background: #211536; }
+  .os-console-page { height: 100%; }
+  .os-console-surface { min-height: 100%; padding: 8px; color: #fff8ff; background: #211536; font-family: var(--os-font); font-size: 14px; line-height: 1.6; }
+  .os-console-output pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; color: inherit; }
+  .os-console-command { display: flex; flex-direction: column; align-items: stretch; margin: 0; scroll-margin-block: 12px; }
+  .os-console-line { display: flex; align-items: baseline; gap: 4px; }
+  .os-console-prompt { min-width: 0; max-width: 70%; overflow-wrap: anywhere; }
+  .os-console-input { flex: 1; min-width: 0; min-height: 24px; width: 0; padding: 0; border: 0; border-radius: 0; outline: none; color: #fff8ff; background: transparent; font: inherit; caret-color: #fff8ff; }
+  .os-console-input:focus-visible { outline: none; }
+  .os-console-actions { display: none; }
+  @media (min-width: 761px) {
+    .os-window[data-app="console"]:not(.os-window--maximized) { width: min(760px, calc(100% - 200px)); height: min(520px, calc(100% - 140px)); }
+  }
+  @media (max-width: 760px) {
+    .os-console-surface { padding: 12px; font-size: 16px; }
+    .os-console-command { gap: 8px; }
+    .os-console-input { min-height: 44px; }
+    .os-console-actions { display: flex; justify-content: flex-end; gap: 4px; }
+    .os-console-action { position: relative; display: flex; }
+    .os-console-actions button { display: grid; place-items: center; width: 44px; height: 44px; padding: 4px; border: 1px solid #bff3f3; background: #3d2166; color: #fff8ff; font: inherit; }
+    .os-console-tooltip { position: absolute; z-index: 1; top: calc(100% + 4px); right: 0; padding: 2px 6px; border: 1px solid #bff3f3; background: #211536; color: #fff8ff; font-size: 14px; white-space: nowrap; pointer-events: none; }
+    .os-console-actions button:active { background: #5022c4; }
+    .os-console-actions button:focus-visible { outline-color: #bff3f3; }
+    .os-console-actions button:disabled { color: #ad8bd2; }
+  }
+}

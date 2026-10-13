@@ -277,7 +277,7 @@ export default function JevPage() {
 
   return (
     <PageLayout contentClassName="page-stack">
-      <PageIntro title="Jev" headingLevel="h2" />
+      <PageIntro title="Jev" headingLevel="h2" hideInOs />
 
       {!authenticated ? (
         <section className="jev-login">

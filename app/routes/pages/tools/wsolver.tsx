@@ -1,6 +1,5 @@
 import * as React from "react";
-import { X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { PageIntro } from "~/components/layout/PageIntro";
 import {
@@ -11,6 +10,7 @@ import {
   isCompletePattern,
 } from "~/utils/wordle";
 import { siteConfig } from "~/utils/site";
+import { OsWindowActiveContext } from "~/components/os/OsContext";
 
 interface AttemptRow {
   id: number;
@@ -114,6 +114,7 @@ function isEditableElement(target: EventTarget | null) {
 }
 
 export default function WordleSolverPage() {
+  const windowActive = useContext(OsWindowActiveContext);
   const [attempts, setAttempts] = useState<AttemptRow[]>([]);
   const [draftLetters, setDraftLetters] = useState<string[]>([...EMPTY_DRAFT]);
   const [selectedDraftIndex, setSelectedDraftIndex] = useState<number | null>(0);
@@ -172,7 +173,7 @@ export default function WordleSolverPage() {
   }, []);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 720px)");
+    const mediaQuery = window.matchMedia("(max-width: 760px)");
     const updateIsMobile = () => {
       setIsMobile(mediaQuery.matches);
     };
@@ -459,7 +460,7 @@ export default function WordleSolverPage() {
   }, [attempts.length, draftLetters]);
 
   useEffect(() => {
-    if (isMobile) {
+    if (isMobile || !windowActive) {
       return;
     }
 
@@ -535,6 +536,7 @@ export default function WordleSolverPage() {
     findNextDraftIndex,
     focusIndexAfterInput,
     isMobile,
+    windowActive,
     handleDraftPaste,
     replaceDraftLetter,
     selectedDraftIndex,
@@ -570,6 +572,7 @@ export default function WordleSolverPage() {
         title="Wordle Solver"
         description="Wordleを効率的に解くツール"
         headingLevel="h2"
+        hideInOs
       />
 
       <section className="solver-layout">
@@ -617,17 +620,16 @@ export default function WordleSolverPage() {
                 <button
                   type="button"
                   onClick={() => deleteRow(row.id)}
-                  className="btn site-icon-button"
+                  className="btn site-button site-button--small"
                   aria-label="入力済み行を削除"
                 >
-                  <X size={16} aria-hidden="true" />
+                  削除
                 </button>
               </div>
             ))}
           </div>
 
           <div className="solver-draft">
-            <p className="solver-label">推測語を入力</p>
             <div className="solver-draft__row">
               {isMobile
                 ? draftLetters.map((letter, index) => (
@@ -648,21 +650,24 @@ export default function WordleSolverPage() {
                       onKeyDown={(event) => handleMobileDraftInputKeyDown(index, event)}
                       onPaste={(event) => handleMobileDraftPaste(index, event)}
                       className="solver-draft-input"
-                      aria-label={`推測語の${index + 1}文字目`}
+                      aria-label={`推測語の${index + 1}文字目${letter ? `：${letter.toUpperCase()}` : ""}`}
                     />
                   ))
                 : draftLetters.map((letter, index) => (
+                    <span key={`draft-${index}`} className="solver-draft-control">
                     <button
-                      key={`draft-${index}`}
                       type="button"
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={() => handleDraftTileClick(index)}
                       className={`solver-draft-tile${selectedDraftIndex === index ? " is-selected" : ""}`}
-                      aria-label={`推測語の${index + 1}文字目`}
+                      aria-label={`推測語の${index + 1}文字目${letter ? `：${letter.toUpperCase()}` : ""}`}
                       aria-pressed={selectedDraftIndex === index}
+                      aria-describedby={`solver-draft-tip-${index}`}
                     >
                       {letter.toUpperCase()}
                     </button>
+                    <span role="tooltip" id={`solver-draft-tip-${index}`} className="os-tooltip">{index + 1}文字目を入力</span>
+                    </span>
                   ))}
               <button
                 type="button"
@@ -711,15 +716,7 @@ export default function WordleSolverPage() {
                 <div key={item.word} className="candidate-row">
                   <span className="candidate-row__rank">#{index + 1}</span>
                   <span className="candidate-row__word">{item.word}</span>
-                  <span className="candidate-row__summary">
-                    <span className="candidate-row__meta">
-                      期待:{item.expectedRemaining?.toFixed(2) ?? "-"}
-                    </span>
-                    <span className="candidate-row__meta">
-                      最大:{item.worstBucket ?? "-"}
-                    </span>
-                    {item.safe ? <span className="candidate-row__safe">safe</span> : null}
-                  </span>
+                  {item.safe ? <span className="candidate-row__safe">safe</span> : null}
                 </div>
               ))}
               {solver.candidateSuggestions.length === 0 ? (
@@ -737,10 +734,7 @@ export default function WordleSolverPage() {
                 <div key={item.word} className="candidate-row">
                   <span className="candidate-row__rank">#{index + 1}</span>
                   <span className="candidate-row__word">{item.word}</span>
-                  <span className="candidate-row__summary">
-                    <span className="candidate-row__meta">分岐:{item.probeLetterCount}</span>
-                    <span className="candidate-row__meta">重み:{item.probeLetterScore}</span>
-                  </span>
+
                 </div>
               ))}
               {solver.explorationSuggestions.length === 0 ? (

@@ -1,0 +1,62 @@
+
+
+html:has(.os-error-screen) { scrollbar-gutter: auto; background: #0000aa; }
+.os-error-screen { box-sizing: border-box; min-height: 100svh; padding: 40px 32px; background: #0000aa; color: #fff8ff; font-family: "DotGothic16", monospace; font-size: 16px; line-height: 1.5; color-scheme: dark; }
+.os-error-screen:focus { outline: none; }
+.os-error-screen__content { display: grid; gap: 24px; max-width: 960px; }
+.os-error-screen p, .os-error-screen h1 { margin: 0; text-wrap: wrap; }
+.os-error-screen h1 { font-size: 16px; font-weight: 400; line-height: inherit; }
+.os-error-screen__brand { white-space: nowrap; }
+.os-error-screen__mobile { display: none; }
+.os-error-screen__technical { display: grid; gap: 4px; }
+.os-error-screen__code span, .os-error-screen__module span { display: inline-block; }
+.os-error-screen__http { font-size: 14px; }
+.os-error-screen__home { display: flex; align-items: center; justify-self: start; min-height: 44px; padding: 8px 16px; border: 1px solid #fff8ff; color: #fff8ff; line-height: 1.5; text-decoration: none; }
+.os-error-screen__home:hover { background: #fff8ff; color: #0000aa; }
+.os-error-screen :focus-visible { outline: 2px dashed #fff8ff; outline-offset: 4px; }
+.os-error-screen ::selection { background: #fff8ff; color: #0000aa; }
+
+@media (max-width: 760px) {
+  .os-error-screen { padding: 32px 16px; }
+}
+
+@media (max-width: 760px) {
+  .os-error-screen__content { gap: 20px; }
+}
+
+@media (max-width: 760px) {
+  .os-error-screen .os-error-screen__desktop { display: none; }
+}
+
+@media (max-width: 760px) {
+  .os-error-screen__mobile { display: block; }
+}
+
+.os-system-error { display: grid; gap: 24px; padding: 8px; }
+
+.os-system-error:focus { outline: none; }
+
+.os-system-error__message { display: flex; align-items: flex-start; gap: 24px; }
+
+.os-system-error__message > div { flex: 1; min-width: 0; }
+
+.os-system-error h1 { font-size: 24px; line-height: 1.5; margin: 0 0 16px; text-wrap: balance; }
+.os-system-error__title-part { display: inline-block; }
+
+.os-system-error p { margin: 0 0 16px; overflow-wrap: anywhere; }
+
+.os-system-error__symbol { flex: 0 0 44px; display: grid; place-items: center; height: 44px; border: 2px solid #fff8ff; outline: 1px solid #942b54; background: #942b54; color: #fff8ff; }
+.os-system-error__symbol svg { display: block; width: 24px; height: 24px; }
+
+.os-system-error__code { font-size: 14px; }
+
+.os-system-error__ok { justify-self: end; min-width: 88px; }
+
+@media (max-width: 760px) {
+  .os-system-error { padding: 0; } }
+
+@media (max-width: 760px) {
+  .os-system-error__message { gap: 16px; flex-wrap: wrap; } }
+
+@media (max-width: 760px) {
+  .os-system-error h1 { font-size: 24px; } }

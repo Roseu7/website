@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useOsPage } from "~/components/os/OsContext";
 
 import { Link, useActionData, useLoaderData } from "~/framework/navigation";
 
@@ -23,9 +24,9 @@ const homeTitleText = homeTitleLines.join("");
 
 const siteDescription = "作ってみたいものを、ちゃんと動く形で残していく個人サイト。";
 
-const socialImageUrl = "https://roseu.net/images/digitalsandbox.png?v=20260614";
+const socialImageUrl = "https://roseu.net/images/R%20OS.3u.png";
 
-const socialImageAlt = "Digital Sandbox";
+const socialImageAlt = "R OS.3u";
 
 const homeTitleInitialDelayMs = 1000;
 
@@ -119,8 +120,8 @@ export const meta = ({ data }: { data?: { isHomeControlHost?: boolean; isMcDashb
     { property: "og:description", content: siteDescription },
     { property: "og:image", content: socialImageUrl },
     { property: "og:image:type", content: "image/png" },
-    { property: "og:image:width", content: "1242" },
-    { property: "og:image:height", content: "699" },
+    { property: "og:image:width", content: "1600" },
+    { property: "og:image:height", content: "900" },
     { property: "og:image:alt", content: socialImageAlt },
     { property: "og:url", content: "https://roseu.net" },
     { property: "og:type", content: "website" },
@@ -138,6 +139,7 @@ export const meta = ({ data }: { data?: { isHomeControlHost?: boolean; isMcDashb
 };
 
 export default function Home() {
+  const osPage = useOsPage();
   const actionData = useActionData<typeof action>() as { linkError?: string } | undefined;
   const loaderData = useLoaderData<typeof loader>() as { isHomeControlHost: boolean; isMcDashboardHost?: boolean; mcDashboardData?: McDashboardLoaderData };
   const { isHomeControlHost } = loaderData;
@@ -149,6 +151,8 @@ export default function Home() {
   if (loaderData.isMcDashboardHost && loaderData.mcDashboardData) {
     return <McDashboardPage data={loaderData.mcDashboardData} linkError={actionData?.linkError ?? null} />;
   }
+
+  if (osPage) return null;
 
   return (
     <PageLayout

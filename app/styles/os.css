@@ -1,0 +1,30 @@
+@import "./os/shared.css" layer(overrides);
+@import "./os/desktop.css" layer(overrides);
+@import "./os/mobile.css" layer(overrides);
+
+@layer overrides {
+  .os-shell .os-window[data-app].os-window--error { width: min(520px, calc(100% - 48px)); height: auto; min-height: 0; max-height: calc(100% - 48px); }
+  .os-window--error .os-window-content { padding: 20px; }
+  .os-window--error .os-system-error { gap: 16px; padding: 0; }
+  .os-window--error .os-system-error__message { gap: 16px; }
+  .os-window--error .os-system-error h1 { margin-bottom: 12px; }
+  .os-window--error .os-system-error p { margin-bottom: 12px; }
+  .os-window--error .os-system-error__code { margin-bottom: 0; }
+  @media (max-width: 760px) {
+    .os-error-shade { position: absolute; inset: 0; z-index: 100; background: rgb(33 21 54 / 42%); }
+    .os-shell .os-window.os-window--backdrop { display: flex; pointer-events: none; }
+    .os-shell .os-window[data-app].os-window--error { inset: 50% auto auto 50%; width: min(340px, calc(100% - 32px)); transform: translate(-50%, -50%); border: 2px solid var(--os-shadow); border-radius: 12px; overflow: hidden; background: linear-gradient(#fff1fc, #dfc8ee); box-shadow: 0 4px 16px rgb(33 21 54 / 45%), inset 0 1px var(--os-light); }
+    .os-window--error .os-titlebar { display: none; }
+    .os-window--error .os-window-content { display: flex; margin: 0; padding: 0; border: 0; background: transparent; }
+    .os-window--error .os-system-error { display: flex; flex-direction: column; width: 100%; gap: 0; }
+    .os-window--error .os-system-error__message { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px; row-gap: 12px; padding: 20px 16px; overflow: auto; }
+    .os-window--error .os-system-error__message > div { display: contents; }
+    .os-window--error .os-system-error__symbol { grid-column: 1; grid-row: 1; align-self: center; }
+    .os-window--error .os-system-error h1 { grid-column: 2; grid-row: 1; align-self: center; margin: 0; }
+    .os-window--error .os-system-error p { grid-column: 2; margin: 0; }
+    .os-window--error .os-system-error__ok { flex-shrink: 0; width: 100%; min-height: 52px; margin: 0; border: 0; border-top: 1px solid var(--os-shadow); border-radius: 0; background: linear-gradient(#f4e4fa, #d4bde9); box-shadow: inset 0 1px var(--os-light); font-size: 16px; }
+    .os-window--error .os-system-error__ok:active { background: var(--os-shadow); }
+    .os-window--error .os-system-error__ok:focus-visible { outline-offset: -5px; }
+    .os-shell:has(.os-window--error.is-active) .os-desktop__message { visibility: hidden; }
+  }
+}

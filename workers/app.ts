@@ -22,12 +22,17 @@ export default {
     const headers = new Headers(request.headers);
     // The nonce is generated here; never trust an incoming value of this header.
     headers.set("X-Website-Nonce", cspNonce);
+    // Router SSR classifies loader failures as 500; retain the handler's HTTP error status.
+    const pageResponse: { status?: number } = {};
     const response = await handler.fetch(new Request(request, { headers }), { context: {
       cspNonce,
       nonce: cspNonce,
+      pageResponse,
       cloudflare: { env, ctx },
     } });
-    return withSecurityHeaders(request, response, cspNonce);
+    const rendered = pageResponse.status && pageResponse.status >= 400
+      ? new Response(response.body, { status: pageResponse.status, headers: response.headers }) : response;
+    return withSecurityHeaders(request, rendered, cspNonce);
   },
 
   async queue(batch: MessageBatch<UmigameQueueMessage>, env) {

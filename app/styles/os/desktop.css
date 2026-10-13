@@ -1,0 +1,86 @@
+@media (min-width: 761px) {
+.os-stage { height: calc(100svh - 48px); min-height: 540px; }
+.os-desktop { padding: 24px 32px; }
+.os-desktop--maximized .os-app-grid, .os-desktop--maximized .os-desktop__brand { visibility: hidden; }
+.os-desktop__brand { position: absolute; top: 24px; right: 32px; }
+.os-desktop__brand .os-brand { font-size: 24px; }
+.os-app-grid { gap: 12px; width: 112px; }
+.os-app-icon { min-height: 84px; }
+.os-app-icon__label { padding-inline: 4px; }
+.os-shortcut { position: absolute; left: 0; bottom: 0; width: 12px; height: 12px; }
+.os-desktop__message { left: 27%; top: 36%; right: 8%; }
+.os-desktop__message h1 { font-size: 32px; }
+.os-desktop__message-line { padding-inline-start: 1em; }
+.os-desktop__owner { font-size: 16px; }
+
+.os-window { top: 0; left: 0; width: min(880px, calc(100% - 200px)); height: calc(100% - 220px); transform: translate(var(--window-x, max(180px, 17vw)), var(--window-y, 76px)); border: 2px solid var(--os-edge); padding: 3px; background: var(--os-face); box-shadow: inset 1px 1px var(--os-light), 3px 3px 0 var(--os-cyan), 4px 4px 0 var(--os-edge); }
+.os-window--maximized { inset: 0; width: auto; height: auto; transform: none; border: 0; padding: 0; box-shadow: none; }
+.os-window--maximized .os-titlebar { border: 0; }
+.os-window--maximized .os-window-content { border: 0; margin: 0; }
+.os-window--maximized .os-titlebar { cursor: default; }
+.os-window:not(.is-active) .os-titlebar { border-color: var(--os-shadow); background: #e3deeb; color: var(--ink-3); }
+.os-titlebar__name--mobile { display: none; }
+.os-window:not(.is-active) .os-titlebar :focus-visible { outline-color: var(--ink-1); }
+.os-window:not(.is-active) .os-window-controls button { border-color: var(--os-shadow); color: var(--ink-3); }
+.os-control-min { width: 12px; height: 3px; align-self: end; margin-bottom: 6px; background: currentColor; }
+.os-control-max { width: 14px; height: 14px; border: 2px solid currentColor; border-top-width: 4px; }
+.os-control-restore { display: block; width: 16px; height: 16px; }
+
+.os-taskbar { position: relative; z-index: 100; display: flex; gap: 8px; align-items: center; height: 48px; padding: 6px 8px; background: var(--os-face); border-top: 1px solid var(--os-shadow); box-shadow: inset 0 1px var(--os-light); font-family: var(--os-font); }
+.os-taskbar__home { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 1px solid var(--os-dark); background: var(--os-face); font-size: 16px; line-height: 1.5; box-shadow: inset 1px 1px var(--os-light), inset -1px -1px var(--os-shadow); }
+.os-taskbar__home { font-weight: 700; padding-inline: 8px 12px; border-width: 2px; border-color: var(--os-light) var(--os-dark) var(--os-dark) var(--os-light); }
+.os-start-emblem { display: grid; grid-template-columns: repeat(2, 9px); grid-template-rows: repeat(2, 9px); gap: 2px; transform: skewY(-10deg); }
+.os-start-emblem i { background: var(--os-edge); }
+.os-start-emblem i:nth-child(2), .os-start-emblem i:nth-child(3) { background: #49aebd; }
+.os-taskbar__home[aria-expanded="true"] { border-color: var(--os-dark) var(--os-light) var(--os-light) var(--os-dark); background: #e4c9ed; }
+.os-taskbar__home:active, .os-taskbar__home[aria-expanded="true"] { box-shadow: inset 1px 1px var(--os-shadow); }
+.os-start-panel:not([hidden]) { position: absolute; z-index: 110; display: flex; bottom: 48px; left: 8px; width: 280px; padding: 3px; border: 1px solid var(--os-dark); background: var(--os-face); box-shadow: inset 1px 1px var(--os-light), inset -1px -1px var(--os-shadow); }
+.os-start-panel__brand { display: flex; align-items: flex-end; width: 36px; padding: 12px 4px; background: var(--os-edge); }
+.os-start-panel__brand .os-brand { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 20px; color: white; }
+.os-start-panel__items { flex: 1; min-width: 0; }
+.os-start-item { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 8px 12px; font-size: 16px; text-align: left; color: var(--ink-1); }
+.os-start-item .os-pixel-icon { width: 24px; height: 24px; }
+.os-start-item:hover, .os-start-item:focus-visible { background: var(--os-edge); color: white; }
+.os-start-item--desktop { margin-top: 4px; border-top: 1px solid var(--os-shadow); box-shadow: inset 0 1px var(--os-light); }
+.os-taskbar__tasks { display: flex; gap: 6px; min-width: 0; overflow-x: auto; padding: 2px; }
+.os-task { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; min-width: 120px; min-height: 36px; padding: 4px 12px; border: 1px solid var(--os-dark); background: var(--os-face); font-size: 14px; line-height: 1.5; box-shadow: inset 1px 1px var(--os-light), inset -1px -1px var(--os-shadow); }
+.os-task .os-pixel-icon { width: 20px; height: 20px; }
+.os-task.is-active { background: repeating-conic-gradient(var(--os-light) 0% 25%, var(--os-face) 0% 50%) 0 0 / 4px 4px; color: var(--ink-1); box-shadow: inset 1px 1px var(--os-shadow); }
+.os-task:active { box-shadow: inset 1px 1px var(--os-shadow); }
+.os-start-item:hover .os-pixel-icon--profile path, .os-start-item:focus-visible .os-pixel-icon--profile path { fill: #fff8ff; }
+.os-task:hover { text-decoration: underline; text-underline-offset: 4px; }
+.os-mobile-controls, .os-mobile-status, .os-history { display: none; }
+.os-mobile-status { user-select: none; -webkit-user-select: none; }
+  .os-window:not(.os-window--maximized)[data-app="about"] { height: min(520px, calc(100% - 140px)); }
+  .os-window:not(.os-window--maximized)[data-app="games"] { height: min(360px, calc(100% - 140px)); }
+  .os-window:not(.os-window--maximized)[data-app="tools"] { height: min(440px, calc(100% - 140px)); }
+
+@media (min-width: 761px) and (max-height: 730px) {
+  .os-stage { min-height: 460px; }
+  .os-app-grid { gap: 0; }
+  .os-app-grid { grid-auto-flow: column; grid-template-rows: repeat(6, 72px); grid-template-columns: repeat(2, 112px); width: 224px; }
+  .os-app-icon { min-height: 72px; gap: 4px; }
+  .os-app-icon .os-pixel-icon { width: 24px; height: 24px; }
+  .os-shortcut { width: 8px; height: 8px; }
+  .os-window { height: calc(100% - 132px); }
+}
+
+@media (max-width: 1000px) {
+  .os-desktop__message { left: 25%; right: 4%; }
+  .os-desktop__message h1 { font-size: 24px; }
+}
+
+
+@media (prefers-reduced-motion: no-preference) {
+  .os-start-panel:not([hidden]) { animation: osStartPanelIn 200ms steps(6, end); transform-origin: bottom left; }
+  .os-start-panel.is-closing:not([hidden]) { animation: osStartPanelOut 200ms steps(6, end) forwards; pointer-events: none; }
+}
+@keyframes osStartPanelIn {
+  from { transform: scaleY(.1); }
+  to { transform: scaleY(1); }
+}
+@keyframes osStartPanelOut {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(.1); }
+}
+}

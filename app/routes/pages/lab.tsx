@@ -5,13 +5,13 @@ import { ToolsDirectory } from "~/routes/pages/tools/index";
 
 export default function LabPage() {
   return <PageLayout contentClassName="page-stack lab-page">
-    <PageIntro title="Lab" />
+    <PageIntro title="Lab" hideInOs />
     <section className="lab-section" aria-labelledby="lab-games-title">
-      <h2 id="lab-games-title" className="lab-section__title">Games</h2>
+      <h2 id="lab-games-title" className="lab-section__title">ゲーム</h2>
       <GamesDirectory headingLevel="h3" />
     </section>
     <section className="lab-section" aria-labelledby="lab-tools-title">
-      <h2 id="lab-tools-title" className="lab-section__title">Tools</h2>
+      <h2 id="lab-tools-title" className="lab-section__title">ツール</h2>
       <ToolsDirectory headingLevel="h3" />
     </section>
   </PageLayout>;

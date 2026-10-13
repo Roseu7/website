@@ -9,7 +9,7 @@ export const meta = () => [
 export default function LicensesPage() {
   return (
     <PageLayout contentClassName="page-stack">
-      <PageIntro title="Licenses" />
+      <PageIntro title="ライセンス" hideInOs />
 
       <section className="license-block">
         <h2>ソフトウェア</h2>
@@ -24,22 +24,12 @@ export default function LicensesPage() {
 
       <section className="license-block">
         <h2>フォント</h2>
-        <p>
-          サイトで配布しているフォントファイルは、次の各ライセンスで提供されています。
-        </p>
         <ul>
-          <li>Noto Sans JP — SIL Open Font License 1.1</li>
-          <li>Poppins — SIL Open Font License 1.1</li>
-          <li>Encode Sans SC — SIL Open Font License 1.1</li>
+          <li>DotGothic16 — SIL Open Font License 1.1</li>
         </ul>
       </section>
 
       <section className="license-block">
-        <h2>ライセンス本文</h2>
-        <p>
-          各ソフトウェアの著作権表示とライセンス全文、フォントの著作権表示と
-          SIL Open Font License全文を掲載しています。
-        </p>
         <p>
           <a
             href="/third-party-notices.txt"

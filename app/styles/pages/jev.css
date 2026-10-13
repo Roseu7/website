@@ -1,3 +1,4 @@
+@layer feature {
 .jev-layout {
   display: grid;
   grid-template-columns: minmax(18rem, 0.9fr) minmax(0, 1.1fr);
@@ -526,4 +527,10 @@
   .jev-login .site-button {
     width: 100%;
   }
+}
+
+}
+
+@layer overrides {
+
 }

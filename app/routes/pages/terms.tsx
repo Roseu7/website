@@ -7,7 +7,7 @@ export const meta = () => [
   { title: `利用規約 | ${siteConfig.fullName}` },
   {
     name: "description",
-    content: "Digital Sandboxのサイトおよび各サービスの利用条件です。",
+    content: `${siteConfig.name}のサイトおよび各サービスの利用条件です。`,
   },
 ];
 
@@ -17,12 +17,12 @@ export default function TermsPage() {
 
   return (
     <PageLayout contentClassName="page-stack legal-document">
-      <PageIntro title="利用規約" />
+      <PageIntro title="利用規約" hideInOs />
 
       <section className="legal-section">
         <h2>第1条（適用範囲）</h2>
         <p>
-          この利用規約は、Roseuが運営するDigital Sandbox（roseu.net）および同サイトから提供するゲーム、ツール、関連機能の利用に適用されます。利用者は、本規約に同意のうえ、本サービスを利用するものとします。
+          この利用規約は、Roseuが運営する{siteConfig.name}（roseu.net）および同サイトから提供するゲーム、ツール、関連機能の利用に適用されます。利用者は、本規約に同意のうえ、本サービスを利用するものとします。
         </p>
       </section>
 

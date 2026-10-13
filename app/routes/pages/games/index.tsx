@@ -1,18 +1,21 @@
-import { Info } from "lucide-react";
 import { Link } from "~/framework/navigation";
 import { PageIntro } from "~/components/layout/PageIntro";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { siteConfig } from "~/utils/site";
+import { PixelIcon } from "~/components/os/PixelIcon";
+import { useContext } from "react";
+import { OsOpenAppContext } from "~/components/os/OsContext";
+import { getOsApp } from "~/utils/os";
 
 export const meta = () => [
-  { title: `Games | ${siteConfig.fullName}` },
+    { title: `ゲーム | ${siteConfig.fullName}` },
   { name: "description", content: "Games" },
 ];
 
 export default function GamesPage() {
   return (
     <PageLayout contentClassName="page-stack">
-      <PageIntro title="Games" />
+      <PageIntro title="ゲーム" hideInOs />
 
       <GamesDirectory />
     </PageLayout>
@@ -20,31 +23,22 @@ export default function GamesPage() {
 }
 
 export function GamesDirectory({ headingLevel = "h2" }: { headingLevel?: "h2" | "h3" }) {
+  const openApp = useContext(OsOpenAppContext);
   const Heading = headingLevel;
   return (
-    <section className="tool-directory">
-        <article className="tool-card">
-          <div className="tool-card__body">
-            <Heading className="tool-card__title">ウミガメのスープ</Heading>
-            <p className="tool-card__copy">
-              JevがGMや判定を担当するウミガメのスープ
-            </p>
-            <div className="game-card__actions">
-              <Link to="/games/umigame" className="btn cta-link" viewTransition>
-                <span>遊ぶ</span>
-              </Link>
-              <Link
-                to="/games/umigame/about"
-                className="btn site-button site-button--ghost game-card__info"
-                aria-label="ウミガメのスープの情報"
-                title="情報"
-                viewTransition
-              >
-                <Info size={16} aria-hidden="true" />
-              </Link>
+      <section className="os-directory" aria-label="ゲーム一覧">
+        <div className="os-directory-row">
+          <Link to="/games/umigame" className="os-directory-entry" onClick={event => openApp?.(getOsApp("umigame"), event)}>
+            <PixelIcon kind="game" />
+            <div className="os-directory-entry__copy">
+              <Heading className="tool-card__title">ウミガメのスープ</Heading>
+              <p className="tool-card__copy">
+                JevがGMや判定を担当するウミガメのスープ
+              </p>
             </div>
-          </div>
-        </article>
+          </Link>
+          <Link to="/games/umigame/about" className="os-directory-info btn site-button" aria-label="ウミガメのスープについて" title="ウミガメのスープについて" onClick={event => openApp?.(getOsApp("umigame"), event)}><PixelIcon kind="info" /></Link>
+        </div>
       </section>
   );
 }

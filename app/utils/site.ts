@@ -22,10 +22,10 @@ export function isRouteActive(pathname: string, to: string) {
 }
 
 export const siteConfig = {
-  name: "Digital Sandbox",
-  fullName: "Digital Sandbox",
+  name: "R OS.3u",
+  fullName: "R OS.3u",
   owner: "Roseu",
-  themeColor: "#1868db",
+  themeColor: "#f9e7fa",
   copyright: {
     year: "2026",
     holder: "Roseu",

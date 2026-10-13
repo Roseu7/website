@@ -1,3 +1,4 @@
+@layer feature {
 /* Umigame Jev observability */
 .umigame-admin-head__actions {
   display: flex;
@@ -190,4 +191,6 @@
   .umigame-jev-daily__row > small {
     grid-column: 2 / -1;
   }
+}
+
 }

@@ -1,6 +1,7 @@
 import * as React from "react";
+import { OsWindowActiveContext, useOsPage } from "~/components/os/OsContext";
 
-import { Form, Link, useActionData, useLoaderData, useNavigation, useRouteLoaderData } from "~/framework/navigation";
+import { Link, useActionData, useLoaderData, useFetcher, useRouteLoaderData } from "~/framework/navigation";
 
 import { PageIntro } from "~/components/layout/PageIntro";
 
@@ -18,7 +19,8 @@ declare global {
         options: {
           sitekey: string;
           action: string;
-          theme: "auto";
+          theme: "auto" | "light";
+          size: "normal" | "compact";
           callback: (token: string) => void;
           "expired-callback": () => void;
           "error-callback": () => void;
@@ -31,7 +33,7 @@ declare global {
 
 export const meta = () => [
   { title: `お問い合わせ | ${siteConfig.fullName}` },
-  { name: "description", content: "Digital Sandboxへのお問い合わせフォームです。" },
+  { name: "description", content: "R OS.3uへのお問い合わせフォームです。" },
 ];
 
 function TurnstileChallenge({
@@ -45,23 +47,36 @@ function TurnstileChallenge({
 }) {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const widgetIdRef = React.useRef<string | null>(null);
+  const osPage = useOsPage();
 
   React.useEffect(() => {
     let disposed = false;
     let script: HTMLScriptElement | null = null;
+    let renderedSize: "normal" | "compact" | null = null;
+    let generation = 0;
     const render = () => {
       const container = containerRef.current;
+      if (disposed || !container || !container.clientWidth) return;
+      const size = container.clientWidth < 300 ? "compact" : "normal";
+      container.dataset.size = size;
       const turnstile = window.turnstile;
-      if (disposed || !container || !turnstile || widgetIdRef.current) return;
+      if (!turnstile || (widgetIdRef.current && renderedSize === size)) return;
+      if (widgetIdRef.current) { turnstile.remove(widgetIdRef.current); onToken(""); }
+      renderedSize = size;
+      const current = ++generation;
+      const updateToken = (token: string) => { if (!disposed && current === generation) onToken(token); };
       widgetIdRef.current = turnstile.render(container, {
         sitekey: siteKey,
         action: "contact",
-        theme: "auto",
-        callback: (token) => onToken(token),
-        "expired-callback": () => onToken(""),
-        "error-callback": () => onToken(""),
+        theme: osPage ? "light" : "auto",
+        size,
+        callback: updateToken,
+        "expired-callback": () => updateToken(""),
+        "error-callback": () => updateToken(""),
       });
     };
+    const resize = new ResizeObserver(render);
+    if (containerRef.current) resize.observe(containerRef.current);
 
     const handleError = () => onToken("");
     let existing = document.getElementById("cloudflare-turnstile-api") as HTMLScriptElement | null;
@@ -84,6 +99,7 @@ function TurnstileChallenge({
 
     return () => {
       disposed = true;
+      resize.disconnect();
       existing?.removeEventListener("load", render);
       existing?.removeEventListener("error", handleError);
       if (widgetIdRef.current && window.turnstile) {
@@ -91,7 +107,7 @@ function TurnstileChallenge({
       }
       widgetIdRef.current = null;
     };
-  }, [nonce, onToken, siteKey]);
+  }, [nonce, onToken, osPage, siteKey]);
 
   return (
     <div
@@ -104,32 +120,37 @@ function TurnstileChallenge({
 }
 
 export default function ContactPage() {
+  const windowActive = React.useContext(OsWindowActiveContext);
   const config = useLoaderData<typeof loader>();
   const rootData = useRouteLoaderData("root") as { legalBaseHref?: string } | undefined;
   const legalBaseHref = rootData?.legalBaseHref ?? "";
-  const result = useActionData<typeof action>();
-  const navigation = useNavigation();
-  const pending = navigation.state === "submitting";
+  const initialResult = useActionData<typeof action>();
+  const fetcher = useFetcher<typeof action>();
+  const result = fetcher.data ?? initialResult;
+  const pending = fetcher.state !== "idle";
+  const available = config.enabled && Boolean(config.siteKey);
   const [turnstileToken, setTurnstileToken] = React.useState("");
   const [legalConsentAccepted, setLegalConsentAccepted] = React.useState(false);
   const failure = result && !result.ok ? result : null;
   const failureAttemptId = failure?.attemptId;
+
+  React.useEffect(() => { if (!windowActive) setTurnstileToken(""); }, [windowActive]);
 
   React.useEffect(() => {
     if (failureAttemptId) setTurnstileToken("");
   }, [failureAttemptId]);
 
   return (
-    <PageLayout contentClassName="page-stack legal-document">
-      <PageIntro title="お問い合わせ" />
+    <PageLayout contentClassName="page-stack legal-document os-contact-page">
+      <PageIntro title="お問い合わせ" hideInOs />
 
       <section className="legal-section">
         <p>
           サイトや機能についての連絡、個人情報に関する相談を受け付けています。
-          返信先のメールアドレスは問い合わせへの返信と受付確認メールに使い、ページ上には公開しません。
+          返信先のメールアドレスは、お問い合わせへの返信と受付確認メールの送付に利用します。
         </p>
         <p>
-          <Link to={`${legalBaseHref}/privacy`}>プライバシーポリシー</Link>を確認のうえ送信してください。パスワードや認証コードなどの秘密情報は入力しないでください。
+          <Link to={`${legalBaseHref}/privacy`}>プライバシーポリシー</Link>を確認のうえ、お問い合わせに必要な情報を入力してください。
         </p>
       </section>
 
@@ -137,8 +158,9 @@ export default function ContactPage() {
         <p className="contact-status contact-status--success" role="status">
           お問い合わせを受け付けました。内容を確認して返信します。
         </p>
-      ) : config.enabled && config.siteKey ? (
-        <Form
+      ) : (
+        <fetcher.Form
+          action="/contact"
           key={failure?.attemptId ?? "contact-form"}
           method="post"
           className="contact-form"
@@ -204,11 +226,11 @@ export default function ContactPage() {
             />
           </div>
 
-          <TurnstileChallenge
+          {available && config.siteKey && windowActive && <TurnstileChallenge
             siteKey={config.siteKey}
             nonce={config.nonce}
             onToken={setTurnstileToken}
-          />
+          />}
           <input type="hidden" name="turnstileToken" value={turnstileToken} />
 
           <LegalConsentCheckbox
@@ -216,7 +238,7 @@ export default function ContactPage() {
             checked={legalConsentAccepted}
             onChange={setLegalConsentAccepted}
           >
-            入力情報を問い合わせ対応・受付確認メールに利用することにも同意します。
+            入力情報を問い合わせ対応・受付確認メールに利用することにも<span className="legal-consent__phrase">同意します。</span>
           </LegalConsentCheckbox>
 
           {failure ? (
@@ -226,15 +248,11 @@ export default function ContactPage() {
           <button
             type="submit"
             className="btn site-button"
-            disabled={pending || !legalConsentAccepted}
+            disabled={!available || pending || !legalConsentAccepted}
           >
             {pending ? "送信しています..." : "送信する"}
           </button>
-        </Form>
-      ) : (
-        <p className="contact-status" role="status">
-          お問い合わせフォームは現在準備中です。
-        </p>
+        </fetcher.Form>
       )}
     </PageLayout>
   );

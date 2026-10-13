@@ -1,5 +1,6 @@
 import * as React from "react";
 import { GitHubMark } from "~/components/icons/GitHubMark";
+import { RetroImage } from "~/components/os/RetroImage";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { PageIntro } from "~/components/layout/PageIntro";
 import { projects } from "~/utils/content";
@@ -7,7 +8,7 @@ import { siteConfig } from "~/utils/site";
 
 export const meta = () => {
   return [
-    { title: `Projects | ${siteConfig.fullName}` },
+    { title: `作品.pdf | ${siteConfig.fullName}` },
     { name: "description", content: "制作したプロジェクト一覧" },
   ];
 };
@@ -21,7 +22,7 @@ export default function ProjectsPage() {
 
   return (
     <PageLayout contentClassName="page-stack">
-      <PageIntro title="Projects" />
+      <PageIntro title="作品.pdf" hideInOs />
 
       <section className="projects-board">
         {projects.map((project, index) => {
@@ -81,7 +82,7 @@ export default function ProjectsPage() {
                 ) : (
                   <picture className="project-sheet__picture">
                     <source srcSet={project.imageWebp} type="image/webp" />
-                    <img
+                    <RetroImage
                       src={project.imagePng}
                       alt={project.alt}
                       className="project-sheet__image"
@@ -94,6 +95,7 @@ export default function ProjectsPage() {
                   </picture>
                 )}
               </div>
+              <p className="os-pdf-page-number">{index + 1} / {projects.length}</p>
             </article>
           );
         })}

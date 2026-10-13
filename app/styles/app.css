@@ -1,11 +1,12 @@
+@layer theme, base, components, utilities, site, feature, overrides;
 @config "../../tailwind.config.ts";
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: false;
-  include: button, badge, input, loading, menu, navbar;
+  include: button, badge, input;
 }
 @plugin "daisyui/theme" {
-  name: "digital-sandbox";
+  name: "ros3u";
   default: true;
   prefersdark: false;
   color-scheme: light;
@@ -39,11 +40,7 @@
   --noise: 0;
 }
 
-@import "./foundation.css";
-@import "./shell.css";
-@import "./home.css";
-@import "./pages.css";
-@import "./mc.css";
-@import "./umigame.css";
-@import "./icon-label-pairs.css";
-@import "./pages/legal.css";
+@import "./foundation.css" layer(site);
+@import "./controls.css" layer(site);
+@import "./icon-label-pairs.css" layer(overrides);
+@import "./error.css" layer(site);

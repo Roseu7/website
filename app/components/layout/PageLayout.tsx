@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useOsPage } from "~/components/os/OsContext";
 import { usePreviousPage } from "~/components/routing/usePreviousPage";
 import { SiteFooter } from "~/components/layout/SiteFooter";
 import {
@@ -30,6 +31,8 @@ export function PageLayout({
   withTopOffset = true,
 }: PageLayoutProps) {
   usePreviousPage();
+  const osPage = useOsPage();
+  if (osPage) return <div className={cx("os-page-content", contentClassName)}>{children}</div>;
 
   return (
     <div className="page-frame">

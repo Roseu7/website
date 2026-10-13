@@ -6,7 +6,7 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  server: { cors: false },
+  server: { host: "127.0.0.1", cors: false },
   preview: { cors: false },
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),

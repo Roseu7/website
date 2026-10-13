@@ -55,11 +55,17 @@ export async function loadPageOnServer(route: string, href: string, context: App
     if (response.status >= 300 && response.status < 400 && response.headers.has("Location")) {
       return { kind: "redirect", href: response.headers.get("Location")!, status: response.status };
     }
-    if (response.status === 404) return { kind: "error", status: 404, message: "Not Found" };
+    if (response.status >= 400) {
+      if (context.pageResponse && !new URL(current.url).pathname.startsWith("/_serverFn/")) context.pageResponse.status = response.status;
+      return { kind: "error", status: response.status, message: response.status === 404 ? "Not Found" : `HTTP ${response.status}` };
+    }
     if (response.headers.get("Content-Type")?.includes("application/json")) return { kind: "data", data: await response.json() };
     return { kind: "error", status: response.status, message: await response.text() };
   } catch (error) {
-    if (error instanceof Response) return { kind: "error", status: error.status, message: await error.text() };
+    if (error instanceof Response) {
+      if (context.pageResponse && !new URL(current.url).pathname.startsWith("/_serverFn/")) context.pageResponse.status = error.status;
+      return { kind: "error", status: error.status, message: await error.text() };
+    }
     throw error;
   }
 }

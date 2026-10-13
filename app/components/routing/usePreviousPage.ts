@@ -15,7 +15,8 @@ export function usePreviousPage() {
   } | null>(null);
 
   useEffect(() => {
-    const index: unknown = window.history.state?.__TSR_index;
+    // Keep the index paired with this rendered location during router transitions.
+    const index: unknown = location.index;
     if (typeof index !== "number" || !Number.isSafeInteger(index) || index < 0) {
       setPrevious({ key: location.key, path: null, available: false });
       return;
@@ -34,7 +35,7 @@ export function usePreviousPage() {
       // Storage may be disabled. Keep browser-back behavior without guessing a label.
     }
     setPrevious({ key: location.key, path: previousPath, available: index > 0 });
-  }, [location.key, path, action]);
+  }, [location.key, location.index, path, action]);
 
   return previous?.key === location.key ? previous : null;
 }

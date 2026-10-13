@@ -1,14 +1,19 @@
+import { useOsPage } from "~/components/os/OsContext";
+
 interface PageIntroProps {
   title: string;
   description?: string;
   headingLevel?: "h1" | "h2";
+  hideInOs?: boolean;
 }
 
 function cx(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(" ");
 }
 
-export function PageIntro({ title, description, headingLevel = "h1" }: PageIntroProps) {
+export function PageIntro({ title, description, headingLevel = "h1", hideInOs = false }: PageIntroProps) {
+  const osPage = useOsPage();
+  if (hideInOs && osPage) return null;
   const Heading = headingLevel;
 
   return (

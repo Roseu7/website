@@ -12,6 +12,11 @@
   "keep_vars": true,
   "ratelimits": [
     {
+      "name": "CONSOLE_RATE_LIMITER",
+      "namespace_id": "2026101401",
+      "simple": { "limit": 60, "period": 60 }
+    },
+    {
       "name": "WORDLE_RATE_LIMITER",
       "namespace_id": "2026090801",
       "simple": { "limit": 60, "period": 60 }

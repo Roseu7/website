@@ -1,4 +1,5 @@
 import * as React from "react";
+import { RetroImage } from "~/components/os/RetroImage";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { PageIntro } from "~/components/layout/PageIntro";
 import { aboutContent } from "~/utils/content";
@@ -6,7 +7,7 @@ import { siteConfig } from "~/utils/site";
 
 export const meta = () => {
   return [
-    { title: `About me | ${siteConfig.fullName}` },
+    { title: `プロフィール | ${siteConfig.fullName}` },
     { name: "description", content: "Roseu のプロフィール" },
   ];
 };
@@ -16,7 +17,7 @@ export default function AboutPage() {
 
   return (
     <PageLayout contentClassName="page-stack">
-      <PageIntro title="About me" />
+      <PageIntro title="プロフィール" hideInOs />
 
       <section className="about-board">
         <section className="about-board__identity">
@@ -27,7 +28,7 @@ export default function AboutPage() {
               ) : (
                 <picture className="about-board__picture">
                   <source srcSet={aboutContent.profileWebp} type="image/webp" />
-                  <img
+                  <RetroImage
                     src={aboutContent.profilePng}
                     alt={aboutContent.profileAlt}
                     className="about-board__image"
@@ -50,7 +51,7 @@ export default function AboutPage() {
 
         <div className="about-board__details">
           <section className="about-slab">
-            <h3 className="content-panel__eyebrow">Skills & Interests</h3>
+            <h3 className="content-panel__eyebrow">スキル・興味</h3>
             <p className="about-board__copy">
               {aboutContent.skills}
               <br />
@@ -59,8 +60,8 @@ export default function AboutPage() {
           </section>
 
           <section className="about-slab">
-            <h3 className="content-panel__eyebrow">Links</h3>
-            <div className="about-links" aria-label="Links">
+            <h3 className="content-panel__eyebrow">リンク</h3>
+            <nav className="about-links" aria-label="プロフィールのリンク">
               <a
                 href={siteConfig.social.x}
                 target="_blank"
@@ -77,7 +78,7 @@ export default function AboutPage() {
               >
                 GitHub / Roseu7
               </a>
-            </div>
+            </nav>
           </section>
         </div>
       </section>

@@ -59,6 +59,10 @@ export default defineConfig({
 					period: 60,
 				},
 			}),
+			CONSOLE_RATE_LIMITER: bindings.rateLimit({
+				namespace: "2026101401",
+				simple: { limit: 60, period: 60 },
+			}),
 			UMIGAME_QUESTION_RATE_LIMITER: bindings.rateLimit({
 				namespace: "2026092101",
 				simple: {

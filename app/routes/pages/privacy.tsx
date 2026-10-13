@@ -7,7 +7,7 @@ export const meta = () => [
   { title: `プライバシーポリシー | ${siteConfig.fullName}` },
   {
     name: "description",
-    content: "Digital Sandboxで取り扱う情報と、その利用方法について説明します。",
+    content: `${siteConfig.name}で取り扱う情報と、その利用方法について説明します。`,
   },
 ];
 
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
 
   return (
     <PageLayout contentClassName="page-stack legal-document">
-      <PageIntro title="プライバシーポリシー" />
+      <PageIntro title="プライバシーポリシー" hideInOs />
 
       <section className="legal-section">
         <h2>運営者</h2>

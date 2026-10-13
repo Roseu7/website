@@ -1,3 +1,46 @@
+@layer feature {
+.about-board { position: relative; display: grid; }
+
+.about-slab {
+  display: grid;
+  gap: 1rem;
+}
+
+.about-board__picture,
+.about-board__image {
+  width: 100%;
+}
+
+.about-board__fallback {
+  min-height: 10rem;
+  display: grid;
+  place-items: center;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink-3);
+}
+
+.about-board__name {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+}
+
+.about-board__copy {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.content-panel__eyebrow {
+  margin: 0;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
 .about-board {
   gap: clamp(2rem, 5vw, 4rem);
 }
@@ -55,4 +98,34 @@
 
 .about-link:hover {
   color: var(--ink-1);
+}
+
+
+@media (max-width: 1100px) {
+  .about-board__identity, .about-board__details {
+    grid-template-columns: 1fr;
+  }
+}
+}
+
+@layer overrides {
+
+.os-page-content .about-board { gap: 32px; }
+.os-page-content .about-board__identity { grid-template-columns: 128px minmax(0, 1fr); gap: 24px; align-items: center; padding: 0; border: 0; }
+.os-page-content .about-board__portrait-frame { padding: 3px; border: 1px solid var(--os-shadow); background: var(--os-light); box-shadow: inset 1px 1px var(--os-dark); }
+.os-page-content .about-board__details { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.os-page-content .about-slab { gap: 12px; padding: 16px; border: 1px solid var(--os-shadow); box-shadow: 1px 1px var(--os-light); }
+.os-page-content .about-slab > h3 { width: fit-content; margin: -30px 0 0 -8px; padding: 0 8px; background: var(--bg-base); color: var(--ink-1); }
+.os-page-content .about-slab .about-board__copy { text-wrap: balance; }
+.os-page-content .about-links { flex-direction: column; align-items: flex-start; gap: 8px; }
+.os-page-content .about-link { display: flex; align-items: center; min-height: 44px; }
+
+@media (max-width: 760px) {
+  .os-page-content .about-board__details { grid-template-columns: 1fr; }
+  .os-page-content .about-board__identity { grid-template-columns: 80px minmax(0, 1fr); gap: 16px; }
+  .os-page-content .about-board__portrait { max-width: 80px; }
+  .os-page-content .about-board__intro { display: contents; }
+  .os-page-content .about-board__name { grid-column: 2; }
+  .os-page-content .about-board__intro > p { grid-column: 1 / -1; }
+}
 }

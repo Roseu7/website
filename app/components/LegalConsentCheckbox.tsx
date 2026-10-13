@@ -38,8 +38,8 @@ export function LegalConsentCheckbox({
           aria-describedby={error ? errorId : undefined}
         />
         <span>
-          <Link to={`${legalBaseHref}/terms`}>利用規約</Link>を契約の内容とすることに同意し、
-          <Link to={`${legalBaseHref}/privacy`}>プライバシーポリシー</Link>の内容にも同意します。
+          <Link to={`${legalBaseHref}/terms`}>利用規約</Link>を契約の内容とすることに<span className="legal-consent__phrase">同意し、</span>
+          <Link to={`${legalBaseHref}/privacy`}>プライバシーポリシー</Link>の内容にも<span className="legal-consent__phrase">同意します。</span>
           {children ? <> {children}</> : null}
         </span>
       </label>

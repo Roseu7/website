@@ -1,3 +1,4 @@
+@layer feature {
 .home-page {
   display: grid;
   gap: var(--section-gap);
@@ -133,4 +134,6 @@
   .home-now {
     grid-template-columns: 1fr;
   }
+}
+
 }

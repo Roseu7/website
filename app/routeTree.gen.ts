@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './start-routes/index'
 import { Route as SplatRouteImport } from './start-routes/$'
 import { Route as AboutRouteImport } from './start-routes/about'
 import { Route as ApplyRouteImport } from './start-routes/apply'
+import { Route as ConsoleRouteImport } from './start-routes/console'
 import { Route as ContactRouteImport } from './start-routes/contact'
 import { Route as GamesRouteImport } from './start-routes/games'
 import { Route as HomeControlRouteImport } from './start-routes/home-control'
@@ -21,15 +22,19 @@ import { Route as LicensesRouteImport } from './start-routes/licenses'
 import { Route as MapRouteImport } from './start-routes/map'
 import { Route as PrivacyRouteImport } from './start-routes/privacy'
 import { Route as ProjectsRouteImport } from './start-routes/projects'
+import { Route as SettingsRouteImport } from './start-routes/settings'
 import { Route as TermsRouteImport } from './start-routes/terms'
 import { Route as ToolsRouteImport } from './start-routes/tools'
 import { Route as WsolverRouteImport } from './start-routes/wsolver'
+import { Route as ApiConsoleRouteImport } from './start-routes/api_.console'
 import { Route as ApiJevRouteImport } from './start-routes/api_.jev'
 import { Route as ApiNextRouteImport } from './start-routes/api_.next'
 import { Route as ApiSmanageRouteImport } from './start-routes/api_.smanage'
 import { Route as AuthLogoutRouteImport } from './start-routes/auth_.logout'
 import { Route as GamesUmigameRouteImport } from './start-routes/games_.umigame'
 import { Route as MapSplatRouteImport } from './start-routes/map_.$'
+import { Route as SettingsAboutRouteImport } from './start-routes/settings_.about'
+import { Route as SettingsHistoryRouteImport } from './start-routes/settings_.history'
 import { Route as ToolsJevRouteImport } from './start-routes/tools_.jev'
 import { Route as ToolsWsolverRouteImport } from './start-routes/tools_.wsolver'
 import { Route as ApiDiscordInteractionsRouteImport } from './start-routes/api_.discord_.interactions'
@@ -93,6 +98,11 @@ const ApplyRoute = ApplyRouteImport.update({
   path: '/apply',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConsoleRoute = ConsoleRouteImport.update({
+  id: '/console',
+  path: '/console',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -133,6 +143,11 @@ const ProjectsRoute = ProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -146,6 +161,11 @@ const ToolsRoute = ToolsRouteImport.update({
 const WsolverRoute = WsolverRouteImport.update({
   id: '/wsolver',
   path: '/wsolver',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiConsoleRoute = ApiConsoleRouteImport.update({
+  id: '/api_/console',
+  path: '/api/console',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiJevRoute = ApiJevRouteImport.update({
@@ -176,6 +196,16 @@ const GamesUmigameRoute = GamesUmigameRouteImport.update({
 const MapSplatRoute = MapSplatRouteImport.update({
   id: '/map_/$',
   path: '/map/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsAboutRoute = SettingsAboutRouteImport.update({
+  id: '/settings_/about',
+  path: '/settings/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsHistoryRoute = SettingsHistoryRouteImport.update({
+  id: '/settings_/history',
+  path: '/settings/history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ToolsJevRoute = ToolsJevRouteImport.update({
@@ -404,6 +434,7 @@ export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
+  '/console': typeof ConsoleRoute
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
   '/home-control': typeof HomeControlRoute
@@ -412,15 +443,19 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/privacy': typeof PrivacyRoute
   '/projects': typeof ProjectsRoute
+  '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/wsolver': typeof WsolverRoute
+  '/api/console': typeof ApiConsoleRoute
   '/api/jev': typeof ApiJevRoute
   '/api/next': typeof ApiNextRoute
   '/api/smanage': typeof ApiSmanageRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/games/umigame': typeof GamesUmigameRoute
   '/map/$': typeof MapSplatRoute
+  '/settings/about': typeof SettingsAboutRoute
+  '/settings/history': typeof SettingsHistoryRoute
   '/tools/jev': typeof ToolsJevRoute
   '/tools/wsolver': typeof ToolsWsolverRoute
   '/api/discord/interactions': typeof ApiDiscordInteractionsRoute
@@ -469,6 +504,7 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
+  '/console': typeof ConsoleRoute
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
   '/home-control': typeof HomeControlRoute
@@ -477,15 +513,19 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/privacy': typeof PrivacyRoute
   '/projects': typeof ProjectsRoute
+  '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/wsolver': typeof WsolverRoute
+  '/api/console': typeof ApiConsoleRoute
   '/api/jev': typeof ApiJevRoute
   '/api/next': typeof ApiNextRoute
   '/api/smanage': typeof ApiSmanageRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/games/umigame': typeof GamesUmigameRoute
   '/map/$': typeof MapSplatRoute
+  '/settings/about': typeof SettingsAboutRoute
+  '/settings/history': typeof SettingsHistoryRoute
   '/tools/jev': typeof ToolsJevRoute
   '/tools/wsolver': typeof ToolsWsolverRoute
   '/api/discord/interactions': typeof ApiDiscordInteractionsRoute
@@ -535,6 +575,7 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
+  '/console': typeof ConsoleRoute
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
   '/home-control': typeof HomeControlRoute
@@ -543,15 +584,19 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/privacy': typeof PrivacyRoute
   '/projects': typeof ProjectsRoute
+  '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/wsolver': typeof WsolverRoute
+  '/api_/console': typeof ApiConsoleRoute
   '/api_/jev': typeof ApiJevRoute
   '/api_/next': typeof ApiNextRoute
   '/api_/smanage': typeof ApiSmanageRoute
   '/auth_/logout': typeof AuthLogoutRoute
   '/games_/umigame': typeof GamesUmigameRoute
   '/map_/$': typeof MapSplatRoute
+  '/settings_/about': typeof SettingsAboutRoute
+  '/settings_/history': typeof SettingsHistoryRoute
   '/tools_/jev': typeof ToolsJevRoute
   '/tools_/wsolver': typeof ToolsWsolverRoute
   '/api_/discord_/interactions': typeof ApiDiscordInteractionsRoute
@@ -602,6 +647,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/apply'
+    | '/console'
     | '/contact'
     | '/games'
     | '/home-control'
@@ -610,15 +656,19 @@ export interface FileRouteTypes {
     | '/map'
     | '/privacy'
     | '/projects'
+    | '/settings'
     | '/terms'
     | '/tools'
     | '/wsolver'
+    | '/api/console'
     | '/api/jev'
     | '/api/next'
     | '/api/smanage'
     | '/auth/logout'
     | '/games/umigame'
     | '/map/$'
+    | '/settings/about'
+    | '/settings/history'
     | '/tools/jev'
     | '/tools/wsolver'
     | '/api/discord/interactions'
@@ -667,6 +717,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/apply'
+    | '/console'
     | '/contact'
     | '/games'
     | '/home-control'
@@ -675,15 +726,19 @@ export interface FileRouteTypes {
     | '/map'
     | '/privacy'
     | '/projects'
+    | '/settings'
     | '/terms'
     | '/tools'
     | '/wsolver'
+    | '/api/console'
     | '/api/jev'
     | '/api/next'
     | '/api/smanage'
     | '/auth/logout'
     | '/games/umigame'
     | '/map/$'
+    | '/settings/about'
+    | '/settings/history'
     | '/tools/jev'
     | '/tools/wsolver'
     | '/api/discord/interactions'
@@ -732,6 +787,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/apply'
+    | '/console'
     | '/contact'
     | '/games'
     | '/home-control'
@@ -740,15 +796,19 @@ export interface FileRouteTypes {
     | '/map'
     | '/privacy'
     | '/projects'
+    | '/settings'
     | '/terms'
     | '/tools'
     | '/wsolver'
+    | '/api_/console'
     | '/api_/jev'
     | '/api_/next'
     | '/api_/smanage'
     | '/auth_/logout'
     | '/games_/umigame'
     | '/map_/$'
+    | '/settings_/about'
+    | '/settings_/history'
     | '/tools_/jev'
     | '/tools_/wsolver'
     | '/api_/discord_/interactions'
@@ -798,6 +858,7 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
   ApplyRoute: typeof ApplyRoute
+  ConsoleRoute: typeof ConsoleRoute
   ContactRoute: typeof ContactRoute
   GamesRoute: typeof GamesRoute
   HomeControlRoute: typeof HomeControlRoute
@@ -806,15 +867,19 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   PrivacyRoute: typeof PrivacyRoute
   ProjectsRoute: typeof ProjectsRoute
+  SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
   ToolsRoute: typeof ToolsRoute
   WsolverRoute: typeof WsolverRoute
+  ApiConsoleRoute: typeof ApiConsoleRoute
   ApiJevRoute: typeof ApiJevRoute
   ApiNextRoute: typeof ApiNextRoute
   ApiSmanageRoute: typeof ApiSmanageRoute
   AuthLogoutRoute: typeof AuthLogoutRoute
   GamesUmigameRoute: typeof GamesUmigameRoute
   MapSplatRoute: typeof MapSplatRoute
+  SettingsAboutRoute: typeof SettingsAboutRoute
+  SettingsHistoryRoute: typeof SettingsHistoryRoute
   ToolsJevRoute: typeof ToolsJevRoute
   ToolsWsolverRoute: typeof ToolsWsolverRoute
   ApiDiscordInteractionsRoute: typeof ApiDiscordInteractionsRoute
@@ -889,6 +954,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApplyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/console': {
+      id: '/console'
+      path: '/console'
+      fullPath: '/console'
+      preLoaderRoute: typeof ConsoleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -945,6 +1017,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -964,6 +1043,13 @@ declare module '@tanstack/react-router' {
       path: '/wsolver'
       fullPath: '/wsolver'
       preLoaderRoute: typeof WsolverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api_/console': {
+      id: '/api_/console'
+      path: '/api/console'
+      fullPath: '/api/console'
+      preLoaderRoute: typeof ApiConsoleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api_/jev': {
@@ -1006,6 +1092,20 @@ declare module '@tanstack/react-router' {
       path: '/map/$'
       fullPath: '/map/$'
       preLoaderRoute: typeof MapSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings_/about': {
+      id: '/settings_/about'
+      path: '/settings/about'
+      fullPath: '/settings/about'
+      preLoaderRoute: typeof SettingsAboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings_/history': {
+      id: '/settings_/history'
+      path: '/settings/history'
+      fullPath: '/settings/history'
+      preLoaderRoute: typeof SettingsHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tools_/jev': {
@@ -1310,6 +1410,7 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
   ApplyRoute: ApplyRoute,
+  ConsoleRoute: ConsoleRoute,
   ContactRoute: ContactRoute,
   GamesRoute: GamesRoute,
   HomeControlRoute: HomeControlRoute,
@@ -1318,15 +1419,19 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   PrivacyRoute: PrivacyRoute,
   ProjectsRoute: ProjectsRoute,
+  SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
   ToolsRoute: ToolsRoute,
   WsolverRoute: WsolverRoute,
+  ApiConsoleRoute: ApiConsoleRoute,
   ApiJevRoute: ApiJevRoute,
   ApiNextRoute: ApiNextRoute,
   ApiSmanageRoute: ApiSmanageRoute,
   AuthLogoutRoute: AuthLogoutRoute,
   GamesUmigameRoute: GamesUmigameRoute,
   MapSplatRoute: MapSplatRoute,
+  SettingsAboutRoute: SettingsAboutRoute,
+  SettingsHistoryRoute: SettingsHistoryRoute,
   ToolsJevRoute: ToolsJevRoute,
   ToolsWsolverRoute: ToolsWsolverRoute,
   ApiDiscordInteractionsRoute: ApiDiscordInteractionsRoute,
