@@ -3,7 +3,7 @@ import { ArrowUp, ArrowDown, CornerDownLeft } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { OsCloseAppContext, OsWindowActiveContext } from "~/components/os/OsContext";
 import { useLoaderData, useNavigate } from "~/framework/navigation";
-import { CONSOLE_COMMAND_LIMIT, type ConsoleCompletion, type ConsoleReply } from "~/utils/console";
+import { CONSOLE_COMMAND_LIMIT, createConsoleShell, executeLocalConsole, type ConsoleShell, type ConsoleCompletion, type ConsoleReply } from "~/utils/console";
 import { siteConfig } from "~/utils/site";
 import type { loader } from "./console.server";
 
@@ -21,6 +21,9 @@ function ConsoleAction({ label, children, disabled, onClick }: { label: string; 
 export default function ConsolePage() {
   const initial = useLoaderData<typeof loader>();
   const sessionId = useRef(initial.sessionId).current;
+  const proof = useRef(initial.proof);
+  const shells = useRef<ConsoleShell[]>([createConsoleShell()]);
+  const version = useRef(initial.greeting.trim()).current;
   const navigate = useNavigate();
   const active = useContext(OsWindowActiveContext);
   const close = useContext(OsCloseAppContext);
@@ -37,7 +40,7 @@ export default function ConsolePage() {
   const draft = useRef("");
   const mounted = useRef(true);
   const controller = useRef<AbortController | null>(null);
-  const completion = useRef<(ConsoleCompletion & { command: string; caret: number; index: number }) | null>(null);
+  const completion = useRef<(ConsoleCompletion & { command: string; caret: number; index: number; expires: number }) | null>(null);
   const completionRequest = useRef<{ controller: AbortController; offset: number } | null>(null);
   useEffect(() => {
     mounted.current = true;
@@ -63,6 +66,17 @@ export default function ConsolePage() {
     });
   }
 
+  async function requestConsole(body: { command: string; operation?: "complete"; cursor?: number }, signal: AbortSignal) {
+    const send = () => fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...body, sessionId, proof: proof.current, shells: shells.current }), signal });
+    const response = await send();
+    if (response.status !== 401) return response;
+    const renewal = await response.json() as { proof?: string };
+    if (!renewal.proof || signal.aborted) return response;
+    proof.current = renewal.proof;
+    return send();
+  }
+
   async function complete(direction: number) {
     const input = inputRef.current;
     if (!input || inFlight.current) return;
@@ -79,7 +93,7 @@ export default function ConsolePage() {
       setCommand(next);
       cursor.current = history.current.length;
     };
-    if (cached?.command === command && cached.caret === caret && input.selectionEnd === caret) {
+    if (cached?.command === command && cached.caret === caret && input.selectionEnd === caret && cached.expires > Date.now()) {
       if (cached.candidates.length) apply({ ...cached, index: (cached.index + direction + cached.candidates.length) % cached.candidates.length });
       return;
     }
@@ -88,14 +102,15 @@ export default function ConsolePage() {
     const request = { controller: new AbortController(), offset: direction > 0 ? 0 : -1 };
     completionRequest.current = request;
     try {
-      const response = await fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ operation: "complete", command, sessionId, cursor: caret }), signal: request.controller.signal });
+      const response = await requestConsole({ operation: "complete", command, cursor: caret }, request.controller.signal);
       if (!response.ok) {
         if (mounted.current && completionRequest.current === request) appendOutput(response.status === 429 ? "\nToo many commands. Try again in 60 seconds.\n" : response.status === 410 ? "\nSession expired. Reopen the command prompt.\n" : `\nCompletion service error (${response.status}). Try again.\n`);
         return;
       }
-      const result = await response.json() as ConsoleCompletion;
+      const result = await response.json() as ConsoleCompletion & { proof: string };
       if (!mounted.current || completionRequest.current !== request || input.value !== command || input.selectionStart !== caret) return;
-      const state = { ...result, command, caret, index: result.candidates.length ? ((request.offset % result.candidates.length) + result.candidates.length) % result.candidates.length : 0 };
+      proof.current = result.proof;
+      const state = { ...result, command, caret, expires: Date.now() + 30_000, index: result.candidates.length ? ((request.offset % result.candidates.length) + result.candidates.length) % result.candidates.length : 0 };
       completion.current = state;
       if (result.candidates.length) apply(state);
     } catch {
@@ -125,10 +140,18 @@ export default function ConsolePage() {
     controller.current = new AbortController();
     let result: ConsoleReply;
     try {
-      const response = await fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ command: submitted, sessionId }), signal: controller.current.signal });
-      if (!response.ok) {
-        result = { cwd, output: response.status === 429 ? "Too many commands. Try again in 60 seconds." : response.status === 410 ? "Session expired. Reopen the command prompt." : `Command service error (${response.status}). Try again.` };
-      } else result = await response.json() as ConsoleReply;
+      const local = executeLocalConsole(submitted, shells.current, version);
+      if (local) result = local;
+      else {
+        const response = await requestConsole({ command: submitted }, controller.current.signal);
+        if (!response.ok) {
+          result = { cwd, output: response.status === 429 ? "Too many commands. Try again in 60 seconds." : response.status === 410 ? "Session expired. Reopen the command prompt." : `Command service error (${response.status}). Try again.` };
+        } else {
+          const reply = await response.json() as ConsoleReply & { shells: ConsoleShell[]; proof: string };
+          result = reply;
+          if (mounted.current) { shells.current = reply.shells; proof.current = reply.proof; }
+        }
+      }
     } catch {
       result = { cwd, output: "The command service is unavailable. Try again." };
     }

@@ -31,6 +31,7 @@ export default defineConfig({
 		],
 		env: {
 			CONSOLE_SESSIONS: bindings.durableObject({ worker: "website", exportName: "ConsoleSession" }),
+			CONSOLE_SESSION_SECRET: bindings.secret(),
 
 			CF_ACCESS_TEAM_DOMAIN: bindings.text("roseu.cloudflareaccess.com"),
 			CF_ACCESS_AUD: bindings.text("96b9c9c9fd0eb49cdba0eab8b3fd4f3b987e89f5972bbfb8ec953d8f81e70549"),
