@@ -43,7 +43,8 @@ html:has(.os-shell) { scrollbar-gutter: auto; background: #f9e7fa; }
 
 .os-shell * { box-sizing: border-box; transition: none; }
 .os-shell[hidden] { display: none; }
-.os-shell :focus-visible { outline: 2px dashed var(--os-edge); outline-offset: 4px; }
+.os-shell :focus-visible { outline: 2px solid var(--os-edge); outline-offset: 4px; }
+.os-shell :where(input, textarea, [contenteditable="true"]):focus-visible { outline-style: dashed; }
 .os-shell ::selection { background: var(--os-edge); color: white; }
 .os-shell button, .os-shell a { -webkit-tap-highlight-color: transparent; }
 .os-shell button { cursor: pointer; }
@@ -73,8 +74,7 @@ html:has(.os-shell) { scrollbar-gutter: auto; background: #f9e7fa; }
 .os-window-controls button { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 1px solid var(--os-dark); background: var(--os-face); box-shadow: inset 1px 1px var(--os-light), inset -1px -1px var(--os-shadow); color: var(--ink-1); }
 .os-window-controls button:active { box-shadow: inset 1px 1px var(--os-shadow); }
 .os-window-content { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 24px; margin-top: 4px; border: 1px solid var(--os-edge); background: var(--bg-base); scrollbar-color: var(--os-shadow) var(--os-face); scrollbar-width: auto; }
-.os-window-content:focus { outline: none; }
-.os-window-content:focus-visible { outline: 2px dashed var(--os-edge); outline-offset: -5px; }
+.os-window-content:focus, .os-window-content:focus-visible { outline: none; }
 .os-github-mark { flex: 0 0 auto; image-rendering: pixelated; }
 .os-clock { flex: 0 0 auto; display: block; min-width: 72px; padding: 2px 8px; margin-left: auto; border: 1px solid var(--os-shadow); box-shadow: inset 1px 1px var(--os-shadow), inset -1px -1px var(--os-light); font-size: 14px; line-height: 28px; text-align: center; }
 

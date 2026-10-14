@@ -13,7 +13,7 @@ html:has(.os-error-screen) { scrollbar-gutter: auto; background: #0000aa; }
 .os-error-screen__http { font-size: 14px; }
 .os-error-screen__home { display: flex; align-items: center; justify-self: start; min-height: 44px; padding: 8px 16px; border: 1px solid #fff8ff; color: #fff8ff; line-height: 1.5; text-decoration: none; }
 .os-error-screen__home:hover { background: #fff8ff; color: #0000aa; }
-.os-error-screen :focus-visible { outline: 2px dashed #fff8ff; outline-offset: 4px; }
+.os-error-screen :focus-visible { outline: 2px solid #fff8ff; outline-offset: 4px; }
 .os-error-screen ::selection { background: #fff8ff; color: #0000aa; }
 
 @media (max-width: 760px) {
