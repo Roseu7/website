@@ -1,4 +1,12 @@
 export const CONSOLE_COMMAND_LIMIT = 512;
+export const CONSOLE_SESSION_DURATION = 24 * 60 * 60 * 1000;
+
+export function isSensitiveConsoleInput(input: string) {
+  return /(?:^|[\s"'])\/p(?::|=)/i.test(input)
+    || (/\/p(?:\s|$)/i.test(input) && !/^\s*(?:del|erase)\s/i.test(input))
+    || /(?:^|[\s"'])\/(?:pass(?:word)?|token|secret)(?::|=|\s|$)/i.test(input)
+    || /\b\w*(?:PASSWORD|PASSWD|TOKEN|SECRET|CREDENTIAL)\w*\s*=/i.test(input);
+}
 
 export type ConsoleShell = {
   cwd: string;
@@ -93,6 +101,7 @@ export type ConsoleReply = {
   output: string;
   effect?: "clear" | "exit";
   launch?: string;
+  input?: "command" | "password";
 };
 
 export type ConsoleCompletion = {

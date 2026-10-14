@@ -3,7 +3,8 @@ import { ArrowUp, ArrowDown, CornerDownLeft } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { OsCloseAppContext, OsWindowActiveContext } from "~/components/os/OsContext";
 import { useLoaderData, useNavigate } from "~/framework/navigation";
-import { CONSOLE_COMMAND_LIMIT, createConsoleShell, executeLocalConsole, type ConsoleShell, type ConsoleCompletion, type ConsoleReply } from "~/utils/console";
+import { CONSOLE_COMMAND_LIMIT, createConsoleShell, executeLocalConsole, expandConsole, isSensitiveConsoleInput, type ConsoleShell, type ConsoleCompletion, type ConsoleReply } from "~/utils/console";
+import { loadConsoleStorage, saveConsoleWorkspace, saveConsoleHistory, saveConsoleDraft } from "~/utils/console-storage";
 import { siteConfig } from "~/utils/site";
 import type { loader } from "./console.server";
 
@@ -20,7 +21,7 @@ function ConsoleAction({ label, children, disabled, onClick }: { label: string; 
 
 export default function ConsolePage() {
   const initial = useLoaderData<typeof loader>();
-  const sessionId = useRef(initial.sessionId).current;
+  const sessionId = useRef(initial.sessionId);
   const proof = useRef(initial.proof);
   const shells = useRef<ConsoleShell[]>([createConsoleShell()]);
   const version = useRef(initial.greeting.trim()).current;
@@ -30,11 +31,15 @@ export default function ConsolePage() {
   const [cwd, setCwd] = useState(initial.cwd);
   const [command, setCommand] = useState("");
   const [entries, setEntries] = useState([{ id: 0, text: initial.greeting }]);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(true);
+  const [inputMode, setInputMode] = useState<"command" | "password">("command");
+  const passwordInput = useRef(false);
+  const storage = useRef<Storage | null>(null);
+  const storageError = useRef(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const sequence = useRef(0);
-  const inFlight = useRef(false);
+  const inFlight = useRef(true);
   const history = useRef<string[]>([]);
   const cursor = useRef(0);
   const draft = useRef("");
@@ -44,7 +49,65 @@ export default function ConsolePage() {
   const completionRequest = useRef<{ controller: AbortController; offset: number } | null>(null);
   useEffect(() => {
     mounted.current = true;
-    return () => { mounted.current = false; controller.current?.abort(); resetCompletion(); };
+    inFlight.current = true;
+    setBusy(true);
+    const restoreController = new AbortController();
+    async function restore() {
+      let ready = true;
+      try {
+        storage.current = window.localStorage;
+        const saved = loadConsoleStorage(storage.current);
+        history.current = saved.history;
+        cursor.current = saved.history.length;
+        setCommand(saved.draft);
+        if (saved.workspace) {
+          let response: Response;
+          try {
+            response = await fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ operation: "resume", ...saved.workspace }), signal: restoreController.signal });
+          } catch (cause) {
+            if (restoreController.signal.aborted) return;
+            ready = false;
+            appendOutput("The Guest workspace could not be restored. Reopen the command prompt to try again.\n");
+            return;
+          }
+          if (restoreController.signal.aborted || !mounted.current) return;
+          if (response.ok) {
+            let result: { proof?: unknown } | null;
+            try { result = await response.json(); } catch { result = null; }
+            if (!result || typeof result.proof !== "string" || result.proof.length > 1024) {
+              ready = false;
+              appendOutput("The Guest workspace service returned invalid data. Reopen the command prompt to try again.\n");
+              return;
+            }
+            if (restoreController.signal.aborted || !mounted.current) return;
+            sessionId.current = saved.workspace.sessionId;
+            proof.current = result.proof;
+            if (storage.current) saveConsoleWorkspace(storage.current, saved.workspace);
+            return;
+          }
+          if (![403, 410].includes(response.status)) {
+            ready = false;
+            appendOutput(`Guest workspace service error (${response.status}). Reopen the command prompt to try again.\n`);
+            return;
+          }
+        }
+        if (!restoreController.signal.aborted && mounted.current) saveConsoleWorkspace(storage.current, { sessionId: initial.sessionId, resumeTicket: initial.resumeTicket });
+      } catch { storageFailed(); }
+      finally {
+        if (ready && !restoreController.signal.aborted && mounted.current) { inFlight.current = false; setBusy(false); }
+      }
+    }
+    void restore();
+    const saveVisibleInput = () => { if (!inFlight.current) persistDraft(inputRef.current?.value ?? ""); };
+    const onVisibility = () => { if (document.visibilityState === "hidden") saveVisibleInput(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", saveVisibleInput);
+    return () => {
+      mounted.current = false; restoreController.abort(); controller.current?.abort(); resetCompletion();
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", saveVisibleInput);
+    };
   }, []);
   useEffect(() => {
     if (active) formRef.current?.scrollIntoView({ block: "nearest" });
@@ -54,6 +117,16 @@ export default function ConsolePage() {
     completion.current = null;
     completionRequest.current?.controller.abort();
     completionRequest.current = null;
+  }
+
+  function storageFailed() {
+    storage.current = null;
+    if (!storageError.current) { storageError.current = true; appendOutput("Local history storage is unavailable. Commands will be kept in memory.\n"); }
+  }
+
+  function persistDraft(value: string) {
+    try { if (storage.current) saveConsoleDraft(storage.current, value, passwordInput.current || isSensitiveConsoleInput(expandConsole(value, shells.current[shells.current.length - 1]))); }
+    catch { storageFailed(); }
   }
 
   function appendOutput(text: string) {
@@ -68,7 +141,7 @@ export default function ConsolePage() {
 
   async function requestConsole(body: { command: string; operation?: "complete"; cursor?: number }, signal: AbortSignal) {
     const send = () => fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...body, sessionId, proof: proof.current, shells: shells.current }), signal });
+      body: JSON.stringify({ ...body, sessionId: sessionId.current, proof: proof.current, shells: shells.current }), signal });
     const response = await send();
     if (response.status !== 401) return response;
     const renewal = await response.json() as { proof?: string };
@@ -79,7 +152,7 @@ export default function ConsolePage() {
 
   async function complete(direction: number) {
     const input = inputRef.current;
-    if (!input || inFlight.current) return;
+    if (!input || inFlight.current || passwordInput.current) return;
     const caret = input.selectionStart ?? command.length;
     const cached = completion.current;
     const apply = (state: NonNullable<typeof completion.current>) => {
@@ -91,6 +164,7 @@ export default function ConsolePage() {
       input.value = next;
       input.setSelectionRange(nextCaret, nextCaret);
       setCommand(next);
+      persistDraft(next);
       cursor.current = history.current.length;
     };
     if (cached?.command === command && cached.caret === caret && input.selectionEnd === caret && cached.expires > Date.now()) {
@@ -121,26 +195,31 @@ export default function ConsolePage() {
   }
 
   function recall(delta: number) {
-    if (inFlight.current) return;
+    if (inFlight.current || passwordInput.current) return;
     resetCompletion();
     if (cursor.current === history.current.length) draft.current = command;
     cursor.current = Math.max(0, Math.min(history.current.length, cursor.current + delta));
-    setCommand(cursor.current === history.current.length ? draft.current : history.current[cursor.current]);
+    const next = cursor.current === history.current.length ? draft.current : history.current[cursor.current];
+    setCommand(next);
+    persistDraft(next);
     inputRef.current?.focus({ preventScroll: true });
   }
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (inFlight.current || !command.trim()) return;
+    if (inFlight.current || (!passwordInput.current && !command.trim())) return;
     resetCompletion();
     const submitted = command;
+    const sensitive = passwordInput.current || isSensitiveConsoleInput(submitted) || isSensitiveConsoleInput(expandConsole(submitted, shells.current[shells.current.length - 1]));
     inFlight.current = true; setBusy(true); setCommand("");
-    history.current = [...history.current, submitted].slice(-100);
+    if (!sensitive) history.current = [...history.current, submitted].slice(-100);
+    persistDraft("");
+    try { if (storage.current) saveConsoleHistory(storage.current, history.current); } catch { storageFailed(); }
     cursor.current = history.current.length; draft.current = "";
     controller.current = new AbortController();
     let result: ConsoleReply;
     try {
-      const local = executeLocalConsole(submitted, shells.current, version);
+      const local = passwordInput.current ? null : executeLocalConsole(submitted, shells.current, version);
       if (local) result = local;
       else {
         const response = await requestConsole({ command: submitted }, controller.current.signal);
@@ -156,11 +235,17 @@ export default function ConsolePage() {
       result = { cwd, output: "The command service is unavailable. Try again." };
     }
     if (!mounted.current) return;
+    if (result.input) {
+      passwordInput.current = result.input === "password";
+      setInputMode(result.input);
+      persistDraft("");
+    } else if (!passwordInput.current) setInputMode("command");
     setCwd(result.cwd);
     if (result.effect === "clear") setEntries([]);
     else if (result.effect === "exit") close?.();
     else {
-      appendOutput(`${cwd}>${submitted}\n${result.output}\n`);
+      const output = sensitive && submitted ? result.output.split(submitted).join("[redacted]") : result.output;
+      appendOutput(sensitive ? `${output}\n` : `${cwd}>${submitted}\n${output}\n`);
       if (result.launch) void navigate(result.launch);
     }
     inFlight.current = false; setBusy(false);
@@ -176,16 +261,17 @@ export default function ConsolePage() {
       <form ref={formRef} className="os-console-command" onSubmit={submit} aria-busy={busy}>
         <div className="os-console-line">
         <span className="os-console-prompt">{cwd}&gt;</span>
-        <input ref={inputRef} className="os-console-input" aria-label="コマンド" value={command} maxLength={CONSOLE_COMMAND_LIMIT} readOnly={busy} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} enterKeyHint="send" onChange={event => { resetCompletion(); setCommand(event.target.value); cursor.current = history.current.length; }} onPointerDown={resetCompletion} onBlur={resetCompletion} onKeyDown={event => {
+        <input ref={inputRef} className="os-console-input" type={inputMode === "password" ? "password" : "text"} aria-label={inputMode === "password" ? "パスワード" : "コマンド"} value={command} maxLength={CONSOLE_COMMAND_LIMIT} readOnly={busy} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} enterKeyHint="send" onChange={event => { resetCompletion(); setCommand(event.target.value); persistDraft(event.target.value); cursor.current = history.current.length; }} onPointerDown={resetCompletion} onBlur={resetCompletion} onKeyDown={event => {
           if (event.nativeEvent.isComposing) return;
+          if (passwordInput.current) return;
           if (event.key === "Tab" && !event.ctrlKey && !event.altKey && !event.metaKey) { event.preventDefault(); void complete(event.shiftKey ? -1 : 1); return; }
           if (event.key !== "Shift") resetCompletion();
           if (event.key === "ArrowUp" || event.key === "ArrowDown") { event.preventDefault(); recall(event.key === "ArrowUp" ? -1 : 1); }
         }} />
         </div>
         <div className="os-console-actions" data-ui-actions>
-          <ConsoleAction label="前のコマンド" disabled={busy} onClick={() => recall(-1)}><ArrowUp size={20} aria-hidden="true" /></ConsoleAction>
-          <ConsoleAction label="次のコマンド" disabled={busy} onClick={() => recall(1)}><ArrowDown size={20} aria-hidden="true" /></ConsoleAction>
+          <ConsoleAction label="前のコマンド" disabled={busy || inputMode === "password"} onClick={() => recall(-1)}><ArrowUp size={20} aria-hidden="true" /></ConsoleAction>
+          <ConsoleAction label="次のコマンド" disabled={busy || inputMode === "password"} onClick={() => recall(1)}><ArrowDown size={20} aria-hidden="true" /></ConsoleAction>
           <ConsoleAction label="実行" disabled={busy}><CornerDownLeft size={20} aria-hidden="true" /></ConsoleAction>
         </div>
       </form>

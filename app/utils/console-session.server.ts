@@ -1,5 +1,5 @@
-import { compactVerify, SignJWT } from "jose";
-import { type ConsoleShell } from "./console";
+import { compactVerify, jwtVerify, SignJWT } from "jose";
+import { CONSOLE_SESSION_DURATION, type ConsoleShell } from "./console";
 import { createConsoleState, executeConsole, completeConsole, getConsoleDirectory, consoleWritesFiles } from "./console.server";
 
 const audience = "ros3u-console", lifetime = 5 * 60;
@@ -9,8 +9,20 @@ const signingKey = (secret: string) => {
 };
 
 export async function signConsoleSession(sessionId: string, files: boolean, secret: string) {
+  const now = Math.floor(Date.now() / 1000);
   return new SignJWT({ sid: sessionId, files }).setProtectedHeader({ alg: "HS256" }).setSubject("Guest")
-    .setAudience(audience).setIssuedAt().setExpirationTime(Math.floor(Date.now() / 1000) + lifetime).sign(signingKey(secret));
+    .setAudience(audience).setIssuedAt(now).setExpirationTime(now + lifetime).sign(signingKey(secret));
+}
+
+export async function signConsoleResume(sessionId: string, secret: string) {
+  return new SignJWT({ sid: sessionId }).setProtectedHeader({ alg: "HS256" }).setSubject("Guest")
+    .setAudience("ros3u-console-resume").setIssuedAt()
+    .setExpirationTime(Math.floor((Number(sessionId.slice(0, 13)) + CONSOLE_SESSION_DURATION) / 1000)).sign(signingKey(secret));
+}
+
+export async function verifyConsoleResume(ticket: string, sessionId: string, secret: string) {
+  const { payload } = await jwtVerify(ticket, signingKey(secret), { algorithms: ["HS256"], audience: "ros3u-console-resume", subject: "Guest" });
+  if (payload.sid !== sessionId || payload.exp !== Math.floor((Number(sessionId.slice(0, 13)) + CONSOLE_SESSION_DURATION) / 1000)) throw Error("Invalid Guest workspace.");
 }
 
 export async function verifyConsoleSession(proof: string, sessionId: string, secret: string) {

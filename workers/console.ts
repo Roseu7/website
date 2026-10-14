@@ -47,7 +47,7 @@ export class ConsoleSession extends DurableObject<Env> {
     if (this.saved !== null && !this.alarmScheduled) {
       this.alarmScheduled = true;
       try {
-        if (await this.ctx.storage.getAlarm() === null) await this.ctx.storage.setAlarm(expires);
+        if (await this.ctx.storage.getAlarm() !== expires) await this.ctx.storage.setAlarm(expires);
       } catch (cause) { this.alarmScheduled = false; throw cause; }
     }
     return { result: reply.result, shells: reply.shells, hasFiles: this.saved !== null };
