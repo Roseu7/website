@@ -16,6 +16,7 @@ const childApps = [
   { id: "jev", label: "Jev", path: "/tools/jev", icon: "tools", parent: "tools" },
   { id: "umigame", label: "ウミガメのスープ", path: "/games/umigame", icon: "game", parent: "games" },
 ] as const;
+export const osExecutableApps = [...osApps, ...childApps, consoleApp].map(app => ({ ...app, executable: `${app.id}.exe` }));
 export type OsApp = (typeof osApps)[number] | (typeof childApps)[number] | typeof labApp | typeof systemApp | typeof consoleApp;
 export function getOsApp(id: OsApp["id"]): OsApp {
   return id === "lab" ? labApp : id === "system" ? systemApp : id === "console" ? consoleApp : [...osApps, ...childApps].find(app => app.id === id)!;

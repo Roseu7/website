@@ -10,6 +10,8 @@
   "workers_dev": false,
   "preview_urls": false,
   "keep_vars": true,
+  "durable_objects": { "bindings": [{ "name": "CONSOLE_SESSIONS", "class_name": "ConsoleSession" }] },
+  "migrations": [{ "tag": "console-sessions-v1", "new_sqlite_classes": ["ConsoleSession"] }],
   "ratelimits": [
     {
       "name": "CONSOLE_RATE_LIMITER",

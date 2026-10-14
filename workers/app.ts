@@ -3,6 +3,7 @@ import { reviewComment } from "../app/utils/umigame/comment-review.server";
 import { reviewPuzzleRevision } from "../app/utils/umigame/puzzle-review.server";
 import { getUmigameEnvFromBindings } from "../app/utils/umigame/env.server";
 import { withSecurityHeaders } from "./security-headers";
+export { ConsoleSession } from "./console";
 
 
 

@@ -6,6 +6,7 @@ export default defineConfig({
 		compatibilityDate: "2025-04-04",
 		compatibilityFlags: ["nodejs_compat"],
 		entrypoint: "./workers/app.ts",
+		exports: { ConsoleSession: { type: "durable-object", storage: "sqlite" } },
 		workersDev: false,
 		previewUrls: false,
 		// Preserve dashboard-managed vars and secrets, as Wrangler keep_vars did.
@@ -29,6 +30,7 @@ export default defineConfig({
 			}),
 		],
 		env: {
+			CONSOLE_SESSIONS: bindings.durableObject({ worker: "website", exportName: "ConsoleSession" }),
 
 			CF_ACCESS_TEAM_DOMAIN: bindings.text("roseu.cloudflareaccess.com"),
 			CF_ACCESS_AUD: bindings.text("96b9c9c9fd0eb49cdba0eab8b3fd4f3b987e89f5972bbfb8ec953d8f81e70549"),

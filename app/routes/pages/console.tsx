@@ -2,7 +2,7 @@ import { useContext, useEffect, useId, useRef, useState, type FormEvent, type Re
 import { ArrowUp, ArrowDown, CornerDownLeft } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { OsCloseAppContext, OsWindowActiveContext } from "~/components/os/OsContext";
-import { useLoaderData } from "~/framework/navigation";
+import { useLoaderData, useNavigate } from "~/framework/navigation";
 import { CONSOLE_COMMAND_LIMIT, type ConsoleCompletion, type ConsoleReply } from "~/utils/console";
 import { siteConfig } from "~/utils/site";
 import type { loader } from "./console.server";
@@ -20,6 +20,8 @@ function ConsoleAction({ label, children, disabled, onClick }: { label: string; 
 
 export default function ConsolePage() {
   const initial = useLoaderData<typeof loader>();
+  const sessionId = useRef(initial.sessionId).current;
+  const navigate = useNavigate();
   const active = useContext(OsWindowActiveContext);
   const close = useContext(OsCloseAppContext);
   const [cwd, setCwd] = useState(initial.cwd);
@@ -86,9 +88,9 @@ export default function ConsolePage() {
     const request = { controller: new AbortController(), offset: direction > 0 ? 0 : -1 };
     completionRequest.current = request;
     try {
-      const response = await fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ operation: "complete", command, cwd, cursor: caret }), signal: request.controller.signal });
+      const response = await fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ operation: "complete", command, sessionId, cursor: caret }), signal: request.controller.signal });
       if (!response.ok) {
-        if (mounted.current && completionRequest.current === request) appendOutput(response.status === 429 ? "\nToo many commands. Try again in 60 seconds.\n" : `\nCompletion service error (${response.status}). Try again.\n`);
+        if (mounted.current && completionRequest.current === request) appendOutput(response.status === 429 ? "\nToo many commands. Try again in 60 seconds.\n" : response.status === 410 ? "\nSession expired. Reopen the command prompt.\n" : `\nCompletion service error (${response.status}). Try again.\n`);
         return;
       }
       const result = await response.json() as ConsoleCompletion;
@@ -123,9 +125,9 @@ export default function ConsolePage() {
     controller.current = new AbortController();
     let result: ConsoleReply;
     try {
-      const response = await fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ command: submitted, cwd }), signal: controller.current.signal });
+      const response = await fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ command: submitted, sessionId }), signal: controller.current.signal });
       if (!response.ok) {
-        result = { cwd, output: response.status === 429 ? "Too many commands. Try again in 60 seconds." : `Command service error (${response.status}). Try again.` };
+        result = { cwd, output: response.status === 429 ? "Too many commands. Try again in 60 seconds." : response.status === 410 ? "Session expired. Reopen the command prompt." : `Command service error (${response.status}). Try again.` };
       } else result = await response.json() as ConsoleReply;
     } catch {
       result = { cwd, output: "The command service is unavailable. Try again." };
@@ -136,6 +138,7 @@ export default function ConsolePage() {
     else if (result.effect === "exit") close?.();
     else {
       appendOutput(`${cwd}>${submitted}\n${result.output}\n`);
+      if (result.launch) void navigate(result.launch);
     }
     inFlight.current = false; setBusy(false);
   }

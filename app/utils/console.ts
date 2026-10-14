@@ -4,6 +4,7 @@ export type ConsoleReply = {
   cwd: string;
   output: string;
   effect?: "clear" | "exit";
+  launch?: string;
 };
 
 export type ConsoleCompletion = {
