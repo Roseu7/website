@@ -1,6 +1,6 @@
 import { compactVerify, jwtVerify, SignJWT } from "jose";
 import { CONSOLE_SESSION_DURATION, type ConsoleShell } from "./console";
-import { createConsoleState, executeConsole, completeConsole, getConsoleDirectory, consoleWritesFiles } from "./console.server";
+import { createConsoleState, executeConsole, completeConsole, getConsoleDirectory, consoleWritesFiles, finishConsolePassword, saveConsoleEditor, type ConsoleState, type ConsolePassword } from "./console.server";
 
 const audience = "ros3u-console", lifetime = 5 * 60;
 const signingKey = (secret: string) => {
@@ -8,10 +8,10 @@ const signingKey = (secret: string) => {
   return new TextEncoder().encode(secret);
 };
 
-export async function signConsoleSession(sessionId: string, files: boolean, secret: string) {
+export async function signConsoleSession(sessionId: string, files: boolean, secret: string, record?: { path: string; hash: string }) {
   const now = Math.floor(Date.now() / 1000);
-  return new SignJWT({ sid: sessionId, files }).setProtectedHeader({ alg: "HS256" }).setSubject("Guest")
-    .setAudience(audience).setIssuedAt(now).setExpirationTime(now + lifetime).sign(signingKey(secret));
+  return new SignJWT({ sid: sessionId, files, ...(record ? { record } : {}) }).setProtectedHeader({ alg: "HS256" }).setSubject(record ? "Roseu" : "Guest")
+    .setAudience(audience).setIssuedAt(now).setExpirationTime(Math.min(now + lifetime, Math.floor((Number(sessionId.slice(0, 13)) + CONSOLE_SESSION_DURATION) / 1000))).sign(signingKey(secret));
 }
 
 export async function signConsoleResume(sessionId: string, secret: string) {
@@ -25,15 +25,31 @@ export async function verifyConsoleResume(ticket: string, sessionId: string, sec
   if (payload.sid !== sessionId || payload.exp !== Math.floor((Number(sessionId.slice(0, 13)) + CONSOLE_SESSION_DURATION) / 1000)) throw Error("Invalid Guest workspace.");
 }
 
+export async function signConsoleRegistration(sessionId: string, record: { path: string; hash: string }, secret: string) {
+  return new SignJWT({ sid: sessionId, ...record }).setProtectedHeader({ alg: "HS256" }).setSubject("Guest")
+    .setAudience("ros3u-console-registration").setIssuedAt()
+    .setExpirationTime(Math.floor((Number(sessionId.slice(0, 13)) + CONSOLE_SESSION_DURATION) / 1000)).sign(signingKey(secret));
+}
+
+export async function verifyConsoleRegistration(ticket: string, sessionId: string, secret: string) {
+  const { payload } = await jwtVerify(ticket, signingKey(secret), { algorithms: ["HS256"], audience: "ros3u-console-registration", subject: "Guest" });
+  if (payload.sid !== sessionId || payload.exp !== Math.floor((Number(sessionId.slice(0, 13)) + CONSOLE_SESSION_DURATION) / 1000)
+    || typeof payload.path !== "string" || payload.path.length > 260 || !/^C:\\/.test(payload.path)
+    || typeof payload.hash !== "string" || !/^[0-9a-f]{64}$/.test(payload.hash)) throw Error("Invalid registration proof.");
+  return { path: payload.path, hash: payload.hash };
+}
+
 export async function verifyConsoleSession(proof: string, sessionId: string, secret: string) {
   const { payload, protectedHeader } = await compactVerify(proof, signingKey(secret), { algorithms: ["HS256"] });
   const claim = JSON.parse(new TextDecoder().decode(payload));
   const now = Math.floor(Date.now() / 1000);
-  if (protectedHeader.alg !== "HS256" || claim.aud !== audience || claim.sid !== sessionId || claim.sub !== "Guest"
+  if (protectedHeader.alg !== "HS256" || claim.aud !== audience || claim.sid !== sessionId || !["Guest", "Roseu"].includes(claim.sub)
     || typeof claim.files !== "boolean" || !Number.isInteger(claim.iat) || claim.iat > now + 30
-    || !Number.isInteger(claim.exp) || claim.exp !== claim.iat + lifetime) throw Error("Invalid console proof.");
-  // Guest needs no login. An expired Guest proof can renew only Guest, never an authenticated principal.
-  return { files: claim.files as boolean, expired: claim.exp <= now };
+    || !Number.isInteger(claim.exp) || claim.exp !== Math.min(claim.iat + lifetime, Math.floor((Number(sessionId.slice(0, 13)) + CONSOLE_SESSION_DURATION) / 1000))) throw Error("Invalid console proof.");
+  if (claim.sub === "Roseu" && (!claim.record || typeof claim.record.path !== "string" || claim.record.path.length > 260 || !/^C:\\/.test(claim.record.path)
+    || typeof claim.record.hash !== "string" || !/^[0-9a-f]{64}$/.test(claim.record.hash))) throw Error("Invalid console proof.");
+  // Signature validation is separate from expiry: the API must recheck a registered record before renewing Roseu.
+  return { files: claim.files as boolean, expired: claim.exp <= now, principal: claim.sub as ConsoleState["principal"], record: claim.sub === "Roseu" ? { path: claim.record.path as string, hash: claim.record.hash as string } : undefined };
 }
 
 export function readConsoleShells(value: unknown): ConsoleShell[] | null {
@@ -59,16 +75,15 @@ export function consoleMayWrite(command: string, shells: ConsoleShell[]) {
 }
 
 const initialFiles = createConsoleState().files;
-initialFiles.forEach(file => Object.freeze(file));
 Object.freeze(initialFiles);
 
-export function runConsoleRequest(command: string, shells: ConsoleShell[], cursor: number | null, files = structuredClone(initialFiles)) {
-  const state = { principal: "Guest" as const, files, shells: structuredClone(shells) };
+export function runConsoleRequest(command: string, shells: ConsoleShell[], cursor: number | null, files = initialFiles, created = Date.now(), action?: { kind: "password"; pending: ConsolePassword } | { kind: "save"; path: string; text: string }, authority?: Pick<ConsoleState, "principal" | "migration">) {
+  const state: ConsoleState = { principal: "Guest", ...authority, files: [...files], shells: structuredClone(shells), created };
   for (const shell of state.shells) {
     const cwd = getConsoleDirectory(shell.cwd, state);
     if (!cwd) throw Error("Invalid console directory.");
     shell.cwd = cwd;
   }
-  const result = cursor === null ? executeConsole(command, state) : completeConsole(command, state, cursor);
-  return { result, shells: state.shells, files: state.files };
+  const result = action?.kind === "password" ? finishConsolePassword(command, state, action.pending) : action?.kind === "save" ? saveConsoleEditor(action.path, action.text, state) : cursor === null ? executeConsole(command, state) : completeConsole(command, state, cursor);
+  return { result, shells: state.shells, files: state.files, password: state.password, registration: state.registration };
 }

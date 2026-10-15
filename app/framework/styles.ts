@@ -13,6 +13,7 @@ import mcCss from "~/styles/mc.css?url";
 import homeControlCss from "~/styles/pages/home-control.css?url";
 import settingsCss from "~/styles/pages/settings.css?url";
 import consoleCss from "~/styles/pages/console.css?url";
+import notepadCss from "~/styles/pages/notepad.css?url";
 import { isOsPath } from "~/utils/os";
 
 export function getPageStyles(pathname: string, osEnabled: boolean, data?: unknown, failed = false) {
@@ -27,6 +28,7 @@ export function getPageStyles(pathname: string, osEnabled: boolean, data?: unkno
   else if (["/tools", "/games", "/lab"].includes(pathname)) styles.push(directoryCss);
   else if (pathname === "/settings" || pathname.startsWith("/settings/")) styles.push(settingsCss);
   else if (pathname === "/console") styles.push(consoleCss);
+  else if (pathname === "/notepad") styles.push(notepadCss);
   else if (pathname === "/about") styles.push(aboutCss);
   else if (pathname === "/projects") styles.push(projectsCss);
   else if (["/contact", "/licenses", "/privacy", "/terms"].includes(pathname)) styles.push(legalCss);

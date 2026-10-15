@@ -20,6 +20,7 @@ import { Route as HomeControlRouteImport } from './start-routes/home-control'
 import { Route as LabRouteImport } from './start-routes/lab'
 import { Route as LicensesRouteImport } from './start-routes/licenses'
 import { Route as MapRouteImport } from './start-routes/map'
+import { Route as NotepadRouteImport } from './start-routes/notepad'
 import { Route as PrivacyRouteImport } from './start-routes/privacy'
 import { Route as ProjectsRouteImport } from './start-routes/projects'
 import { Route as SettingsRouteImport } from './start-routes/settings'
@@ -34,6 +35,7 @@ import { Route as AuthLogoutRouteImport } from './start-routes/auth_.logout'
 import { Route as GamesUmigameRouteImport } from './start-routes/games_.umigame'
 import { Route as MapSplatRouteImport } from './start-routes/map_.$'
 import { Route as SettingsAboutRouteImport } from './start-routes/settings_.about'
+import { Route as SettingsDeveloperRouteImport } from './start-routes/settings_.developer'
 import { Route as SettingsHistoryRouteImport } from './start-routes/settings_.history'
 import { Route as ToolsJevRouteImport } from './start-routes/tools_.jev'
 import { Route as ToolsWsolverRouteImport } from './start-routes/tools_.wsolver'
@@ -133,6 +135,11 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotepadRoute = NotepadRouteImport.update({
+  id: '/notepad',
+  path: '/notepad',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -201,6 +208,11 @@ const MapSplatRoute = MapSplatRouteImport.update({
 const SettingsAboutRoute = SettingsAboutRouteImport.update({
   id: '/settings_/about',
   path: '/settings/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsDeveloperRoute = SettingsDeveloperRouteImport.update({
+  id: '/settings_/developer',
+  path: '/settings/developer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsHistoryRoute = SettingsHistoryRouteImport.update({
@@ -441,6 +453,7 @@ export interface FileRoutesByFullPath {
   '/lab': typeof LabRoute
   '/licenses': typeof LicensesRoute
   '/map': typeof MapRoute
+  '/notepad': typeof NotepadRoute
   '/privacy': typeof PrivacyRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
@@ -455,6 +468,7 @@ export interface FileRoutesByFullPath {
   '/games/umigame': typeof GamesUmigameRoute
   '/map/$': typeof MapSplatRoute
   '/settings/about': typeof SettingsAboutRoute
+  '/settings/developer': typeof SettingsDeveloperRoute
   '/settings/history': typeof SettingsHistoryRoute
   '/tools/jev': typeof ToolsJevRoute
   '/tools/wsolver': typeof ToolsWsolverRoute
@@ -511,6 +525,7 @@ export interface FileRoutesByTo {
   '/lab': typeof LabRoute
   '/licenses': typeof LicensesRoute
   '/map': typeof MapRoute
+  '/notepad': typeof NotepadRoute
   '/privacy': typeof PrivacyRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
@@ -525,6 +540,7 @@ export interface FileRoutesByTo {
   '/games/umigame': typeof GamesUmigameRoute
   '/map/$': typeof MapSplatRoute
   '/settings/about': typeof SettingsAboutRoute
+  '/settings/developer': typeof SettingsDeveloperRoute
   '/settings/history': typeof SettingsHistoryRoute
   '/tools/jev': typeof ToolsJevRoute
   '/tools/wsolver': typeof ToolsWsolverRoute
@@ -582,6 +598,7 @@ export interface FileRoutesById {
   '/lab': typeof LabRoute
   '/licenses': typeof LicensesRoute
   '/map': typeof MapRoute
+  '/notepad': typeof NotepadRoute
   '/privacy': typeof PrivacyRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
@@ -596,6 +613,7 @@ export interface FileRoutesById {
   '/games_/umigame': typeof GamesUmigameRoute
   '/map_/$': typeof MapSplatRoute
   '/settings_/about': typeof SettingsAboutRoute
+  '/settings_/developer': typeof SettingsDeveloperRoute
   '/settings_/history': typeof SettingsHistoryRoute
   '/tools_/jev': typeof ToolsJevRoute
   '/tools_/wsolver': typeof ToolsWsolverRoute
@@ -654,6 +672,7 @@ export interface FileRouteTypes {
     | '/lab'
     | '/licenses'
     | '/map'
+    | '/notepad'
     | '/privacy'
     | '/projects'
     | '/settings'
@@ -668,6 +687,7 @@ export interface FileRouteTypes {
     | '/games/umigame'
     | '/map/$'
     | '/settings/about'
+    | '/settings/developer'
     | '/settings/history'
     | '/tools/jev'
     | '/tools/wsolver'
@@ -724,6 +744,7 @@ export interface FileRouteTypes {
     | '/lab'
     | '/licenses'
     | '/map'
+    | '/notepad'
     | '/privacy'
     | '/projects'
     | '/settings'
@@ -738,6 +759,7 @@ export interface FileRouteTypes {
     | '/games/umigame'
     | '/map/$'
     | '/settings/about'
+    | '/settings/developer'
     | '/settings/history'
     | '/tools/jev'
     | '/tools/wsolver'
@@ -794,6 +816,7 @@ export interface FileRouteTypes {
     | '/lab'
     | '/licenses'
     | '/map'
+    | '/notepad'
     | '/privacy'
     | '/projects'
     | '/settings'
@@ -808,6 +831,7 @@ export interface FileRouteTypes {
     | '/games_/umigame'
     | '/map_/$'
     | '/settings_/about'
+    | '/settings_/developer'
     | '/settings_/history'
     | '/tools_/jev'
     | '/tools_/wsolver'
@@ -865,6 +889,7 @@ export interface RootRouteChildren {
   LabRoute: typeof LabRoute
   LicensesRoute: typeof LicensesRoute
   MapRoute: typeof MapRoute
+  NotepadRoute: typeof NotepadRoute
   PrivacyRoute: typeof PrivacyRoute
   ProjectsRoute: typeof ProjectsRoute
   SettingsRoute: typeof SettingsRoute
@@ -879,6 +904,7 @@ export interface RootRouteChildren {
   GamesUmigameRoute: typeof GamesUmigameRoute
   MapSplatRoute: typeof MapSplatRoute
   SettingsAboutRoute: typeof SettingsAboutRoute
+  SettingsDeveloperRoute: typeof SettingsDeveloperRoute
   SettingsHistoryRoute: typeof SettingsHistoryRoute
   ToolsJevRoute: typeof ToolsJevRoute
   ToolsWsolverRoute: typeof ToolsWsolverRoute
@@ -1003,6 +1029,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notepad': {
+      id: '/notepad'
+      path: '/notepad'
+      fullPath: '/notepad'
+      preLoaderRoute: typeof NotepadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -1099,6 +1132,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/about'
       fullPath: '/settings/about'
       preLoaderRoute: typeof SettingsAboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings_/developer': {
+      id: '/settings_/developer'
+      path: '/settings/developer'
+      fullPath: '/settings/developer'
+      preLoaderRoute: typeof SettingsDeveloperRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings_/history': {
@@ -1417,6 +1457,7 @@ const rootRouteChildren: RootRouteChildren = {
   LabRoute: LabRoute,
   LicensesRoute: LicensesRoute,
   MapRoute: MapRoute,
+  NotepadRoute: NotepadRoute,
   PrivacyRoute: PrivacyRoute,
   ProjectsRoute: ProjectsRoute,
   SettingsRoute: SettingsRoute,
@@ -1431,6 +1472,7 @@ const rootRouteChildren: RootRouteChildren = {
   GamesUmigameRoute: GamesUmigameRoute,
   MapSplatRoute: MapSplatRoute,
   SettingsAboutRoute: SettingsAboutRoute,
+  SettingsDeveloperRoute: SettingsDeveloperRoute,
   SettingsHistoryRoute: SettingsHistoryRoute,
   ToolsJevRoute: ToolsJevRoute,
   ToolsWsolverRoute: ToolsWsolverRoute,

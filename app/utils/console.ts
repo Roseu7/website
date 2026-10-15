@@ -102,6 +102,11 @@ export type ConsoleReply = {
   effect?: "clear" | "exit";
   launch?: string;
   input?: "command" | "password";
+  challenge?: string;
+  editor?: { path: string; text: string };
+  registration?: string | null;
+  external?: string;
+  reset?: boolean;
 };
 
 export type ConsoleCompletion = {

@@ -4,7 +4,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { getOsApp, getOsHomePath, getOsPage, isOsPath, osApps, type OsApp } from "~/utils/os";
 import { PixelIcon } from "./PixelIcon";
 import { OsWindow } from "./OsWindow";
-import { OsOpenAppContext, OsPageContext } from "./OsContext";
+import { OsOpenAppContext, OsPageContext, OsEditorContext, OsDeveloperContext, type OsEditorDocument } from "./OsContext";
 import { animateOsWindow, stopOsMotion, type OsOpening } from "./motion";
 
 type Task = { id: OsApp["id"]; path: string };
@@ -49,6 +49,12 @@ function AppLink({ app, path = app.path, onOpen, shortcut = false }: { app: OsAp
 }
 
 export function OsShell({ enabled, children, notFound = false, systemError = false }: { enabled: boolean; children: ReactNode; notFound?: boolean; systemError?: boolean }) {
+  const [editorDocument, setEditorDocument] = useState<OsEditorDocument | null>(null);
+  const [editorDirty, setEditorDirty] = useState(false);
+  const [developerPresses, setDeveloperPresses] = useState(0);
+  const [developerCommand, setDeveloperCommand] = useState<{ id: number; text: string; operation?: "developer" } | null>(null);
+  const [registration, setRegistration] = useState<string | null>(null);
+  const developerSerial = useRef(0);
   const location = useRouterState({ select: state => {
     const match = state.matches[state.matches.length - 1];
     // Match and page advance together; location can change before/after lazy route loading.
@@ -238,7 +244,9 @@ export function OsShell({ enabled, children, notFound = false, systemError = fal
   }
 
   function dismissWindow(task: OpenWindow, close: boolean) {
+    if (close && task.id === "notepad" && editorDirty && !window.confirm("変更を破棄して閉じますか？")) return;
     const commit = () => {
+      if (close && task.id === "notepad") { setEditorDocument(null); setEditorDirty(false); }
       setTasks((current) => close ? current.filter((item) => item.id !== task.id) : current.map((item) => item.id === task.id ? { ...item, minimized: true } : item));
       if (getOsPage(locationRef.current)?.id !== task.id) return;
       const next = tasksRef.current.filter((item) => item.id !== task.id && !item.minimized).sort((a, b) => b.order - a.order)[0];
@@ -252,7 +260,12 @@ export function OsShell({ enabled, children, notFound = false, systemError = fal
   if (!active && !notFound) return <OsPageContext.Provider value={false}>{children}</OsPageContext.Provider>;
 
   return (
-    <OsPageContext.Provider value><OsOpenAppContext.Provider value={rememberOpening}>
+    <OsPageContext.Provider value><OsOpenAppContext.Provider value={rememberOpening}><OsEditorContext.Provider value={{ document: editorDocument, setDirty: setEditorDirty, open: document => {
+      if (editorDirty && !window.confirm("変更を破棄して別のファイルを開きますか？")) return false;
+      setEditorDocument(document); setEditorDirty(false); return true;
+    } }}><OsDeveloperContext.Provider value={{ presses: developerPresses, pressBuild: () => setDeveloperPresses(count => Math.min(7, count + 1)), command: developerCommand, runCommand: (text, operation) => {
+      setDeveloperCommand({ id: ++developerSerial.current, text, operation }); void navigate("/console");
+    }, consumeCommand: id => setDeveloperCommand(command => command?.id === id ? null : command), registration, register: setRegistration }}>
       <div ref={shellRef} className={`os-shell${historyOpen ? " os-shell--history" : ""}`} hidden={notFound} inert={notFound}>
         <a className="os-skip-link" href={page ? `#os-content-${page.id}` : "#os-apps"}>内容へ移動</a>
         <div className="os-mobile-status" role="group" aria-label="仮想OSのステータスバー">
@@ -320,6 +333,6 @@ export function OsShell({ enabled, children, notFound = false, systemError = fal
         </div>
       </div>
       {notFound && children}
-    </OsOpenAppContext.Provider></OsPageContext.Provider>
+    </OsDeveloperContext.Provider></OsEditorContext.Provider></OsOpenAppContext.Provider></OsPageContext.Provider>
   );
 }

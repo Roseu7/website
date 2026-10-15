@@ -14,6 +14,16 @@
   .os-settings-details dt { color: var(--ink-2); }
   .os-settings-details dd { margin: 0; overflow-wrap: anywhere; }
   .os-settings-version { display: inline-block; }
+  .os-settings-build { border: 0; padding: 0 4px; background: transparent; color: inherit; font: inherit; min-height: 28px; }
+  .os-settings-build-status { margin: 0; font-size: 14px; }
+  .os-settings-build-status:empty { display: none; }
+  .os-developer-options { display: grid; gap: 16px; }
+  .os-developer-log { justify-self: start; }
+  .os-developer-details { margin: 0; display: grid; gap: 16px; }
+  .os-developer-details > div { display: grid; gap: 8px; }
+  .os-developer-details dd { margin: 0; }
+  .os-developer-details > div:last-child dd { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .os-developer-details code { display: block; font: inherit; font-size: 14px; overflow-wrap: anywhere; margin-bottom: 8px; }
   .os-settings-history { display: grid; gap: 16px; }
   .os-settings-history time { color: var(--ink-3); font-size: 14px; }
   .os-settings-history ul { display: grid; gap: 8px; margin: 0; padding-left: 24px; line-height: 1.8; }
@@ -25,6 +35,13 @@
   .os-settings-word { display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
 
   @media (min-width: 761px) {
+    .os-settings-pane:has(.os-developer-options) { padding: 16px; }
+    .os-developer-options, .os-developer-details { gap: 12px; }
+    .os-developer-details > div { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; align-items: center; }
+    .os-developer-details > div:last-child { grid-template-columns: 1fr; gap: 4px; }
+    .os-developer-details dd { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .os-developer-details code { display: inline; margin: 0; }
+    .os-developer-options .site-button { min-height: 34px; padding: 4px 8px; line-height: 1.4; }
     .os-window[data-app="settings"] { width: min(520px, calc(100% - 200px)); height: min(360px, calc(100% - 140px)); border: 1px solid var(--ink-1); padding: 4px; box-shadow: inset 1px 1px var(--os-light), inset -1px -1px var(--os-dark), inset 2px 2px var(--os-face), inset -2px -2px var(--os-shadow), 1px 1px var(--os-dark); }
     .os-window[data-app="settings"] .os-window-content { padding: 16px 12px 12px; border: 0; margin-top: 0; background: var(--os-face); }
     .os-window[data-app="settings"] .os-titlebar { border-color: var(--os-shadow); box-shadow: inset 1px 1px var(--os-light), inset -1px -1px var(--os-shadow); }
@@ -36,6 +53,9 @@
   }
 
   @media (max-width: 760px) {
+    .os-settings-build { min-height: 44px; }
+    .os-developer-options { padding: 16px; }
+    .os-developer-details .site-button, .os-developer-log { min-height: 44px; }
     .os-window[data-app="settings"] .os-titlebar { position: relative; }
     .os-window[data-app="settings"] .os-window-content { background: repeating-linear-gradient(90deg, #dfc8ee 0 3px, #e4d0f0 3px 6px); }
     .os-settings-tabs, .os-settings-brand, .os-settings-page--index .os-settings-pane { display: none; }

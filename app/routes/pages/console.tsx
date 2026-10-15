@@ -1,7 +1,7 @@
 import { useContext, useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { ArrowUp, ArrowDown, CornerDownLeft } from "lucide-react";
 import { PageLayout } from "~/components/layout/PageLayout";
-import { OsCloseAppContext, OsWindowActiveContext } from "~/components/os/OsContext";
+import { OsCloseAppContext, OsWindowActiveContext, OsEditorContext, OsDeveloperContext } from "~/components/os/OsContext";
 import { useLoaderData, useNavigate } from "~/framework/navigation";
 import { CONSOLE_COMMAND_LIMIT, createConsoleShell, executeLocalConsole, expandConsole, isSensitiveConsoleInput, type ConsoleShell, type ConsoleCompletion, type ConsoleReply } from "~/utils/console";
 import { loadConsoleStorage, saveConsoleWorkspace, saveConsoleHistory, saveConsoleDraft } from "~/utils/console-storage";
@@ -28,12 +28,17 @@ export default function ConsolePage() {
   const navigate = useNavigate();
   const active = useContext(OsWindowActiveContext);
   const close = useContext(OsCloseAppContext);
+  const editor = useContext(OsEditorContext);
+  const developer = useContext(OsDeveloperContext);
+  const registration = useRef(developer.registration);
+  registration.current = developer.registration;
   const [cwd, setCwd] = useState(initial.cwd);
   const [command, setCommand] = useState("");
-  const [entries, setEntries] = useState([{ id: 0, text: initial.greeting }]);
+  const [entries, setEntries] = useState<{ id: number; text: string; link?: string }[]>([{ id: 0, text: initial.greeting }]);
   const [busy, setBusy] = useState(true);
   const [inputMode, setInputMode] = useState<"command" | "password">("command");
   const passwordInput = useRef(false);
+  const passwordChallenge = useRef<string | undefined>(undefined);
   const storage = useRef<Storage | null>(null);
   const storageError = useRef(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -112,6 +117,13 @@ export default function ConsolePage() {
   useEffect(() => {
     if (active) formRef.current?.scrollIntoView({ block: "nearest" });
   }, [entries, active]);
+  useEffect(() => {
+    if (!active || busy || !developer.command || inFlight.current) return;
+    const requested = developer.command;
+    developer.consumeCommand(requested.id);
+    passwordInput.current = false; passwordChallenge.current = undefined; setInputMode("command");
+    void runCommand(requested.text, requested.operation);
+  }, [active, busy, developer.command]);
 
   function resetCompletion() {
     completion.current = null;
@@ -129,8 +141,8 @@ export default function ConsolePage() {
     catch { storageFailed(); }
   }
 
-  function appendOutput(text: string) {
-    const entry = { id: ++sequence.current, text };
+  function appendOutput(text: string, link?: string) {
+    const entry = { id: ++sequence.current, text, ...(link ? { link } : {}) };
     setEntries(current => {
       const next = [...current, entry];
       let size = next.reduce((total, item) => total + item.text.length, 0);
@@ -139,15 +151,23 @@ export default function ConsolePage() {
     });
   }
 
-  async function requestConsole(body: { command: string; operation?: "complete"; cursor?: number }, signal: AbortSignal) {
+  async function requestConsole(body: { command: string; operation?: "complete" | "password" | "cancel" | "save" | "developer"; cursor?: number; challenge?: string; path?: string; text?: string }, signal: AbortSignal) {
     const send = () => fetch("/api/console", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...body, sessionId: sessionId.current, proof: proof.current, shells: shells.current }), signal });
+      body: JSON.stringify({ ...body, sessionId: sessionId.current, proof: proof.current, shells: shells.current, ...(registration.current ? { registration: registration.current } : {}) }), signal });
     const response = await send();
     if (response.status !== 401) return response;
     const renewal = await response.json() as { proof?: string };
     if (!renewal.proof || signal.aborted) return response;
     proof.current = renewal.proof;
     return send();
+  }
+
+  function needsRenewal() {
+    // Decoding only schedules renewal; permissions always come from server signature checks.
+    try {
+      const claim = JSON.parse(atob(proof.current.split(".")[1].replaceAll("-", "+").replaceAll("_", "/")));
+      return claim.sub === "Roseu" && claim.exp <= Math.floor(Date.now() / 1000);
+    } catch { return true; }
   }
 
   async function complete(direction: number) {
@@ -167,7 +187,7 @@ export default function ConsolePage() {
       persistDraft(next);
       cursor.current = history.current.length;
     };
-    if (cached?.command === command && cached.caret === caret && input.selectionEnd === caret && cached.expires > Date.now()) {
+    if (!needsRenewal() && cached?.command === command && cached.caret === caret && input.selectionEnd === caret && cached.expires > Date.now()) {
       if (cached.candidates.length) apply({ ...cached, index: (cached.index + direction + cached.candidates.length) % cached.candidates.length });
       return;
     }
@@ -181,9 +201,14 @@ export default function ConsolePage() {
         if (mounted.current && completionRequest.current === request) appendOutput(response.status === 429 ? "\nToo many commands. Try again in 60 seconds.\n" : response.status === 410 ? "\nSession expired. Reopen the command prompt.\n" : `\nCompletion service error (${response.status}). Try again.\n`);
         return;
       }
-      const result = await response.json() as ConsoleCompletion & { proof: string };
+      const result = await response.json() as ConsoleCompletion & ConsoleReply & { proof: string; shells: ConsoleShell[] };
       if (!mounted.current || completionRequest.current !== request || input.value !== command || input.selectionStart !== caret) return;
       proof.current = result.proof;
+      if (result.registration !== undefined) developer.register(result.registration);
+      if (result.reset) {
+        shells.current = result.shells; setCwd(result.cwd); setCommand(""); persistDraft("");
+        appendOutput(result.output + "\n"); return;
+      }
       const state = { ...result, command, caret, expires: Date.now() + 30_000, index: result.candidates.length ? ((request.offset % result.candidates.length) + result.candidates.length) % result.candidates.length : 0 };
       completion.current = state;
       if (result.candidates.length) apply(state);
@@ -207,22 +232,30 @@ export default function ConsolePage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (inFlight.current || (!passwordInput.current && !command.trim())) return;
+    await runCommand(command);
+  }
+  async function runCommand(submitted: string, operation?: "developer") {
+    if (inFlight.current || (!operation && !passwordInput.current && !submitted.trim())) return;
     resetCompletion();
-    const submitted = command;
+    const enteredPassword = passwordInput.current;
     const sensitive = passwordInput.current || isSensitiveConsoleInput(submitted) || isSensitiveConsoleInput(expandConsole(submitted, shells.current[shells.current.length - 1]));
     inFlight.current = true; setBusy(true); setCommand("");
-    if (!sensitive) history.current = [...history.current, submitted].slice(-100);
+    if (!sensitive && submitted.trim()) history.current = [...history.current, submitted].slice(-100);
     persistDraft("");
     try { if (storage.current) saveConsoleHistory(storage.current, history.current); } catch { storageFailed(); }
     cursor.current = history.current.length; draft.current = "";
     controller.current = new AbortController();
     let result: ConsoleReply;
+    let reserved: Window | null = null;
+    const token = /^\s*("[^"]+"|\S+)\s+\S/.exec(expandConsole(submitted, shells.current[shells.current.length - 1]));
+    if (!enteredPassword && !operation && token && /^beacon(?:\.exe)?$/i.test(token[1].replaceAll('"', "").split("\\").at(-1)!)) {
+      try { reserved = window.open("about:blank", "_blank"); if (reserved) reserved.opener = null; } catch { reserved?.close(); reserved = null; }
+    }
     try {
-      const local = passwordInput.current ? null : executeLocalConsole(submitted, shells.current, version);
+      const local = passwordInput.current || operation || needsRenewal() ? null : executeLocalConsole(submitted, shells.current, version);
       if (local) result = local;
       else {
-        const response = await requestConsole({ command: submitted }, controller.current.signal);
+        const response = await requestConsole({ command: submitted, ...(operation ? { operation } : passwordInput.current ? { operation: "password", challenge: passwordChallenge.current } : {}) }, controller.current.signal);
         if (!response.ok) {
           result = { cwd, output: response.status === 429 ? "Too many commands. Try again in 60 seconds." : response.status === 410 ? "Session expired. Reopen the command prompt." : `Command service error (${response.status}). Try again.` };
         } else {
@@ -234,9 +267,21 @@ export default function ConsolePage() {
     } catch {
       result = { cwd, output: "The command service is unavailable. Try again." };
     }
-    if (!mounted.current) return;
+    if (!mounted.current) { reserved?.close(); return; }
+    let externalLink: string | undefined;
+    if (result.external) {
+      try {
+        const url = new URL(result.external);
+        if (url.origin !== "https://x.com" || url.pathname !== "/intent/tweet" || !url.search.startsWith("?text=") || url.searchParams.size !== 1 || url.hash) throw Error("Invalid external URL.");
+        if (reserved && !reserved.closed) { reserved.location.replace(url.href); reserved = null; }
+        else { externalLink = url.href; result.output = "Could not open a new tab. Open X here:"; }
+      } catch { result.output = "Could not open a new tab."; }
+    }
+    reserved?.close();
+    if (result.registration !== undefined) developer.register(result.registration);
     if (result.input) {
       passwordInput.current = result.input === "password";
+      passwordChallenge.current = result.challenge;
       setInputMode(result.input);
       persistDraft("");
     } else if (!passwordInput.current) setInputMode("command");
@@ -244,11 +289,36 @@ export default function ConsolePage() {
     if (result.effect === "clear") setEntries([]);
     else if (result.effect === "exit") close?.();
     else {
-      const output = sensitive && submitted ? result.output.split(submitted).join("[redacted]") : result.output;
-      appendOutput(sensitive ? `${output}\n` : `${cwd}>${submitted}\n${output}\n`);
-      if (result.launch) void navigate(result.launch);
+      const output = sensitive && !enteredPassword && submitted ? result.output.split(submitted).join("[redacted]") : result.output;
+      appendOutput(sensitive || operation || result.reset ? `${output}\n` : `${cwd}>${submitted}\n${output}\n`, externalLink);
+      let openEditor = true;
+      if (result.editor) openEditor = editor.open({ ...result.editor, save: async (path, text) => {
+        const response = await requestConsole({ command: "", operation: "save", path, text }, new AbortController().signal);
+        if (!response.ok) return { cwd, output: `Editor service error (${response.status}). Try again.` };
+        const saved = await response.json() as ConsoleReply & { shells: ConsoleShell[]; proof: string };
+        proof.current = saved.proof;
+        if (saved.reset) { resetCompletion(); shells.current = saved.shells; setCwd(saved.cwd); setCommand(""); persistDraft(""); }
+        if (saved.registration !== undefined) developer.register(saved.registration);
+        return saved;
+      } });
+      if (result.launch && openEditor) void navigate(result.launch);
     }
     inFlight.current = false; setBusy(false);
+  }
+  async function cancelPassword() {
+    if (inFlight.current || !passwordInput.current || !passwordChallenge.current) return;
+    inFlight.current = true; setBusy(true); setCommand(""); persistDraft("");
+    try {
+      const response = await requestConsole({ command: "", operation: "cancel", challenge: passwordChallenge.current }, new AbortController().signal);
+      if (!response.ok) { appendOutput(`Password service error (${response.status}). Try again.\n`); return; }
+      const reply = await response.json() as ConsoleReply & { proof: string; shells: ConsoleShell[] };
+      passwordInput.current = false; passwordChallenge.current = undefined; setInputMode("command");
+      proof.current = reply.proof; shells.current = reply.shells;
+      if (reply.registration !== undefined) developer.register(reply.registration);
+      setCwd(reply.cwd);
+      if (reply.output) appendOutput(reply.output + "\n");
+    } catch { appendOutput("The password service is unavailable. Try again.\n"); }
+    finally { inFlight.current = false; setBusy(false); }
   }
 
   return <PageLayout contentClassName="os-console-page">
@@ -256,22 +326,25 @@ export default function ConsolePage() {
       if (active && !(event.target as Element).closest("button, input") && !window.getSelection()?.toString()) inputRef.current?.focus({ preventScroll: true });
     }}>
       <div className="os-console-output" role="log" aria-label="コマンドの出力" aria-live="polite" aria-relevant="additions">
-        {entries.map(entry => <pre key={entry.id}>{entry.text}</pre>)}
+        {entries.map(entry => <pre key={entry.id}>{entry.text}{entry.link && <><a href={entry.link} target="_blank" rel="noopener noreferrer">Open X</a>{"\n"}</>}</pre>)}
       </div>
       <form ref={formRef} className="os-console-command" onSubmit={submit} aria-busy={busy}>
         <div className="os-console-line">
-        <span className="os-console-prompt">{cwd}&gt;</span>
+        <span className="os-console-prompt">{inputMode === "password" ? "" : `${cwd}>`}</span>
         <input ref={inputRef} className="os-console-input" type={inputMode === "password" ? "password" : "text"} aria-label={inputMode === "password" ? "パスワード" : "コマンド"} value={command} maxLength={CONSOLE_COMMAND_LIMIT} readOnly={busy} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} enterKeyHint="send" onChange={event => { resetCompletion(); setCommand(event.target.value); persistDraft(event.target.value); cursor.current = history.current.length; }} onPointerDown={resetCompletion} onBlur={resetCompletion} onKeyDown={event => {
           if (event.nativeEvent.isComposing) return;
-          if (passwordInput.current) return;
+          if (passwordInput.current) { if (event.key === "Escape") { event.preventDefault(); void cancelPassword(); } return; }
           if (event.key === "Tab" && !event.ctrlKey && !event.altKey && !event.metaKey) { event.preventDefault(); void complete(event.shiftKey ? -1 : 1); return; }
           if (event.key !== "Shift") resetCompletion();
           if (event.key === "ArrowUp" || event.key === "ArrowDown") { event.preventDefault(); recall(event.key === "ArrowUp" ? -1 : 1); }
         }} />
         </div>
-        <div className="os-console-actions" data-ui-actions>
-          <ConsoleAction label="前のコマンド" disabled={busy || inputMode === "password"} onClick={() => recall(-1)}><ArrowUp size={20} aria-hidden="true" /></ConsoleAction>
-          <ConsoleAction label="次のコマンド" disabled={busy || inputMode === "password"} onClick={() => recall(1)}><ArrowDown size={20} aria-hidden="true" /></ConsoleAction>
+        <div className={`os-console-actions${inputMode === "password" ? " os-console-actions--password" : ""}`} data-ui-actions>
+          {inputMode === "password" && <button type="button" className="os-console-cancel" disabled={busy} onClick={() => void cancelPassword()}>キャンセル</button>}
+          {inputMode === "command" && <>
+          <ConsoleAction label="前のコマンド" disabled={busy} onClick={() => recall(-1)}><ArrowUp size={20} aria-hidden="true" /></ConsoleAction>
+          <ConsoleAction label="次のコマンド" disabled={busy} onClick={() => recall(1)}><ArrowDown size={20} aria-hidden="true" /></ConsoleAction>
+          </>}
           <ConsoleAction label="実行" disabled={busy}><CornerDownLeft size={20} aria-hidden="true" /></ConsoleAction>
         </div>
       </form>

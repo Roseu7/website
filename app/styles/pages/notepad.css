@@ -1,0 +1,15 @@
+@layer overrides {
+  .os-window[data-app="notepad"] .os-window-content { padding: 0; }
+  .os-notepad-page { display: flex; flex-direction: column; height: 100%; min-height: 0; background: var(--os-face); }
+  .os-notepad-toolbar { display: flex; align-items: center; gap: 8px; padding: 8px; border-bottom: 1px solid var(--os-shadow); box-shadow: inset 0 1px var(--os-light); }
+  .os-notepad-toolbar input { flex: 1; min-width: 0; min-height: 36px; padding: 4px 8px; border: 1px solid var(--os-shadow); background: var(--os-light); box-shadow: inset 1px 1px var(--os-dark); color: var(--ink-1); font: inherit; }
+  .os-notepad-toolbar .site-button { min-height: 36px; padding: 4px 12px; }
+  .os-notepad-text { flex: 1; width: 100%; min-height: 0; padding: 8px; border: 0; resize: none; background: white; color: var(--ink-1); font-family: var(--os-font); font-size: 16px; line-height: 1.8; white-space: pre; overflow: auto; }
+  .os-notepad-text:focus-visible { outline-offset: -3px; }
+  .os-notepad-status { min-height: 32px; margin: 0; padding: 4px 8px; border-top: 1px solid var(--os-shadow); font-size: 14px; line-height: 1.5; }
+  @media (max-width: 760px) {
+    .os-notepad-toolbar { flex-wrap: wrap; }
+    .os-notepad-toolbar input, .os-notepad-toolbar .site-button { min-height: 44px; }
+    .os-notepad-toolbar label { font-size: 14px; }
+  }
+}

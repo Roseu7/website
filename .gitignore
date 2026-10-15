@@ -52,6 +52,9 @@ config.yml
 
 # Private virtual command environment and puzzle content
 /app/utils/console.server.ts
+/app/utils/console-fixtures.server.ts
+/app/utils/console-migration-data.server.ts
+/app/utils/console-relcheck.server.ts
 
 # Local source font archive
 /assets/fonts/unused/
