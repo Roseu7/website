@@ -7,7 +7,7 @@
 .os-app-grid { gap: 12px; width: 112px; }
 .os-app-icon { min-height: 84px; }
 .os-app-icon__label { padding-inline: 4px; }
-.os-shortcut { position: absolute; left: 0; bottom: 0; width: 12px; height: 12px; }
+.os-shortcut { position: absolute; left: 0; bottom: 0; width: 16px; height: 16px; }
 .os-desktop__message { left: 27%; top: 36%; right: 8%; }
 .os-desktop__message h1 { font-size: 32px; }
 .os-desktop__message-line { padding-inline-start: 1em; }
@@ -23,7 +23,7 @@
 .os-window:not(.is-active) .os-titlebar :focus-visible { outline-color: var(--ink-1); }
 .os-window:not(.is-active) .os-window-controls button { border-color: var(--os-shadow); color: var(--ink-3); }
 .os-control-min { width: 12px; height: 3px; align-self: end; margin-bottom: 6px; background: currentColor; }
-.os-control-max { width: 14px; height: 14px; border: 2px solid currentColor; border-top-width: 4px; }
+.os-control-max { width: 14px; height: 14px; border: 2px solid currentColor; border-top-width: 3px; }
 .os-control-restore { display: block; width: 16px; height: 16px; }
 
 .os-taskbar { position: relative; z-index: 100; display: flex; gap: 8px; align-items: center; height: 48px; padding: 6px 8px; background: var(--os-face); border-top: 1px solid var(--os-shadow); box-shadow: inset 0 1px var(--os-light); font-family: var(--os-font); }
@@ -44,10 +44,9 @@
 .os-start-item--desktop { margin-top: 4px; border-top: 1px solid var(--os-shadow); box-shadow: inset 0 1px var(--os-light); }
 .os-taskbar__tasks { display: flex; gap: 6px; min-width: 0; overflow-x: auto; padding: 2px; }
 .os-task { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; min-width: 120px; min-height: 36px; padding: 4px 12px; border: 1px solid var(--os-dark); background: var(--os-face); font-size: 14px; line-height: 1.5; box-shadow: inset 1px 1px var(--os-light), inset -1px -1px var(--os-shadow); }
-.os-task .os-pixel-icon { width: 20px; height: 20px; }
+.os-task .os-pixel-icon { width: 24px; height: 24px; }
 .os-task.is-active { background: repeating-conic-gradient(var(--os-light) 0% 25%, var(--os-face) 0% 50%) 0 0 / 4px 4px; color: var(--ink-1); box-shadow: inset 1px 1px var(--os-shadow); }
 .os-task:active { box-shadow: inset 1px 1px var(--os-shadow); }
-.os-start-item:hover .os-pixel-icon--profile path, .os-start-item:focus-visible .os-pixel-icon--profile path { fill: #fff8ff; }
 .os-task:hover { text-decoration: underline; text-underline-offset: 4px; }
 .os-mobile-controls, .os-mobile-status, .os-history { display: none; }
 .os-mobile-status { user-select: none; -webkit-user-select: none; }
