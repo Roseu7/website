@@ -7,7 +7,7 @@ export function PixelIcon({ kind }: { kind: OsApp["icon"] | "system" | "info" })
         <path fill="#5022c4" d="M2 3h20v18H2z" />
         <path fill="#fff8ff" d="M3 4h18v3H3z" />
         <path fill="#211536" d="M3 8h18v12H3z" />
-        <path fill="#bff3f3" d="M5 10h2v1h1v1h1v1H8v1H7v1H5v-1h2v-1H6v-1H5zM10 15h6v1h-6z" />
+        <path fill="#bff3f3" d="M5 10h2v1H5zM6 11h2v1H6zM7 12h2v1H7zM6 13h2v1H6zM5 14h2v1H5zM10 15h6v1h-6z" />
       </>}
       {kind === "info" && <>
         <path fill="currentColor" fillRule="evenodd" d="M8 2h8v2h4v4h2v8h-2v4h-4v2H8v-2H4v-4H2V8h2V4h4zM8 4v2H6v2H4v8h2v2h2v2h8v-2h2v-2h2V8h-2V6h-2V4z" />
@@ -21,6 +21,7 @@ export function PixelIcon({ kind }: { kind: OsApp["icon"] | "system" | "info" })
         <path fill="#5022c4" d="M10 8h4v1h1v1h1v4h-1v1h-1v1h-4v-1H9v-1H8v-4h1V9h1z" />
         <path fill="#bff3f3" d="M10 9h4v1h1v4h-1v1h-4v-1H9v-4h1z" />
         <path fill="#fff8ff" d="M10 10h4v4h-4z" />
+        <path fill="#5022c4" d="M4 4h1v1H4zM19 4h1v1h-1zM4 19h1v1H4zM19 19h1v1h-1z" />
       </>}
       {kind === "folder" && <>
         <path fill="#5022c4" d="M2 5h8v2h12v14H2z" />
@@ -34,13 +35,16 @@ export function PixelIcon({ kind }: { kind: OsApp["icon"] | "system" | "info" })
         <path fill="#a2c8f1" d="M7 4h1v16H7zM8 20h9v1H8z" />
         <path fill="#eeabe7" d="M15 3h3v4h-3z" />
         <path fill="#942b54" d="M3 10h18v7H3z" />
-        <path fill="#fff8ff" d="M5 11h3v3H6v2H5zM9 11h2v1h1v3h-1v1H9zM13 11h4v1h-3v1h2v1h-2v2h-1z" />
-        <path fill="#942b54" d="M6 12h1v1H6zM10 12h1v3h-1z" />
+        <path fill="#fff8ff" d="M6 11h3v3H7v2H6zM10 11h2v1h1v3h-1v1h-2zM14 11h4v1h-3v1h2v1h-2v2h-1z" />
+        <path fill="#942b54" d="M7 12h1v1H7zM11 12h1v3h-1z" />
       </>}
-      {kind === "profile" && <path fill="#5022c4" d="M9 2h6v1h2v2h1v5h-1v2h-2v2h-1v2h3v1h2v2h2v3H3v-3h2v-2h2v-1h3v-2H9v-2H7v-2H6V5h1V3h2z" />}
+      {kind === "profile" && <>
+        <path fill="#5022c4" d="M9 2h6v1h-6zM7 3h2v1h-2zM15 3h2v1h-2zM7 4h1v1h-1zM16 4h1v1h-1zM6 5h1v5h-1zM17 5h1v5h-1zM7 10h1v1h-1zM16 10h1v1h-1zM7 11h2v1h-2zM15 11h2v1h-2zM9 12h1v2h-1zM14 12h1v2h-1zM10 14h1v2h-1zM13 14h1v2h-1zM7 16h3v1h-3zM14 16h3v1h-3zM5 17h2v1h-2zM17 17h2v1h-2zM5 18h1v1h-1zM18 18h1v1h-1zM3 19h2v1h-2zM19 19h2v1h-2zM3 20h1v1h-1zM20 20h1v1h-1zM3 21h18v1h-18z" />
+        <path fill="#c4a5ee" d="M9 3h6v1h-6zM8 4h8v1h-8zM7 5h10v5h-10zM8 10h8v1h-8zM9 11h6v1h-6zM10 12h4v2h-4zM11 14h2v2h-2zM10 16h4v1h-4zM7 17h10v1h-10zM6 18h12v1h-12zM5 19h14v1h-14zM4 20h16v1h-16z" />
+      </>}
       {kind === "game" && <>
         <path fill="#5022c4" d="M5 5h14v1h2v2h1v11h-1v1h-4v-2H7v2H3v-1H2V8h1V6h2z" />
-        <path fill="#bff3f3" d="M5 6h14v1h2v11h-3v-2H6v2H3V8h2z" />
+        <path fill="#bff3f3" d="M5 6h14v2h2v10h-3v-2H6v2H3V8h2z" />
         <path fill="#fff8ff" d="M5 6h14v1H6v1H4v7H3V8h2z" />
         <path fill="#5022c4" d="M6 9h2v2h2v2H8v2H6v-2H4v-2h2zM10 15h4v1h-4z" />
         <path fill="#ed65be" d="M16 9h2v2h-2zM18 12h2v2h-2z" />
@@ -48,7 +52,7 @@ export function PixelIcon({ kind }: { kind: OsApp["icon"] | "system" | "info" })
       {kind === "tools" && <>
         <path fill="#5022c4" d="M6 2h3v5h6V2h3v8h-2v2h-2v9h-1v1h-2v-1h-1v-9H8v-2H6z" />
         <path fill="#bff3f3" d="M7 3h1v5h8V3h1v6h-2v2h-2v9h-2v-9H9V9H7z" />
-        <path fill="#fff8ff" d="M7 3h1v5H7zM7 9h2v2H8v-1H7zM11 12h1v7h-1z" />
+        <path fill="#fff8ff" d="M7 3h1v5H7zM7 9h2v1H7zM11 12h1v7h-1z" />
         <path fill="#eeabe7" d="M12 12h1v7h-1z" />
       </>}
       {kind === "document" && <>
@@ -64,7 +68,7 @@ export function PixelIcon({ kind }: { kind: OsApp["icon"] | "system" | "info" })
         <path fill="#5022c4" d="M3 5h18v1h1v13h-1v1H3v-1H2V6h1z" />
         <path fill="#bff3f3" d="M3 6h18v13H3z" />
         <path fill="#fff8ff" d="M3 6h18v1H4v11H3z" />
-        <path fill="#eeabe7" d="M4 7h16v2h-2v2h-2v2H8v-2H6V9H4z" />
+        <path fill="#eeabe7" d="M5 7h14v1H5zM7 8h10v2H7zM9 10h6v2H9z" />
         <path fill="#5022c4" d="M3 6h2v2h2v2h2v2h6v-2h2V8h2V6h2v2h-2v2h-2v2h-2v2H9v-2H7v-2H5V8H3z" />
         <path fill="#a2c8f1" d="M4 17h16v1H4z" />
       </>}

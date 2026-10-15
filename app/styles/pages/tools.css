@@ -43,7 +43,7 @@
 .os-directory { display: grid; gap: 0; border: 1px solid var(--os-shadow); background: #fffdfc; box-shadow: inset 1px 1px var(--os-dark); }
 .os-directory-entry { display: flex; align-items: center; gap: 16px; min-height: 84px; padding: 16px; border-bottom: 1px solid var(--line-soft); }
 .os-directory-entry:last-child { border-bottom: 0; }
-.os-directory-entry .os-pixel-icon { width: 32px; height: 32px; }
+.os-directory-entry .os-pixel-icon { width: 48px; height: 48px; }
 .os-directory-entry:hover, .os-directory-entry:focus-visible { background: #eed8f9; }
 .os-directory > a:not(.os-directory-entry) { display: flex; align-items: center; min-height: 44px; padding: 8px 16px; background: var(--os-face); }
 .os-page-content .os-directory-entry h2 { margin: 0; font-family: var(--os-font); font-size: 20px; }
