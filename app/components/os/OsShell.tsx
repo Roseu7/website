@@ -52,7 +52,7 @@ export function OsShell({ enabled, children, notFound = false, systemError = fal
   const [editorDocument, setEditorDocument] = useState<OsEditorDocument | null>(null);
   const [editorDirty, setEditorDirty] = useState(false);
   const [developerPresses, setDeveloperPresses] = useState(0);
-  const [developerCommand, setDeveloperCommand] = useState<{ id: number; text: string; operation?: "developer" } | null>(null);
+  const [developerCommand, setDeveloperCommand] = useState<{ id: number; text: string; operation?: "developer"; localLogTime?: boolean } | null>(null);
   const [registration, setRegistration] = useState<string | null>(null);
   const developerSerial = useRef(0);
   const location = useRouterState({ select: state => {
@@ -263,8 +263,8 @@ export function OsShell({ enabled, children, notFound = false, systemError = fal
     <OsPageContext.Provider value><OsOpenAppContext.Provider value={rememberOpening}><OsEditorContext.Provider value={{ document: editorDocument, setDirty: setEditorDirty, open: document => {
       if (editorDirty && !window.confirm("変更を破棄して別のファイルを開きますか？")) return false;
       setEditorDocument(document); setEditorDirty(false); return true;
-    } }}><OsDeveloperContext.Provider value={{ presses: developerPresses, pressBuild: () => setDeveloperPresses(count => Math.min(7, count + 1)), command: developerCommand, runCommand: (text, operation) => {
-      setDeveloperCommand({ id: ++developerSerial.current, text, operation }); void navigate("/console");
+    } }}><OsDeveloperContext.Provider value={{ presses: developerPresses, pressBuild: () => setDeveloperPresses(count => Math.min(7, count + 1)), command: developerCommand, runCommand: (text, operation, localLogTime) => {
+      setDeveloperCommand({ id: ++developerSerial.current, text, operation, localLogTime }); void navigate("/console");
     }, consumeCommand: id => setDeveloperCommand(command => command?.id === id ? null : command), registration, register: setRegistration }}>
       <div ref={shellRef} className={`os-shell${historyOpen ? " os-shell--history" : ""}`} hidden={notFound} inert={notFound}>
         <a className="os-skip-link" href={page ? `#os-content-${page.id}` : "#os-apps"}>内容へ移動</a>

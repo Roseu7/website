@@ -2,7 +2,7 @@ import { Link, useNavigate } from "~/framework/navigation";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { PixelIcon } from "~/components/os/PixelIcon";
 import { siteConfig } from "~/utils/site";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { OsOpenAppContext, OsDeveloperContext } from "~/components/os/OsContext";
 import { getOsApp } from "~/utils/os";
 import changelog from "../../../changelog.md?raw";
@@ -18,6 +18,9 @@ export default function SettingsPage({ view = "index" }: { view?: "index" | "abo
   const developer = useContext(OsDeveloperContext);
   const unlocked = developer.presses === 7;
   const navigate = useNavigate();
+  const [buildReaction, setBuildReaction] = useState(0);
+  const [localLogTime, setLocalLogTime] = useState(false);
+  function pressBuild() { developer.pressBuild(); setBuildReaction(value => value + 1); }
   useEffect(() => { if (view === "developer" && !unlocked) void navigate("/settings/about"); }, [view, unlocked]);
   return <PageLayout contentClassName={`os-settings-page${view === "index" ? " os-settings-page--index" : ""}`}>
     {view === "index" && <nav className="os-settings-menu" aria-label="設定項目">
@@ -38,20 +41,21 @@ export default function SettingsPage({ view = "index" }: { view?: "index" | "abo
           <ul>{entry.changes.map((change, i) => <li key={i}>{change.split(/([ァ-ヶー]+)/).map((part, j) => /^[ァ-ヶー]+$/.test(part) ? <span className="os-settings-word" key={j}>{part}</span> : part)}</li>)}</ul>
         </section>)}
       </div> : view === "developer" && unlocked ? <div className="os-developer-options">
-        <button type="button" className="os-developer-log btn site-button" onClick={() => developer.runCommand("type C:\\Logs\\system.log")}>システムログを表示</button>
         <dl className="os-developer-details">
-          <div><dt>旧文字コード</dt><dd>Shift_JIS（読み取りのみ）</dd></div>
-          <div><dt>移行の検証</dt><dd><code>C:\ROS3U\Tools\relcheck.exe</code><button type="button" className="btn site-button" onClick={() => developer.runCommand("C:\\ROS3U\\Tools\\relcheck.exe")}>実行</button></dd></div>
-          <div><dt>開発者コンソール（公開用）</dt><dd><span>{developer.registration ? "移行の検証が完了しました" : "移行の検証が完了すると有効になります"}</span><button type="button" className="btn site-button" disabled={!developer.registration} onClick={() => developer.runCommand("", "developer")}>起動</button></dd></div>
+          <div><dt>システムログ</dt><dd><button type="button" className="btn site-button" onClick={() => developer.runCommand("type C:\\Logs\\system.log", undefined, localLogTime)}>表示</button></dd></div>
+          <div><dt>ログの時刻表示</dt><dd><button type="button" className="os-developer-time" onClick={() => setLocalLogTime(value => !value)}>{localLogTime ? "ローカル" : "UTC"}</button></dd></div>
+          <div><dt>旧文字コード</dt><dd>Shift_JIS（読み取り専用）</dd></div>
+          <div><dt>移行記録の検証</dt><dd><button type="button" className="btn site-button" onClick={() => developer.runCommand("C:\\ROS3U\\Tools\\relcheck.exe")}>実行</button></dd></div>
+          <div><dt>公開開発者コンソール</dt><dd>{developer.registration ? <button type="button" className="btn site-button" onClick={() => developer.runCommand("", "developer")}>開く</button> : "無効"}</dd></div>
         </dl>
+        {!developer.registration && <p className="os-developer-note">* 移行記録の検証が必要です</p>}
       </div> : <>
         <div className="os-settings-brand"><PixelIcon kind="settings" /><h1 className="os-brand">R <span className="os-brand__accent">OS</span>.3u</h1></div>
         <dl className="os-settings-details">
           <div><dt>システム</dt><dd>R OS.3u</dd></div>
-          <div><dt>バージョン</dt><dd><span className="os-settings-version">Version {osVersion}</span>{" "}<button type="button" className="os-settings-version os-settings-build" aria-label={`ビルド番号 ${osBuild}`} onClick={developer.pressBuild}>(Build {osBuild})</button></dd></div>
+          <div><dt>バージョン</dt><dd><span className="os-settings-version">Version {osVersion}</span>{" "}<span role="button" tabIndex={0} className={`os-settings-version os-settings-build${buildReaction ? ` os-settings-build--shake-${buildReaction % 2}` : ""}`} aria-label={`ビルド番号 ${osBuild}`} onClick={pressBuild} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); pressBuild(); } }}>(Build {osBuild})</span></dd></div>
           <div><dt>開発者</dt><dd>{siteConfig.owner}</dd></div>
         </dl>
-        <p className="os-settings-build-status" role="status">{developer.presses >= 7 ? "開発者向けオプションを有効にしました" : developer.presses >= 2 ? `開発者向けオプションまであと${7 - developer.presses}回` : ""}</p>
       </>}
     </section>
   </PageLayout>;

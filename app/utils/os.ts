@@ -10,14 +10,14 @@ export const osApps = [
 
 const labApp = { id: "lab", label: "Lab", path: "/lab", icon: "folder" } as const;
 const systemApp = { id: "system", label: "システムエラー", path: "/", icon: "system" } as const;
-const consoleApp = { id: "console", label: "コマンド プロンプト", path: "/console", icon: "console", parent: "settings" } as const;
-const notepadApp = { id: "notepad", label: "メモ帳", path: "/notepad", icon: "document", parent: "console" } as const;
+const consoleApp = { id: "console", label: "コマンド プロンプト", path: "/console", icon: "console", parent: "settings", executablePath: "C:\\ROS3U\\System32\\console.exe" } as const;
+const notepadApp = { id: "notepad", label: "メモ帳", path: "/notepad", icon: "document", parent: "console", executablePath: "C:\\ROS3U\\System32\\notepad.exe" } as const;
 const childApps = [
   { id: "wsolver", label: "Wordle Solver", path: "/tools/wsolver", icon: "tools", parent: "tools" },
   { id: "jev", label: "Jev", path: "/tools/jev", icon: "tools", parent: "tools" },
   { id: "umigame", label: "ウミガメのスープ", path: "/games/umigame", icon: "game", parent: "games" },
 ] as const;
-export const osExecutableApps = [...osApps, ...childApps, consoleApp, notepadApp].map(app => ({ ...app, executable: `${app.id}.exe` }));
+export const osExecutableApps = [...osApps, ...childApps, consoleApp, notepadApp].map(app => ({ ...app, executable: `${app.id}.exe`, executablePath: "executablePath" in app ? app.executablePath : `C:\\Apps\\${app.id}.exe` }));
 export type OsApp = (typeof osApps)[number] | (typeof childApps)[number] | typeof labApp | typeof systemApp | typeof consoleApp | typeof notepadApp;
 export function getOsApp(id: OsApp["id"]): OsApp {
   return id === "lab" ? labApp : id === "system" ? systemApp : id === "console" ? consoleApp : id === "notepad" ? notepadApp : [...osApps, ...childApps].find(app => app.id === id)!;

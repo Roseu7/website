@@ -14,11 +14,16 @@
   .os-settings-details dt { color: var(--ink-2); }
   .os-settings-details dd { margin: 0; overflow-wrap: anywhere; }
   .os-settings-version { display: inline-block; }
-  .os-settings-build { border: 0; padding: 0 4px; background: transparent; color: inherit; font: inherit; min-height: 28px; }
-  .os-settings-build-status { margin: 0; font-size: 14px; }
-  .os-settings-build-status:empty { display: none; }
+  .os-shell .os-settings-build { border: 0; padding: 0 4px; background: transparent; color: inherit; font: inherit; min-height: 28px; line-height: 28px; cursor: text; user-select: text; -webkit-user-select: text; }
+  .os-settings-build:hover { background: transparent; color: inherit; }
+  .os-settings-build--shake-0 { animation: os-build-shake-even 180ms ease-out; }
+  .os-settings-build--shake-1 { animation: os-build-shake-odd 180ms ease-out; }
+  @keyframes os-build-shake-even { 25%, 75% { transform: translateX(-1px); } 50% { transform: translateX(1px); } }
+  @keyframes os-build-shake-odd { 25%, 75% { transform: translateX(-1px); } 50% { transform: translateX(1px); } }
+  @media (prefers-reduced-motion: reduce) { .os-settings-build { animation: none; } }
   .os-developer-options { display: grid; gap: 16px; }
-  .os-developer-log { justify-self: start; }
+  .os-developer-note { margin: 0; }
+  .os-developer-time { border: 0; padding: 0; background: transparent; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
   .os-developer-details { margin: 0; display: grid; gap: 16px; }
   .os-developer-details > div { display: grid; gap: 8px; }
   .os-developer-details dd { margin: 0; }
@@ -37,8 +42,7 @@
   @media (min-width: 761px) {
     .os-settings-pane:has(.os-developer-options) { padding: 16px; }
     .os-developer-options, .os-developer-details { gap: 12px; }
-    .os-developer-details > div { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; align-items: center; }
-    .os-developer-details > div:last-child { grid-template-columns: 1fr; gap: 4px; }
+    .os-developer-details > div { grid-template-columns: 168px minmax(0, 1fr); gap: 12px; align-items: center; }
     .os-developer-details dd { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
     .os-developer-details code { display: inline; margin: 0; }
     .os-developer-options .site-button { min-height: 34px; padding: 4px 8px; line-height: 1.4; }
@@ -53,7 +57,8 @@
   }
 
   @media (max-width: 760px) {
-    .os-settings-build { min-height: 44px; }
+    .os-shell .os-settings-build { min-height: 44px; line-height: 44px; }
+    .os-developer-time { min-width: 44px; min-height: 44px; text-align: left; }
     .os-developer-options { padding: 16px; }
     .os-developer-details .site-button, .os-developer-log { min-height: 44px; }
     .os-window[data-app="settings"] .os-titlebar { position: relative; }

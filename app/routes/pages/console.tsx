@@ -122,7 +122,7 @@ export default function ConsolePage() {
     const requested = developer.command;
     developer.consumeCommand(requested.id);
     passwordInput.current = false; passwordChallenge.current = undefined; setInputMode("command");
-    void runCommand(requested.text, requested.operation);
+    void runCommand(requested.text, requested.operation, requested.localLogTime);
   }, [active, busy, developer.command]);
 
   function resetCompletion() {
@@ -142,7 +142,7 @@ export default function ConsolePage() {
   }
 
   function appendOutput(text: string, link?: string) {
-    const entry = { id: ++sequence.current, text, ...(link ? { link } : {}) };
+    const entry = { id: ++sequence.current, text: text.replace(/(?:\r?\n)+$/, "") + (link ? "\n" : "\n\n"), ...(link ? { link } : {}) };
     setEntries(current => {
       const next = [...current, entry];
       let size = next.reduce((total, item) => total + item.text.length, 0);
@@ -234,7 +234,7 @@ export default function ConsolePage() {
     event.preventDefault();
     await runCommand(command);
   }
-  async function runCommand(submitted: string, operation?: "developer") {
+  async function runCommand(submitted: string, operation?: "developer", localLogTime = false) {
     if (inFlight.current || (!operation && !passwordInput.current && !submitted.trim())) return;
     resetCompletion();
     const enteredPassword = passwordInput.current;
@@ -289,7 +289,13 @@ export default function ConsolePage() {
     if (result.effect === "clear") setEntries([]);
     else if (result.effect === "exit") close?.();
     else {
-      const output = sensitive && !enteredPassword && submitted ? result.output.split(submitted).join("[redacted]") : result.output;
+      let output = sensitive && !enteredPassword && submitted ? result.output.split(submitted).join("[redacted]") : result.output;
+      if (localLogTime) output = output.replace(/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\dZ/gm, timestamp => {
+        const date = new Date(timestamp.replace(" ", "T"));
+        const pad = (value: number) => String(value).padStart(2, "0");
+        const offset = -date.getTimezoneOffset();
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}${offset < 0 ? "-" : "+"}${pad(Math.floor(Math.abs(offset) / 60))}:${pad(Math.abs(offset) % 60)}`;
+      });
       appendOutput(sensitive || operation || result.reset ? `${output}\n` : `${cwd}>${submitted}\n${output}\n`, externalLink);
       let openEditor = true;
       if (result.editor) openEditor = editor.open({ ...result.editor, save: async (path, text) => {
@@ -326,7 +332,7 @@ export default function ConsolePage() {
       if (active && !(event.target as Element).closest("button, input") && !window.getSelection()?.toString()) inputRef.current?.focus({ preventScroll: true });
     }}>
       <div className="os-console-output" role="log" aria-label="コマンドの出力" aria-live="polite" aria-relevant="additions">
-        {entries.map(entry => <pre key={entry.id}>{entry.text}{entry.link && <><a href={entry.link} target="_blank" rel="noopener noreferrer">Open X</a>{"\n"}</>}</pre>)}
+        {entries.map(entry => <pre key={entry.id}>{entry.text}{entry.link && <><a href={entry.link} target="_blank" rel="noopener noreferrer">Open X</a>{"\n\n"}</>}</pre>)}
       </div>
       <form ref={formRef} className="os-console-command" onSubmit={submit} aria-busy={busy}>
         <div className="os-console-line">
