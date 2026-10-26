@@ -1,4 +1,4 @@
-type AssetPrefix = "webgame" | "rg" | "default";
+type AssetPrefix = "rg" | "default";
 
 type AssetRoute = {
   prefix: AssetPrefix;
@@ -8,7 +8,6 @@ type AssetRoute = {
 
 interface AssetsEnv {
   ASSETS_BUCKET: R2Bucket;
-  WEBGAME_BUCKET: R2Bucket;
   RG_BUCKET: R2Bucket;
 }
 
@@ -71,14 +70,6 @@ function getAssetRoute(url: URL, env: AssetsEnv): AssetRoute | null {
   const key = normalizeKey(url.pathname);
   if (!key) {
     return null;
-  }
-
-  if (key.startsWith("webgame/")) {
-    return {
-      prefix: "webgame",
-      bucket: env.WEBGAME_BUCKET,
-      key: key.slice("webgame/".length),
-    };
   }
 
   if (key.startsWith("rg/")) {

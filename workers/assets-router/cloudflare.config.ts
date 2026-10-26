@@ -9,7 +9,6 @@ export default defineConfig({
     domains: ["assets.roseu.net"],
     env: {
       ASSETS_BUCKET: bindings.r2({ name: "assets" }),
-      WEBGAME_BUCKET: bindings.r2({ name: "webgame" }),
       RG_BUCKET: bindings.r2({ name: "rg-assets" }),
     },
   },

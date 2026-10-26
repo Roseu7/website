@@ -24,10 +24,6 @@
 			"bucket_name": "assets"
 		},
 		{
-			"binding": "WEBGAME_BUCKET",
-			"bucket_name": "webgame"
-		},
-		{
 			"binding": "RG_BUCKET",
 			"bucket_name": "rg-assets"
 		}
