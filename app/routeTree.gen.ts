@@ -16,7 +16,6 @@ import { Route as ApplyRouteImport } from './start-routes/apply'
 import { Route as ConsoleRouteImport } from './start-routes/console'
 import { Route as ContactRouteImport } from './start-routes/contact'
 import { Route as GamesRouteImport } from './start-routes/games'
-import { Route as HomeControlRouteImport } from './start-routes/home-control'
 import { Route as LabRouteImport } from './start-routes/lab'
 import { Route as LicensesRouteImport } from './start-routes/licenses'
 import { Route as MapRouteImport } from './start-routes/map'
@@ -40,9 +39,6 @@ import { Route as SettingsHistoryRouteImport } from './start-routes/settings_.hi
 import { Route as ToolsJevRouteImport } from './start-routes/tools_.jev'
 import { Route as ToolsWsolverRouteImport } from './start-routes/tools_.wsolver'
 import { Route as ApiDiscordInteractionsRouteImport } from './start-routes/api_.discord_.interactions'
-import { Route as ApiHomeShutdownRouteImport } from './start-routes/api_.home_.shutdown'
-import { Route as ApiHomeStatusRouteImport } from './start-routes/api_.home_.status'
-import { Route as ApiHomeWakeRouteImport } from './start-routes/api_.home_.wake'
 import { Route as ApiJevLoginRouteImport } from './start-routes/api_.jev_.login'
 import { Route as ApiMcLinkCodesRouteImport } from './start-routes/api_.mc_.link-codes'
 import { Route as ApiMcLinkStatusRouteImport } from './start-routes/api_.mc_.link-status'
@@ -113,11 +109,6 @@ const ContactRoute = ContactRouteImport.update({
 const GamesRoute = GamesRouteImport.update({
   id: '/games',
   path: '/games',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HomeControlRoute = HomeControlRouteImport.update({
-  id: '/home-control',
-  path: '/home-control',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LabRoute = LabRouteImport.update({
@@ -233,21 +224,6 @@ const ToolsWsolverRoute = ToolsWsolverRouteImport.update({
 const ApiDiscordInteractionsRoute = ApiDiscordInteractionsRouteImport.update({
   id: '/api_/discord_/interactions',
   path: '/api/discord/interactions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiHomeShutdownRoute = ApiHomeShutdownRouteImport.update({
-  id: '/api_/home_/shutdown',
-  path: '/api/home/shutdown',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiHomeStatusRoute = ApiHomeStatusRouteImport.update({
-  id: '/api_/home_/status',
-  path: '/api/home/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiHomeWakeRoute = ApiHomeWakeRouteImport.update({
-  id: '/api_/home_/wake',
-  path: '/api/home/wake',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiJevLoginRoute = ApiJevLoginRouteImport.update({
@@ -449,7 +425,6 @@ export interface FileRoutesByFullPath {
   '/console': typeof ConsoleRoute
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
-  '/home-control': typeof HomeControlRoute
   '/lab': typeof LabRoute
   '/licenses': typeof LicensesRoute
   '/map': typeof MapRoute
@@ -473,9 +448,6 @@ export interface FileRoutesByFullPath {
   '/tools/jev': typeof ToolsJevRoute
   '/tools/wsolver': typeof ToolsWsolverRoute
   '/api/discord/interactions': typeof ApiDiscordInteractionsRoute
-  '/api/home/shutdown': typeof ApiHomeShutdownRoute
-  '/api/home/status': typeof ApiHomeStatusRoute
-  '/api/home/wake': typeof ApiHomeWakeRoute
   '/api/jev/login': typeof ApiJevLoginRoute
   '/api/mc/link-codes': typeof ApiMcLinkCodesRoute
   '/api/mc/link-status': typeof ApiMcLinkStatusRoute
@@ -521,7 +493,6 @@ export interface FileRoutesByTo {
   '/console': typeof ConsoleRoute
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
-  '/home-control': typeof HomeControlRoute
   '/lab': typeof LabRoute
   '/licenses': typeof LicensesRoute
   '/map': typeof MapRoute
@@ -545,9 +516,6 @@ export interface FileRoutesByTo {
   '/tools/jev': typeof ToolsJevRoute
   '/tools/wsolver': typeof ToolsWsolverRoute
   '/api/discord/interactions': typeof ApiDiscordInteractionsRoute
-  '/api/home/shutdown': typeof ApiHomeShutdownRoute
-  '/api/home/status': typeof ApiHomeStatusRoute
-  '/api/home/wake': typeof ApiHomeWakeRoute
   '/api/jev/login': typeof ApiJevLoginRoute
   '/api/mc/link-codes': typeof ApiMcLinkCodesRoute
   '/api/mc/link-status': typeof ApiMcLinkStatusRoute
@@ -594,7 +562,6 @@ export interface FileRoutesById {
   '/console': typeof ConsoleRoute
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
-  '/home-control': typeof HomeControlRoute
   '/lab': typeof LabRoute
   '/licenses': typeof LicensesRoute
   '/map': typeof MapRoute
@@ -618,9 +585,6 @@ export interface FileRoutesById {
   '/tools_/jev': typeof ToolsJevRoute
   '/tools_/wsolver': typeof ToolsWsolverRoute
   '/api_/discord_/interactions': typeof ApiDiscordInteractionsRoute
-  '/api_/home_/shutdown': typeof ApiHomeShutdownRoute
-  '/api_/home_/status': typeof ApiHomeStatusRoute
-  '/api_/home_/wake': typeof ApiHomeWakeRoute
   '/api_/jev_/login': typeof ApiJevLoginRoute
   '/api_/mc_/link-codes': typeof ApiMcLinkCodesRoute
   '/api_/mc_/link-status': typeof ApiMcLinkStatusRoute
@@ -668,7 +632,6 @@ export interface FileRouteTypes {
     | '/console'
     | '/contact'
     | '/games'
-    | '/home-control'
     | '/lab'
     | '/licenses'
     | '/map'
@@ -692,9 +655,6 @@ export interface FileRouteTypes {
     | '/tools/jev'
     | '/tools/wsolver'
     | '/api/discord/interactions'
-    | '/api/home/shutdown'
-    | '/api/home/status'
-    | '/api/home/wake'
     | '/api/jev/login'
     | '/api/mc/link-codes'
     | '/api/mc/link-status'
@@ -740,7 +700,6 @@ export interface FileRouteTypes {
     | '/console'
     | '/contact'
     | '/games'
-    | '/home-control'
     | '/lab'
     | '/licenses'
     | '/map'
@@ -764,9 +723,6 @@ export interface FileRouteTypes {
     | '/tools/jev'
     | '/tools/wsolver'
     | '/api/discord/interactions'
-    | '/api/home/shutdown'
-    | '/api/home/status'
-    | '/api/home/wake'
     | '/api/jev/login'
     | '/api/mc/link-codes'
     | '/api/mc/link-status'
@@ -812,7 +768,6 @@ export interface FileRouteTypes {
     | '/console'
     | '/contact'
     | '/games'
-    | '/home-control'
     | '/lab'
     | '/licenses'
     | '/map'
@@ -836,9 +791,6 @@ export interface FileRouteTypes {
     | '/tools_/jev'
     | '/tools_/wsolver'
     | '/api_/discord_/interactions'
-    | '/api_/home_/shutdown'
-    | '/api_/home_/status'
-    | '/api_/home_/wake'
     | '/api_/jev_/login'
     | '/api_/mc_/link-codes'
     | '/api_/mc_/link-status'
@@ -885,7 +837,6 @@ export interface RootRouteChildren {
   ConsoleRoute: typeof ConsoleRoute
   ContactRoute: typeof ContactRoute
   GamesRoute: typeof GamesRoute
-  HomeControlRoute: typeof HomeControlRoute
   LabRoute: typeof LabRoute
   LicensesRoute: typeof LicensesRoute
   MapRoute: typeof MapRoute
@@ -909,9 +860,6 @@ export interface RootRouteChildren {
   ToolsJevRoute: typeof ToolsJevRoute
   ToolsWsolverRoute: typeof ToolsWsolverRoute
   ApiDiscordInteractionsRoute: typeof ApiDiscordInteractionsRoute
-  ApiHomeShutdownRoute: typeof ApiHomeShutdownRoute
-  ApiHomeStatusRoute: typeof ApiHomeStatusRoute
-  ApiHomeWakeRoute: typeof ApiHomeWakeRoute
   ApiJevLoginRoute: typeof ApiJevLoginRoute
   ApiMcLinkCodesRoute: typeof ApiMcLinkCodesRoute
   ApiMcLinkStatusRoute: typeof ApiMcLinkStatusRoute
@@ -999,13 +947,6 @@ declare module '@tanstack/react-router' {
       path: '/games'
       fullPath: '/games'
       preLoaderRoute: typeof GamesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/home-control': {
-      id: '/home-control'
-      path: '/home-control'
-      fullPath: '/home-control'
-      preLoaderRoute: typeof HomeControlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lab': {
@@ -1167,27 +1108,6 @@ declare module '@tanstack/react-router' {
       path: '/api/discord/interactions'
       fullPath: '/api/discord/interactions'
       preLoaderRoute: typeof ApiDiscordInteractionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api_/home_/shutdown': {
-      id: '/api_/home_/shutdown'
-      path: '/api/home/shutdown'
-      fullPath: '/api/home/shutdown'
-      preLoaderRoute: typeof ApiHomeShutdownRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api_/home_/status': {
-      id: '/api_/home_/status'
-      path: '/api/home/status'
-      fullPath: '/api/home/status'
-      preLoaderRoute: typeof ApiHomeStatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api_/home_/wake': {
-      id: '/api_/home_/wake'
-      path: '/api/home/wake'
-      fullPath: '/api/home/wake'
-      preLoaderRoute: typeof ApiHomeWakeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api_/jev_/login': {
@@ -1453,7 +1373,6 @@ const rootRouteChildren: RootRouteChildren = {
   ConsoleRoute: ConsoleRoute,
   ContactRoute: ContactRoute,
   GamesRoute: GamesRoute,
-  HomeControlRoute: HomeControlRoute,
   LabRoute: LabRoute,
   LicensesRoute: LicensesRoute,
   MapRoute: MapRoute,
@@ -1477,9 +1396,6 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsJevRoute: ToolsJevRoute,
   ToolsWsolverRoute: ToolsWsolverRoute,
   ApiDiscordInteractionsRoute: ApiDiscordInteractionsRoute,
-  ApiHomeShutdownRoute: ApiHomeShutdownRoute,
-  ApiHomeStatusRoute: ApiHomeStatusRoute,
-  ApiHomeWakeRoute: ApiHomeWakeRoute,
   ApiJevLoginRoute: ApiJevLoginRoute,
   ApiMcLinkCodesRoute: ApiMcLinkCodesRoute,
   ApiMcLinkStatusRoute: ApiMcLinkStatusRoute,

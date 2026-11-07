@@ -17,7 +17,6 @@ export const routeModules = {
   "/tools/wsolver": { path: "/tools/wsolver", load: async () => ({}) },
   "/tools/jev": { path: "/tools/jev", load: () => import("~/routes/pages/tools/jev.server") },
   "/games": { path: "/games", load: async () => ({}) },
-  "/home-control": { path: "/home-control", load: () => import("~/routes/home/control.server") },
   "/auth/discord/start": { path: "/auth/discord/start", load: () => import("~/routes/auth/discord/start") },
   "/auth/discord/callback": { path: "/auth/discord/callback", load: () => import("~/routes/auth/discord/callback") },
   "/auth/logout": { path: "/auth/logout", load: () => import("~/routes/auth/logout") },
@@ -58,9 +57,6 @@ export const routeModules = {
   "/api/umigame/sessions/:id/guess": { path: "/api/umigame/sessions/:id/guess", load: () => import("~/routes/api/umigame/session-guess") },
   "/api/umigame/sessions/:id/hint": { path: "/api/umigame/sessions/:id/hint", load: () => import("~/routes/api/umigame/session-hint") },
   "/api/umigame/sessions/:id/give-up": { path: "/api/umigame/sessions/:id/give-up", load: () => import("~/routes/api/umigame/session-give-up") },
-  "/api/home/status": { path: "/api/home/status", load: () => import("~/routes/home/api/status") },
-  "/api/home/wake": { path: "/api/home/wake", load: () => import("~/routes/home/api/wake") },
-  "/api/home/shutdown": { path: "/api/home/shutdown", load: () => import("~/routes/home/api/shutdown") },
   "/api/mc/link-codes": { path: "/api/mc/link-codes", load: () => import("~/routes/api/mc/link-codes") },
   "/api/mc/link-status": { path: "/api/mc/link-status", load: () => import("~/routes/api/mc/link-status") },
   "/api/mc/status": { path: "/api/mc/status", load: () => import("~/routes/api/mc/status") },
@@ -70,4 +66,4 @@ export const routeModules = {
   "/*": { path: "/*", load: () => import("~/routes/$.server") },
 };
 
-export const pageRoutes = new Set<string>(["/","/projects","/about","/licenses","/privacy","/terms","/contact","/settings","/settings/about","/settings/history","/settings/developer","/notepad","/console","/tools","/tools/wsolver","/tools/jev","/games","/home-control","/auth/access/logout","/apply","/wsolver","/games/umigame","/games/umigame/about","/games/umigame/admin","/games/umigame/admin/jev","/games/umigame/favorites","/games/umigame/licenses","/games/umigame/rankings","/games/umigame/recommend","/games/umigame/results","/games/umigame/author/quality","/games/umigame/new","/games/umigame/p/:id","/games/umigame/p/:id/edit","/games/umigame/p/:id/play","/games/umigame/u/:username","/games/umigame/settings/profile","/*"]);
+export const pageRoutes = new Set<string>(["/","/projects","/about","/licenses","/privacy","/terms","/contact","/settings","/settings/about","/settings/history","/settings/developer","/notepad","/console","/tools","/tools/wsolver","/tools/jev","/games","/auth/access/logout","/apply","/wsolver","/games/umigame","/games/umigame/about","/games/umigame/admin","/games/umigame/admin/jev","/games/umigame/favorites","/games/umigame/licenses","/games/umigame/rankings","/games/umigame/recommend","/games/umigame/results","/games/umigame/author/quality","/games/umigame/new","/games/umigame/p/:id","/games/umigame/p/:id/edit","/games/umigame/p/:id/play","/games/umigame/u/:username","/games/umigame/settings/profile","/*"]);

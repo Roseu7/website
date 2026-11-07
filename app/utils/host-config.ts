@@ -6,7 +6,6 @@ export const MAIN_SITE_HOSTS = new Set([
   "mc.localhost",
 ]);
 
-export const HOME_CONTROL_HOST = "home.roseu.net";
 export const MC_DASHBOARD_HOST = "mc.roseu.net";
 
 const LOCAL_MC_DASHBOARD_HOSTS = new Set(["mc.localhost"]);
