@@ -153,7 +153,7 @@ async function insertGoldenRun(
 }
 
 export async function runGoldenTestBatch(env: UmigameEnv) {
-  const provider = "typesafe";
+  const provider = "clef";
   if (!isJevConfigured(env)) {
     throw new Response("JEV_API_TOKENが設定されていません。", { status: 503 });
   }

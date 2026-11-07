@@ -35,7 +35,7 @@ export default defineConfig({
 			CF_ACCESS_TEAM_DOMAIN: bindings.text("roseu.cloudflareaccess.com"),
 			CF_ACCESS_AUD: bindings.text("96b9c9c9fd0eb49cdba0eab8b3fd4f3b987e89f5972bbfb8ec953d8f81e70549"),
 			UMIGAME_ACCESS_AUD: bindings.text("be861d10bd1c5a96e3b9e3120cc86803111421eca67fa4e1fa711927901bb344"),
-			JEV_INPUT_USD_PER_MILLION: bindings.text("0.042"),
+			JEV_NEURONS_PER_MILLION_INPUT: bindings.text("21818"),
 			UMIGAME_SESSION_SECRET: bindings.secret(),
 			SURVCORE_SESSION_SECRET: bindings.secret(),
 
