@@ -3,19 +3,15 @@ import { type ActionFunctionArgs, type LoaderFunctionArgs } from "~/framework/ht
 
 import type { McDashboardLoaderData } from "~/utils/mc/dashboard";
 
-import { isCanonicalHomeControlHost } from "~/utils/home/host";
-
 import { MAX_FORM_BODY_BYTES, readLimitedFormData } from "~/utils/request-body.server";
 
 import { isMcDashboardHost } from "~/utils/host-config";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const { hostname } = new URL(request.url);
-  const isHomeControlHost = isCanonicalHomeControlHost(hostname);
   const isMcHost = isMcDashboardHost(hostname);
 
   return {
-    isHomeControlHost,
     isMcDashboardHost: isMcHost,
     mcDashboardData: isMcHost ? await loadMcDashboardData(request, context) : null,
   };

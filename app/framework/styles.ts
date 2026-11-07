@@ -10,7 +10,6 @@ import jevCss from "~/styles/pages/jev.css?url";
 import umigameCss from "~/styles/umigame.css?url";
 import umigameAdminCss from "~/styles/umigame/80-observability.css?url";
 import mcCss from "~/styles/mc.css?url";
-import homeControlCss from "~/styles/pages/home-control.css?url";
 import settingsCss from "~/styles/pages/settings.css?url";
 import consoleCss from "~/styles/pages/console.css?url";
 import notepadCss from "~/styles/pages/notepad.css?url";
@@ -33,10 +32,8 @@ export function getPageStyles(pathname: string, osEnabled: boolean, data?: unkno
   else if (pathname === "/projects") styles.push(projectsCss);
   else if (["/contact", "/licenses", "/privacy", "/terms"].includes(pathname)) styles.push(legalCss);
   else if (pathname === "/apply") styles.push(mcCss);
-  else if (pathname === "/home-control") styles.push(homeControlCss);
   else if (pathname === "/" && !osEnabled) {
     if (data && typeof data === "object" && "isMcDashboardHost" in data && data.isMcDashboardHost) styles.push(mcCss);
-    else if (data && typeof data === "object" && "isHomeControlHost" in data && data.isHomeControlHost) styles.push(homeControlCss);
     else styles.push(homeCss);
   }
   return styles;

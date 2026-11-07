@@ -5,8 +5,6 @@ import { Link, useActionData, useLoaderData } from "~/framework/navigation";
 
 import { PageLayout } from "~/components/layout/PageLayout";
 
-import { HomeControlPage } from "~/components/home/HomeControlPage";
-
 import { McDashboardPage } from "~/routes/mc/dashboard";
 
 import type { McDashboardLoaderData } from "~/utils/mc/dashboard";
@@ -94,21 +92,13 @@ function AnimatedHomeTitle() {
   );
 }
 
-export const meta = ({ data }: { data?: { isHomeControlHost?: boolean; isMcDashboardHost?: boolean } }) => {
+export const meta = ({ data }: { data?: { isMcDashboardHost?: boolean } }) => {
   if (data?.isMcDashboardHost) {
     return [
       { title: `Survival Server | ${siteConfig.fullName}` },
       { name: "description", content: "Minecraft サーバー情報" },
       { name: "robots", content: "noindex, nofollow" },
       { name: "theme-color", content: siteConfig.themeColor },
-    ];
-  }
-
-  if (data?.isHomeControlHost) {
-    return [
-      { title: `Home Control | ${siteConfig.fullName}` },
-      { name: "description", content: "自宅PCの状態確認と電源操作を行う管理ページ" },
-      { name: "robots", content: "noindex, nofollow" },
     ];
   }
 
@@ -141,13 +131,7 @@ export const meta = ({ data }: { data?: { isHomeControlHost?: boolean; isMcDashb
 export default function Home() {
   const osPage = useOsPage();
   const actionData = useActionData<typeof action>() as { linkError?: string } | undefined;
-  const loaderData = useLoaderData<typeof loader>() as { isHomeControlHost: boolean; isMcDashboardHost?: boolean; mcDashboardData?: McDashboardLoaderData };
-  const { isHomeControlHost } = loaderData;
-
-  if (isHomeControlHost) {
-    return <HomeControlPage />;
-  }
-
+  const loaderData = useLoaderData<typeof loader>() as { isMcDashboardHost?: boolean; mcDashboardData?: McDashboardLoaderData };
   if (loaderData.isMcDashboardHost && loaderData.mcDashboardData) {
     return <McDashboardPage data={loaderData.mcDashboardData} linkError={actionData?.linkError ?? null} />;
   }

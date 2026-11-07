@@ -25,7 +25,7 @@ export function withSecurityHeaders(request: Request, response: Response, nonce:
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self'",
-    `connect-src 'self'${turnstileSource} https://home.roseu.net https://roseu.net https://www.roseu.net https://roseu.cloudflareaccess.com ws: wss:`,
+    `connect-src 'self'${turnstileSource} https://roseu.net https://www.roseu.net https://roseu.cloudflareaccess.com ws: wss:`,
     "form-action 'self'",
     "upgrade-insecure-requests",
   ].join("; ");

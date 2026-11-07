@@ -16,7 +16,6 @@ export default defineConfig({
 		},
 		domains: [
 			"roseu.net",
-			"home.roseu.net",
 			"mc.roseu.net",
 		],
 		triggers: [
