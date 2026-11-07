@@ -311,7 +311,7 @@ export interface AdminJevProviderStats {
   inputTokens: number;
   outputTokens: number;
   avgLatency: number;
-  estimatedCostUsd: number | null;
+  estimatedNeurons: number | null;
 }
 
 export interface AdminJevPurposeStats {
@@ -323,20 +323,23 @@ export interface AdminJevPurposeStats {
   avgLatency: number;
 }
 
-function parsePrice(value: string | undefined) {
+// Workers AI の無料枠は 10,000 neurons/日（00:00 UTC リセット）。
+const JEV_DAILY_FREE_NEURONS = 10_000;
+
+function parseRate(value: string | undefined) {
   if (!value) return null;
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
 }
 
-function estimateProviderCost(
+function estimateProviderNeurons(
   provider: string,
   inputTokens: number,
   env: UmigameEnv,
 ) {
-  if (provider !== "typesafe") return null;
-  const price = parsePrice(env.JEV_INPUT_USD_PER_MILLION);
-  return price === null ? null : (inputTokens / 1_000_000) * price;
+  if (provider !== "clef") return null;
+  const rate = parseRate(env.JEV_NEURONS_PER_MILLION_INPUT);
+  return rate === null ? null : (inputTokens / 1_000_000) * rate;
 }
 
 export async function getAdminJevAnalytics(env: UmigameEnv) {
@@ -346,8 +349,10 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
   const jstOffset = 9 * 60 * 60 * 1000;
   const todayStart = Math.floor((now + jstOffset) / dayMs) * dayMs - jstOffset;
   const sevenDayStart = todayStart - 6 * dayMs;
+  // 無料枠の区切りは UTC。JST の集計とは窓が異なるため別に数える。
+  const utcStart = Math.floor(now / dayMs) * dayMs;
 
-  const [summary, providers, purposes, errors, models, daily, latest] =
+  const [summary, providers, purposes, errors, models, daily, latest, quota] =
     await Promise.all([
       db.prepare(
         `SELECT COUNT(*) AS total,
@@ -455,6 +460,11 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
         latency_ms: number;
         created_at: number;
       }>(),
+      db.prepare(
+        `SELECT COALESCE(SUM(input_tokens), 0) AS input_tokens
+         FROM jev_runs
+         WHERE created_at >= ? AND provider = 'clef'`,
+      ).bind(utcStart).first<{ input_tokens: number }>(),
     ]);
 
   const providerStats: AdminJevProviderStats[] = (providers.results ?? []).map(
@@ -465,7 +475,7 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
       inputTokens: row.input_tokens ?? 0,
       outputTokens: row.output_tokens ?? 0,
       avgLatency: Math.round(row.avg_latency ?? 0),
-      estimatedCostUsd: estimateProviderCost(
+      estimatedNeurons: estimateProviderNeurons(
         row.provider,
         row.input_tokens ?? 0,
         env,
@@ -473,20 +483,11 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
     }),
   );
 
-  const estimatedCostUsd = providerStats.some(
-    (provider) => provider.estimatedCostUsd !== null,
-  )
-    ? providerStats.reduce(
-        (sum, provider) => sum + (provider.estimatedCostUsd ?? 0),
-        0,
-      )
-    : null;
-
   const total = summary?.total ?? 0;
   const errorCount = summary?.errors ?? 0;
 
   return {
-    currentProvider: "typesafe",
+    currentProvider: "clef",
     configuredModel:
       (models.results ?? [])[0]?.model ||
       "provider default",
@@ -497,7 +498,12 @@ export async function getAdminJevAnalytics(env: UmigameEnv) {
     inputTokens: summary?.input_tokens ?? 0,
     outputTokens: summary?.output_tokens ?? 0,
     avgLatency: Math.round(summary?.avg_latency ?? 0),
-    estimatedCostUsd,
+    freeNeuronsPerDay: JEV_DAILY_FREE_NEURONS,
+    quotaNeurons: estimateProviderNeurons(
+      "clef",
+      quota?.input_tokens ?? 0,
+      env,
+    ),
     providers: providerStats,
     purposes: (purposes.results ?? []).map((row) => ({
       purpose: row.purpose,

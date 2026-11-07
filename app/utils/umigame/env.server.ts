@@ -4,7 +4,7 @@ export interface UmigameEnv {
   DB: D1Database;
   API_SERVICE?: Fetcher;
   JEV_API_TOKEN?: string;
-  JEV_INPUT_USD_PER_MILLION?: string;
+  JEV_NEURONS_PER_MILLION_INPUT?: string;
   UMIGAME_SESSION_SECRET?: string;
   CF_ACCESS_TEAM_DOMAIN?: string;
   UMIGAME_ACCESS_AUD?: string;

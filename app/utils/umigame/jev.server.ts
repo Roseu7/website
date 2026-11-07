@@ -153,7 +153,7 @@ async function recordRun(
       data.latencyMs,
       data.status,
       await stateHash(data.state),
-      "typesafe",
+      "clef",
       0,
       data.primaryError ?? null,
       Date.now(),
@@ -194,7 +194,7 @@ export async function evaluateWithJev(
     });
     return {
       response,
-      provider: "typesafe" as const,
+      provider: "clef" as const,
       latencyMs,
     };
   } catch (error) {

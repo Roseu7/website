@@ -23,9 +23,9 @@ function number(value: number) {
   return new Intl.NumberFormat("ja-JP").format(value);
 }
 
-function cost(value: number | null) {
+function neurons(value: number | null) {
   if (value === null) return "—";
-  return "$" + value.toFixed(value < 0.01 ? 6 : 4);
+  return number(Math.round(value));
 }
 
 function dateTime(value: number) {
@@ -51,6 +51,10 @@ export default function UmigameAdminJevPage() {
     1,
     ...analytics.daily.map((item) => item.calls),
   );
+  const quotaShare =
+    analytics.quotaNeurons !== null && analytics.freeNeuronsPerDay > 0
+      ? analytics.quotaNeurons / analytics.freeNeuronsPerDay
+      : null;
 
   return (
     <PageLayout contentClassName="page-stack">
@@ -84,7 +88,7 @@ export default function UmigameAdminJevPage() {
           <div>
             <h2>Golden Test</h2>
             <p>
-              seed問題のGM質問をTypeSafeで再実行し、期待値との一致率を確認します。
+              seed問題のGM質問をClefで再実行し、期待値との一致率を確認します。
             </p>
           </div>
           <span className="umigame-count">{golden.caseCount} cases</span>
@@ -105,7 +109,7 @@ export default function UmigameAdminJevPage() {
               {goldenRunning ? "実行中…" : "Golden Testを実行"}
             </button>
           </Form>
-          <span>TypeSafe: {golden.configured ? "利用可" : "未設定"}</span>
+          <span>Clef: {golden.configured ? "利用可" : "未設定"}</span>
         </div>
 
         {golden.batches.length > 0 ? (
@@ -211,8 +215,12 @@ export default function UmigameAdminJevPage() {
           <span>errors</span>
         </div>
         <div>
-          <strong>{cost(analytics.estimatedCostUsd)}</strong>
-          <span>推定cost</span>
+          <strong>{neurons(analytics.quotaNeurons)}</strong>
+          <span>推定neurons / 無料枠日(UTC)</span>
+        </div>
+        <div>
+          <strong>{quotaShare === null ? "—" : percent(quotaShare)}</strong>
+          <span>無料枠 {number(analytics.freeNeuronsPerDay)} neurons/日の消費</span>
         </div>
       </section>
       <section className="umigame-admin-section">
@@ -238,7 +246,7 @@ export default function UmigameAdminJevPage() {
                 <div><dt>平均latency</dt><dd>{provider.avgLatency}ms</dd></div>
                 <div><dt>input</dt><dd>{number(provider.inputTokens)}</dd></div>
                 <div><dt>output</dt><dd>{number(provider.outputTokens)}</dd></div>
-                <div><dt>推定cost</dt><dd>{cost(provider.estimatedCostUsd)}</dd></div>
+                <div><dt>推定neurons</dt><dd>{neurons(provider.estimatedNeurons)}</dd></div>
               </dl>
             </article>
           ))}
@@ -389,11 +397,13 @@ export default function UmigameAdminJevPage() {
       <section className="umigame-admin-section umigame-jev-pricing-note">
         <div className="umigame-about-section__title">
           <ShieldCheck size={20} aria-hidden="true" />
-          <h2>推定costについて</h2>
+          <h2>推定neuronsについて</h2>
         </div>
         <p>
-          表示額はWranglerに設定したTypeSafeのinput単価と記録済みtoken数から算出した概算です。
-          プロモーション、無料枠、請求調整は反映しないため、実請求額はTypeSafe側のUsageを正とします。
+          表示はWranglerに設定したClefのinput単価（neurons / M input tokens）と記録済みtoken数から算出した概算です。
+          outputは課金されないため、実消費はinput分だけです。翻訳を使った実行の分は含みません。
+          無料枠は{number(analytics.freeNeuronsPerDay)} neurons/日（00:00 UTCリセット）で、アカウント内の他のWorkers AI利用と共有します。
+          実際の消費はCloudflareのダッシュボードを正とします。
         </p>
       </section>
     </PageLayout>

@@ -104,19 +104,11 @@ export default function UmigameAboutPage() {
         <p>Jevの仕様と、このサイトで使う接続先の扱い方は、次の資料で確認できます。</p>
         <div className="umigame-about-reference__links">
           <a
-            href="https://api.typesafe.ai/docs"
+            href="https://developers.cloudflare.com/workers-ai/models/clef/"
             target="_blank"
             rel="noreferrer"
           >
-            TypeSafe AI API docs
-            <ExternalLink size={13} aria-hidden="true" />
-          </a>
-          <a
-            href="https://developers.cloudflare.com/ai/models/typesafe/jev/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Cloudflare Jev docs
+            Cloudflare Clef docs
             <ExternalLink size={13} aria-hidden="true" />
           </a>
         </div>
