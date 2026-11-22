@@ -9,7 +9,7 @@ import { engine } from "~/utils/prog-lang-guess/data";
 
 const { languages, questions } = engine;
 const game = getOsApp("prog-lang-guess");
-const description = "思い浮かべたプログラミング言語を当てます。";
+const description = "思い浮かべたプログラミング言語を当てます";
 const NO_EXCLUSION = new Set<number>();
 const SORTED_NAMES = languages.map(l => l.name).sort((a, b) => a.localeCompare(b, "ja"));
 
@@ -137,7 +137,7 @@ export default function ProgLangGuessPage() {
               <div className="plg-stat"><span className="plg-stat__value" data-ui-number>{state.answers.length}</span><span className="plg-stat__label">質問した数</span></div>
               <div className="plg-stat"><span className="plg-stat__value" data-ui-number>{Math.max(1, Math.round(2 ** bits))}</span><span className="plg-stat__label">実質の候補数</span></div>
             </div>
-            <p className="plg-note">あと約 {bits.toFixed(1)} bit</p>
+            <p className="plg-note">あと約{bits.toFixed(1)} bit</p>
             {!state.done && state.step.kind === "ask" ? <p className="plg-note">この質問の期待情報量 <span data-ui-number>{state.step.gain.toFixed(2)}</span> bit</p> : null}
             {!state.done && state.step.kind === "guess" ? <p className="plg-note">確信度 <strong data-ui-number>{Math.round(p[state.step.languageIndex] * 100)}%</strong></p> : null}
             <h2>上位の候補</h2>
@@ -155,14 +155,14 @@ export default function ProgLangGuessPage() {
         </details>
         <details className="plg-all">
           <summary>収録している言語（{languages.length}）</summary>
-          <p className="plg-note">収録言語は、英語版Wikipediaの「List of programming languages」を参考に選んでいます。BASICの方言や難解言語なども一部収録しています。</p>
+          <p className="plg-note">収録言語は英語版Wikipediaの「List of programming languages」を参考に選んでいます。BASICの方言や難解言語なども一部収録しています。</p>
           <ul className="plg-all__list">
             {SORTED_NAMES.map((name, i) => (
               <li key={name}>{name}{i < SORTED_NAMES.length - 1 && <span aria-hidden="true">、</span>}</li>
             ))}
           </ul>
         </details>
-        <p className="plg-note">特徴のデータは手作業で付けたものなので、データ側が間違っていることもあります。キーボードの 1〜5 でも答えられます。</p>
+        <p className="plg-note">特徴のデータは手作業で付けたものなので、データ側が間違っていることもあります。キーボードの1〜5でも答えられます。</p>
       </div>
     </PageLayout>
   );
@@ -206,7 +206,7 @@ function Stage({ state, dispatch }: { state: State; dispatch: (action: Action) =
     return (
       <>
         <div className="plg-meta"><span>{n}問目のあと</span></div>
-        <p className="plg-big">思い浮かべたのは…</p>
+        <p className="plg-big">思い浮かべたのは...</p>
         <p className="plg-guess-name">{l.name}</p>
         <p className="plg-note">{l.year}年ごろ登場</p>
         <div className="plg-row" data-ui-actions>
@@ -238,11 +238,11 @@ function GiveUp({ state, dispatch }: { state: State; dispatch: (action: Action) 
   return (
     <>
       <p className="plg-big">降参です。何を思い浮かべていましたか？</p>
-      <p className="plg-note">{state.answers.length}問答えてもらって、{state.wrong.length}回外しました。名前を選ぶと、「技術情報」で答えとデータのずれを見られます。</p>
+      <p className="plg-note">{state.answers.length}問答えてもらって、{state.wrong.length}回外しました。名前を選ぶと「技術情報」で答えとデータのずれを見られます。</p>
       <form className="plg-pick" onSubmit={submit}>
         <label htmlFor={inputId} className="plg-note">言語名</label>
         <div className="plg-row" data-ui-actions>
-          <input id={inputId} className="plg-input" list={listId} autoComplete="off" placeholder="例: Kotlin" value={value} aria-invalid={error} aria-describedby={error ? `${inputId}-error` : undefined} onChange={event => { setValue(event.target.value); setError(false); }} />
+          <input id={inputId} className="plg-input" list={listId} autoComplete="off" placeholder="例：Kotlin" value={value} aria-invalid={error} aria-describedby={error ? `${inputId}-error` : undefined} onChange={event => { setValue(event.target.value); setError(false); }} />
           <datalist id={listId}>{languages.map(l => <option key={l.name} value={l.name} />)}</datalist>
           <button type="submit" className="btn site-button plg-answer--main">これでした</button>
         </div>
@@ -289,7 +289,7 @@ function DoneView({ state, done, dispatch }: { state: State; done: Done; dispatc
     return (
       <>
         <p className="plg-big">一覧の外から来ましたね。</p>
-        <p className="plg-note">収録しているのは {languages.length} 言語です。下の「収録している言語」で一覧を見られます。</p>
+        <p className="plg-note">収録しているのは{languages.length}言語です。下の「収録している言語」で一覧を見られます。</p>
         {actions}
       </>
     );
@@ -318,8 +318,7 @@ function AnswerComparison({ state, done }: { state: State; done: Exclude<Done, {
   const unknown = rows.filter(r => r.answer === 2).length;
   return (
     <>
-      {done.kind === "lose" ? <p className="plg-note">外れた候補を除かずに計算し直すと、{l.name} は {rank} 位でした。</p> : null}
-      <p className="plg-note">データと食い違った答え（≠）{offs} 個、「わからない」{unknown} 個。</p>
+      {done.kind === "lose" ? <p className="plg-note">外れた候補を除かずに計算し直すと、{l.name}は{rank}位でした。</p> : null}
       {rows.length ? (
         <div className="plg-table-wrap">
           <table className="plg-table">
@@ -336,6 +335,7 @@ function AnswerComparison({ state, done }: { state: State; done: Exclude<Done, {
           </table>
         </div>
       ) : null}
+      <p className="plg-note">データと食い違った答え（≠）{offs}個、「わからない」{unknown}個</p>
       {offs ? <p className="plg-note">食い違いは、あなたの思い違いのこともあれば、データの付け方が雑なこともあります。</p> : null}
     </>
   );
