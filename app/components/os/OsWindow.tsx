@@ -23,8 +23,8 @@ function WindowControl({ id, label, onClick, pressed, children }: { id: string; 
   </span>;
 }
 
-export function OsWindow({ path, active, error, background, modal, minimized, maximized, order, slot, opening, children, onFocus, onMinimize, onMaximize, onClose }: {
-  path: string; active: boolean; error: boolean; background: boolean; modal: boolean; minimized: boolean; maximized: boolean; order: number; slot: number; children: ReactNode;
+export function OsWindow({ path, active, error, background, openingSource, modal, minimized, maximized, order, slot, opening, children, onFocus, onMinimize, onMaximize, onClose }: {
+  path: string; active: boolean; error: boolean; background: boolean; openingSource: boolean; modal: boolean; minimized: boolean; maximized: boolean; order: number; slot: number; children: ReactNode;
   onFocus: () => void; onMinimize: () => void; onMaximize: () => void; onClose: () => void;
   opening?: OsOpening;
 }) {
@@ -112,7 +112,7 @@ export function OsWindow({ path, active, error, background, modal, minimized, ma
     frameRef.current?.classList.remove("is-dragging");
   }
 
-  return <section ref={frameRef} data-app={page.id} style={{ zIndex: modal ? 101 : order }} className={`os-window${active ? " is-active" : ""}${error ? " os-window--error" : ""}${background ? " os-window--backdrop" : ""}${minimized ? " is-minimized" : ""}${maximized ? " os-window--maximized" : ""}${page.id === "documents" ? " os-window--text" : ""}${page.id === "projects" ? " os-window--pdf" : ""}`} role={error ? "dialog" : undefined} aria-modal={modal || undefined} aria-hidden={background || undefined} inert={background} aria-label={page.title} onKeyDown={event => {
+  return <section ref={frameRef} data-app={page.id} data-opening-source={openingSource || undefined} style={{ zIndex: modal ? 101 : order }} className={`os-window${active ? " is-active" : ""}${error ? " os-window--error" : ""}${background ? " os-window--backdrop" : ""}${minimized ? " is-minimized" : ""}${maximized ? " os-window--maximized" : ""}${page.id === "documents" ? " os-window--text" : ""}${page.id === "projects" ? " os-window--pdf" : ""}`} role={error ? "dialog" : undefined} aria-modal={modal || undefined} aria-hidden={background || openingSource || undefined} inert={background || openingSource} aria-label={page.title} onKeyDown={event => {
     if (modal && event.key === "Tab") { event.preventDefault(); contentRef.current?.querySelector<HTMLButtonElement>(".os-system-error__ok")?.focus(); }
   }} onPointerDownCapture={(event) => {
     if (!(event.target as Element).closest(".os-window-controls")) onFocus();

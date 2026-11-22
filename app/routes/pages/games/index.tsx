@@ -39,6 +39,15 @@ export function GamesDirectory({ headingLevel = "h2" }: { headingLevel?: "h2" | 
           </Link>
           <Link to="/games/umigame/about" className="os-directory-info btn site-button" aria-label="ウミガメのスープについて" title="ウミガメのスープについて" onClick={event => openApp?.(getOsApp("umigame"), event)}><PixelIcon kind="info" /></Link>
         </div>
+        <Link to="/games/prog-lang-guess" className="os-directory-entry" onClick={event => openApp?.(getOsApp("prog-lang-guess"), event)}>
+          <PixelIcon kind="game" />
+          <div className="os-directory-entry__copy">
+            <Heading className="tool-card__title">{getOsApp("prog-lang-guess").label}</Heading>
+            <p className="tool-card__copy">
+              思い浮かべたプログラミング言語を当てます
+            </p>
+          </div>
+        </Link>
       </section>
   );
 }

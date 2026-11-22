@@ -70,7 +70,7 @@ export function OsShell({ enabled, children, notFound = false, systemError = fal
   const [mobile, setMobile] = useState(false);
   const [startOpen, setStartOpen] = useState(false);
   const [startClosing, setStartClosing] = useState(false);
-  const [opening, setOpening] = useState<(OsOpening & { app: OsApp["id"] }) | null>(null);
+  const [opening, setOpening] = useState<(OsOpening & { app: OsApp["id"]; from?: string }) | null>(null);
   const openingSerial = useRef(0);
   const shellRef = useRef<HTMLDivElement>(null);
   const startButtonRef = useRef<HTMLButtonElement>(null);
@@ -192,7 +192,9 @@ export function OsShell({ enabled, children, notFound = false, systemError = fal
       }
     } else {
       const source = event.currentTarget.querySelector<HTMLElement>(".os-app-icon__graphic, .os-pixel-icon") ?? event.currentTarget;
-      setOpening({ app: app.id, origin: source.getBoundingClientRect(), serial: ++openingSerial.current });
+      const sourceWindow = event.currentTarget.closest<HTMLElement>(".os-window.is-active");
+      if (mobile && sourceWindow) stopOsMotion(sourceWindow);
+      setOpening({ app: app.id, from: sourceWindow?.dataset.app, origin: source.getBoundingClientRect(), serial: ++openingSerial.current });
     }
     setHistoryOpen(false);
     closeStart();
@@ -286,7 +288,7 @@ export function OsShell({ enabled, children, notFound = false, systemError = fal
           <span className="os-desktop__owner" inert={page || historyOpen ? true : undefined}>© 2026 Roseu</span>
 
           {mobileDialog && <div className="os-error-shade" aria-hidden="true" />}
-          {windows.map((task, index) => <OsWindow key={task.id} path={page?.id === task.id ? location.pathname : task.path} active={page?.id === task.id} error={page?.id === task.id ? systemError : task.error} background={task.id === errorBackground} modal={mobileDialog && page?.id === task.id} minimized={task.minimized} maximized={task.maximized && !(page?.id === task.id ? systemError : task.error)} order={windows.filter((item) => item.order < task.order).length + 1} slot={index} opening={opening?.app === task.id ? opening : undefined} onFocus={() => focusWindow(task)} onMinimize={() => dismissWindow(task, false)} onClose={() => dismissWindow(task, true)} onMaximize={() => {
+          {windows.map((task, index) => <OsWindow key={task.id} path={page?.id === task.id ? location.pathname : task.path} active={page?.id === task.id} error={page?.id === task.id ? systemError : task.error} openingSource={mobile && opening?.app === page?.id && opening?.from === task.id && task.id !== page?.id} background={task.id === errorBackground} modal={mobileDialog && page?.id === task.id} minimized={task.minimized} maximized={task.maximized && !(page?.id === task.id ? systemError : task.error)} order={windows.filter((item) => item.order < task.order).length + 1} slot={index} opening={opening?.app === task.id ? opening : undefined} onFocus={() => focusWindow(task)} onMinimize={() => dismissWindow(task, false)} onClose={() => dismissWindow(task, true)} onMaximize={() => {
             setTasks((current) => current.map((item) => item.id === task.id ? { ...item, maximized: !item.maximized } : item));
             focusWindow(task);
           }}>{page?.id === task.id ? children : task.content}</OsWindow>)}

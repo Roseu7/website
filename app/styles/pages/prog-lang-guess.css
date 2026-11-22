@@ -1,0 +1,96 @@
+@layer feature {
+/* ウィンドウの幅はOSの中で変わるので、画面幅ではなく自分の幅で2カラムに切り替える。 */
+.plg { container-type: inline-size; display: grid; gap: 24px; min-width: 0; }
+.plg p { margin: 0; }
+.plg [data-ui-number] { font-variant-numeric: tabular-nums; }
+.plg-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; }
+.plg-lead { flex: 1 1 20rem; color: var(--ink-2); }
+.plg-layout { display: grid; gap: 24px; align-items: start; }
+@container (min-width: 720px) {
+  .plg-layout { grid-template-columns: minmax(0, 1fr) 280px; }
+}
+
+.plg-card, .plg-side {
+  min-width: 0; display: grid; gap: 16px; padding: 16px;
+  border: 1px solid var(--os-shadow, var(--line-soft)); background: var(--bg-base);
+  box-shadow: inset 1px 1px var(--os-light, transparent), 1px 1px var(--os-light, transparent);
+}
+.plg-side { align-content: start; }
+.plg h2 { margin: 0; font-size: 20px; line-height: 1.5; }
+.plg code { padding: 0 0.25em; background: var(--bg-muted); color: var(--os-edge, var(--ink-1)); font-family: var(--font-mono); white-space: nowrap; }
+
+.plg-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--ink-3); font-size: 14px; }
+.plg-meta strong { color: var(--os-edge, var(--ink-1)); font-weight: 400; }
+.plg-question { font-size: 20px; line-height: 1.6; }
+.plg-example {
+  margin: 0; padding: 8px 12px; overflow-x: auto; border: 1px solid var(--os-shadow, var(--line-soft));
+  background: var(--bg-strong); box-shadow: inset 1px 1px var(--os-shadow, transparent);
+  font-family: var(--font-mono); font-size: 16px; line-height: 1.6; white-space: pre;
+}
+.plg-example__tag { display: block; color: var(--ink-3); font-size: 14px; }
+
+.plg-answers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.plg .plg-answer { display: grid; grid-template-rows: 1fr auto; place-items: center; gap: 0; min-height: 56px; padding-inline: 4px; word-break: keep-all; }
+.plg-answer__key { color: var(--ink-3); font-size: 14px; line-height: 1.2; }
+/* 主の答え(はい・いいえ)は、旧Windowsの既定ボタンのように枠を1段太くする。 */
+.plg .plg-answer--main { outline: 1px solid var(--os-edge, var(--line-strong)); outline-offset: -2px; }
+.plg .plg-answer--main:focus-visible { outline: 2px solid var(--os-edge, var(--line-strong)); outline-offset: 4px; }
+.plg-stage { container-type: inline-size; }
+@container (max-width: 420px) {
+  .plg-answers { grid-template-columns: 1fr 1fr; }
+  .plg-answers [data-answer="0"] { order: 1; }
+  .plg-answers [data-answer="4"] { order: 2; }
+  .plg-answers [data-answer="1"] { order: 3; }
+  .plg-answers [data-answer="3"] { order: 4; }
+  .plg-answers [data-answer="2"] { order: 5; grid-column: 1 / -1; }
+}
+
+.plg-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.plg-big { font-size: 20px; line-height: 1.6; }
+.plg-guess-name { color: var(--os-edge, var(--ink-1)); font-size: 32px; line-height: 1.3; overflow-wrap: anywhere; }
+.plg-note { color: var(--ink-2); font-size: 14px; }
+.plg-error { color: var(--danger); font-size: 14px; }
+.plg-pick { display: grid; gap: 4px; }
+.plg-input {
+  flex: 1 1 12rem; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--os-shadow, var(--line-soft));
+  border-radius: 0; background: white; color: var(--ink-1); box-shadow: inset 1px 1px var(--os-dark, transparent); font: inherit;
+}
+.plg-input::placeholder { color: var(--ink-3); opacity: 1; }
+.plg-input[aria-invalid="true"] { border-color: var(--danger); }
+
+.plg-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.plg-stat { display: grid; }
+.plg-stat__value { font-size: 24px; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.plg-stat__label { color: var(--ink-2); font-size: 14px; }
+.plg-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 12px; border-top: 1px solid var(--os-shadow, var(--line-soft)); }
+
+.plg-candidates, .plg-log { display: grid; margin: 0; padding: 0; list-style: none; }
+.plg-candidates { gap: 8px; }
+.plg-technical { display: grid; gap: 12px; min-width: 0; }
+.plg-candidates li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; font-size: 14px; }
+.plg-candidates__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plg-candidates__pct { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.plg-candidates__bar { grid-column: 1 / -1; height: 6px; border: 1px solid var(--os-shadow, var(--line-soft)); background: var(--bg-strong); }
+.plg-candidates__bar span { display: block; height: 100%; background: var(--os-edge, var(--ink-1)); }
+
+.plg-log { font-size: 14px; }
+.plg-log li { display: grid; grid-template-columns: 2em minmax(0, 1fr) auto; gap: 8px; padding: 4px 0; border-top: 1px solid var(--line-soft); }
+.plg-log li:first-child { border-top: 0; }
+.plg-log .plg-log__empty { display: block; color: var(--ink-2); }
+.plg-log__n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.plg-log__a { white-space: nowrap; }
+
+.plg-table-wrap { overflow-x: auto; }
+.plg-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.plg-table th, .plg-table td { padding: 8px 8px 8px 0; border-top: 1px solid var(--line-soft); text-align: left; vertical-align: top; }
+.plg-table th { border-top: 0; color: var(--ink-2); font-weight: 400; }
+.plg-table__nw { white-space: nowrap; }
+.plg-table__off { color: var(--danger); white-space: nowrap; }
+
+.plg-all { padding-top: 12px; border-top: 1px solid var(--os-shadow, var(--line-soft)); }
+.plg-all summary { padding-block: 10px; line-height: 1.5; cursor: pointer; }
+@media (min-width: 761px) {
+  .os-window:not(.os-window--maximized):has(.plg) { height: calc(100% - 160px); }
+}
+.plg-all__list { display: flex; flex-wrap: wrap; row-gap: 4px; margin: 8px 0 0; padding: 0; list-style: none; color: var(--ink-2); font-size: 14px; }
+}

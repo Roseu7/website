@@ -8,6 +8,7 @@ import directoryCss from "~/styles/pages/tools.css?url";
 import solverCss from "~/styles/pages/solver.css?url";
 import jevCss from "~/styles/pages/jev.css?url";
 import umigameCss from "~/styles/umigame.css?url";
+import progLangGuessCss from "~/styles/pages/prog-lang-guess.css?url";
 import umigameAdminCss from "~/styles/umigame/80-observability.css?url";
 import mcCss from "~/styles/mc.css?url";
 import settingsCss from "~/styles/pages/settings.css?url";
@@ -22,6 +23,7 @@ export function getPageStyles(pathname: string, osEnabled: boolean, data?: unkno
     styles.push(umigameCss);
     if (pathname.startsWith("/games/umigame/admin")) styles.push(umigameAdminCss);
   }
+  else if (pathname === "/games/prog-lang-guess") styles.push(progLangGuessCss);
   else if (pathname === "/tools/wsolver") styles.push(solverCss);
   else if (pathname === "/tools/jev") styles.push(jevCss);
   else if (["/tools", "/games", "/lab"].includes(pathname)) styles.push(directoryCss);

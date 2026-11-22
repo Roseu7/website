@@ -17,6 +17,7 @@ export const routeModules = {
   "/tools/wsolver": { path: "/tools/wsolver", load: async () => ({}) },
   "/tools/jev": { path: "/tools/jev", load: () => import("~/routes/pages/tools/jev.server") },
   "/games": { path: "/games", load: async () => ({}) },
+  "/games/prog-lang-guess": { path: "/games/prog-lang-guess", load: async () => ({}) },
   "/auth/discord/start": { path: "/auth/discord/start", load: () => import("~/routes/auth/discord/start") },
   "/auth/discord/callback": { path: "/auth/discord/callback", load: () => import("~/routes/auth/discord/callback") },
   "/auth/logout": { path: "/auth/logout", load: () => import("~/routes/auth/logout") },
@@ -66,4 +67,4 @@ export const routeModules = {
   "/*": { path: "/*", load: () => import("~/routes/$.server") },
 };
 
-export const pageRoutes = new Set<string>(["/","/projects","/about","/licenses","/privacy","/terms","/contact","/settings","/settings/about","/settings/history","/settings/developer","/notepad","/console","/tools","/tools/wsolver","/tools/jev","/games","/auth/access/logout","/apply","/wsolver","/games/umigame","/games/umigame/about","/games/umigame/admin","/games/umigame/admin/jev","/games/umigame/favorites","/games/umigame/licenses","/games/umigame/rankings","/games/umigame/recommend","/games/umigame/results","/games/umigame/author/quality","/games/umigame/new","/games/umigame/p/:id","/games/umigame/p/:id/edit","/games/umigame/p/:id/play","/games/umigame/u/:username","/games/umigame/settings/profile","/*"]);
+export const pageRoutes = new Set<string>(["/","/projects","/about","/licenses","/privacy","/terms","/contact","/settings","/settings/about","/settings/history","/settings/developer","/notepad","/console","/tools","/tools/wsolver","/tools/jev","/games","/games/prog-lang-guess","/auth/access/logout","/apply","/wsolver","/games/umigame","/games/umigame/about","/games/umigame/admin","/games/umigame/admin/jev","/games/umigame/favorites","/games/umigame/licenses","/games/umigame/rankings","/games/umigame/recommend","/games/umigame/results","/games/umigame/author/quality","/games/umigame/new","/games/umigame/p/:id","/games/umigame/p/:id/edit","/games/umigame/p/:id/play","/games/umigame/u/:username","/games/umigame/settings/profile","/*"]);

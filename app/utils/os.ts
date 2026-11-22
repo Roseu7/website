@@ -16,6 +16,7 @@ const childApps = [
   { id: "wsolver", label: "Wordle Solver", path: "/tools/wsolver", icon: "tools", parent: "tools" },
   { id: "jev", label: "Jev", path: "/tools/jev", icon: "tools", parent: "tools" },
   { id: "umigame", label: "ウミガメのスープ", path: "/games/umigame", icon: "game", parent: "games" },
+  { id: "prog-lang-guess", label: "たぶんこの言語", path: "/games/prog-lang-guess", icon: "game", parent: "games" },
 ] as const;
 export const osExecutableApps = [...osApps, ...childApps, consoleApp, notepadApp].map(app => ({ ...app, executable: `${app.id}.exe`, executablePath: "executablePath" in app ? app.executablePath : `C:\\Apps\\${app.id}.exe` }));
 export type OsApp = (typeof osApps)[number] | (typeof childApps)[number] | typeof labApp | typeof systemApp | typeof consoleApp | typeof notepadApp;

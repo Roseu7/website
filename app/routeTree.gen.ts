@@ -31,6 +31,7 @@ import { Route as ApiJevRouteImport } from './start-routes/api_.jev'
 import { Route as ApiNextRouteImport } from './start-routes/api_.next'
 import { Route as ApiSmanageRouteImport } from './start-routes/api_.smanage'
 import { Route as AuthLogoutRouteImport } from './start-routes/auth_.logout'
+import { Route as GamesProgLangGuessRouteImport } from './start-routes/games_.prog-lang-guess'
 import { Route as GamesUmigameRouteImport } from './start-routes/games_.umigame'
 import { Route as MapSplatRouteImport } from './start-routes/map_.$'
 import { Route as SettingsAboutRouteImport } from './start-routes/settings_.about'
@@ -184,6 +185,11 @@ const ApiSmanageRoute = ApiSmanageRouteImport.update({
 const AuthLogoutRoute = AuthLogoutRouteImport.update({
   id: '/auth_/logout',
   path: '/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesProgLangGuessRoute = GamesProgLangGuessRouteImport.update({
+  id: '/games_/prog-lang-guess',
+  path: '/games/prog-lang-guess',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GamesUmigameRoute = GamesUmigameRouteImport.update({
@@ -440,6 +446,7 @@ export interface FileRoutesByFullPath {
   '/api/next': typeof ApiNextRoute
   '/api/smanage': typeof ApiSmanageRoute
   '/auth/logout': typeof AuthLogoutRoute
+  '/games/prog-lang-guess': typeof GamesProgLangGuessRoute
   '/games/umigame': typeof GamesUmigameRoute
   '/map/$': typeof MapSplatRoute
   '/settings/about': typeof SettingsAboutRoute
@@ -508,6 +515,7 @@ export interface FileRoutesByTo {
   '/api/next': typeof ApiNextRoute
   '/api/smanage': typeof ApiSmanageRoute
   '/auth/logout': typeof AuthLogoutRoute
+  '/games/prog-lang-guess': typeof GamesProgLangGuessRoute
   '/games/umigame': typeof GamesUmigameRoute
   '/map/$': typeof MapSplatRoute
   '/settings/about': typeof SettingsAboutRoute
@@ -577,6 +585,7 @@ export interface FileRoutesById {
   '/api_/next': typeof ApiNextRoute
   '/api_/smanage': typeof ApiSmanageRoute
   '/auth_/logout': typeof AuthLogoutRoute
+  '/games_/prog-lang-guess': typeof GamesProgLangGuessRoute
   '/games_/umigame': typeof GamesUmigameRoute
   '/map_/$': typeof MapSplatRoute
   '/settings_/about': typeof SettingsAboutRoute
@@ -647,6 +656,7 @@ export interface FileRouteTypes {
     | '/api/next'
     | '/api/smanage'
     | '/auth/logout'
+    | '/games/prog-lang-guess'
     | '/games/umigame'
     | '/map/$'
     | '/settings/about'
@@ -715,6 +725,7 @@ export interface FileRouteTypes {
     | '/api/next'
     | '/api/smanage'
     | '/auth/logout'
+    | '/games/prog-lang-guess'
     | '/games/umigame'
     | '/map/$'
     | '/settings/about'
@@ -783,6 +794,7 @@ export interface FileRouteTypes {
     | '/api_/next'
     | '/api_/smanage'
     | '/auth_/logout'
+    | '/games_/prog-lang-guess'
     | '/games_/umigame'
     | '/map_/$'
     | '/settings_/about'
@@ -852,6 +864,7 @@ export interface RootRouteChildren {
   ApiNextRoute: typeof ApiNextRoute
   ApiSmanageRoute: typeof ApiSmanageRoute
   AuthLogoutRoute: typeof AuthLogoutRoute
+  GamesProgLangGuessRoute: typeof GamesProgLangGuessRoute
   GamesUmigameRoute: typeof GamesUmigameRoute
   MapSplatRoute: typeof MapSplatRoute
   SettingsAboutRoute: typeof SettingsAboutRoute
@@ -1052,6 +1065,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/logout'
       fullPath: '/auth/logout'
       preLoaderRoute: typeof AuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games_/prog-lang-guess': {
+      id: '/games_/prog-lang-guess'
+      path: '/games/prog-lang-guess'
+      fullPath: '/games/prog-lang-guess'
+      preLoaderRoute: typeof GamesProgLangGuessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/games_/umigame': {
@@ -1388,6 +1408,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiNextRoute: ApiNextRoute,
   ApiSmanageRoute: ApiSmanageRoute,
   AuthLogoutRoute: AuthLogoutRoute,
+  GamesProgLangGuessRoute: GamesProgLangGuessRoute,
   GamesUmigameRoute: GamesUmigameRoute,
   MapSplatRoute: MapSplatRoute,
   SettingsAboutRoute: SettingsAboutRoute,
