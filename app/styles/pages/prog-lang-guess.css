@@ -62,7 +62,7 @@
 .plg-stat { display: grid; }
 .plg-stat__value { font-size: 24px; line-height: 1.3; font-variant-numeric: tabular-nums; }
 .plg-stat__label { color: var(--ink-2); font-size: 14px; }
-.plg-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 12px; border-top: 1px solid var(--os-shadow, var(--line-soft)); }
+.plg-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
 .plg-candidates, .plg-log { display: grid; margin: 0; padding: 0; list-style: none; }
 .plg-candidates { gap: 8px; }
