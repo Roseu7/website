@@ -321,6 +321,8 @@
     color: var(--ink-3);
     pointer-events: none;
   }
+  /* 空の段落では、段落の終わりの印がプレースホルダーの先頭に重なるので、プレースホルダーを出している間は隠す。 */
+  .article-editor p.is-empty .tiptap-invisible-character--paragraph { display: none; }
   .article-editor .article-figure.is-selected img,
   .article-editor .ProseMirror-selectednode img,
   .article-editor [data-youtube-video-id].ProseMirror-selectednode { outline: 2px solid var(--line-strong); outline-offset: 2px; }
