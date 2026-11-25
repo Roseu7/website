@@ -99,6 +99,91 @@
   .article-pager__title { font-family: var(--article-font); font-size: 1rem; font-weight: 700; line-height: 1.5; }
   .article-pager__date { color: var(--ink-3); font-family: var(--article-font); font-size: 0.8125rem; }
 
+  .article-share { display: inline-flex; align-items: center; gap: 0.4rem; }
+  /* 共有のウィンドウ。R OSの小さなウィンドウ（枠・タイトルバー・閉じるボタン）に見た目をそろえる。
+     OSの外で開いたときのために、OSの色の変数が無ければ通常の線の色を使う。 */
+  .article-share-dialog {
+    inline-size: min(32rem, calc(100vw - 2rem));
+    margin: auto;
+    padding: 3px;
+    border: 2px solid var(--os-edge, var(--line-strong));
+    background: var(--os-face, var(--bg-muted));
+    color: var(--ink-1);
+    box-shadow: inset 1px 1px var(--os-light, #fff), 3px 3px 0 var(--os-cyan, transparent), 4px 4px 0 var(--os-edge, transparent);
+    overscroll-behavior: contain;
+  }
+  .article-share-dialog::backdrop { background: rgb(40 20 70 / 0.35); }
+  .article-share-dialog__titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-block-size: 36px;
+    padding: 3px 4px 3px 8px;
+    border: 1px solid var(--os-edge, var(--line-strong));
+    background: #eed3f3;
+    color: var(--os-edge, var(--ink-1));
+    font-family: var(--os-font, inherit);
+  }
+  .article-share-dialog__titlebar h2 { margin: 0; font-size: 16px; font-weight: 400; line-height: 1.5; }
+  .article-share-dialog__close {
+    display: grid;
+    place-items: center;
+    inline-size: 28px;
+    block-size: 28px;
+    padding: 0;
+    border: 1px solid var(--os-edge, var(--line-strong));
+    background: var(--os-face, var(--bg-muted));
+    box-shadow: inset 1px 1px var(--os-light, #fff), inset -1px -1px var(--os-shadow, var(--line-soft));
+    color: var(--ink-1);
+    cursor: pointer;
+  }
+  .article-share-dialog__close:active { box-shadow: inset 1px 1px var(--os-shadow, var(--line-soft)); }
+  /* 列を minmax(0, 1fr) にしないと、折り返さないURLの長さに列が引っ張られて、狭い画面で横にはみ出す。 */
+  .article-share-dialog__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    margin-block-start: 4px;
+    padding: 1.25rem 1rem;
+    border: 1px solid var(--os-edge, var(--line-strong));
+    background: var(--bg-base);
+  }
+  .article-share-dialog__url {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    inline-size: 100%;
+    min-block-size: 2.75rem;
+    padding: 0.4rem 0.4rem 0.4rem 0.75rem;
+    border: 1px solid var(--line-soft);
+    background: var(--bg-strong);
+    color: var(--ink-1);
+    font: inherit;
+    text-align: start;
+    cursor: copy;
+  }
+  .article-share-dialog__url:hover { border-color: var(--os-edge, var(--line-strong)); }
+  .article-share-dialog__url:focus-visible { outline: 2px solid var(--os-edge, var(--ink-1)); outline-offset: 2px; }
+  .article-share-dialog__url-text {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .article-share-dialog__url-action {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--accent-soft);
+    font-size: 0.8125rem;
+  }
+  .article-share-dialog__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
   .article-page__footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; font-size: 0.9375rem; }
 
   /* 広い画面の右の目次。ふだんは出さない。 */
