@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
-import Page, { meta } from "~/routes/articles/article";
+import Page, { links, meta } from "~/routes/articles/article";
 import { loadPage, resolvePage, PageState, pageHead } from '~/framework/page';
 
 export const Route = createFileRoute("/articles_/$id")({
   loaderDeps: ({ search }) => search,
   loader: ({ location }) => loadPage({ data: { route: "/articles/:id", href: location.href } }).then(resolvePage),
   component: () => <PageState route="/articles/:id"><Page /></PageState>,
-  head: ({ loaderData }) => pageHead(meta, loaderData)
+  head: ({ loaderData }) => ({ ...pageHead(meta, loaderData), links: links({ data: loaderData as Parameters<typeof links>[0]["data"] }) })
 });

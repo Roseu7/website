@@ -13,23 +13,65 @@ import type { loader } from "./article.server";
 
 type ArticleData = Awaited<ReturnType<typeof loader>>;
 
+const articleUrl = (id: string) => `https://roseu.net/articles/${id}`;
+// 本文に画像が無い記事のカードには、サイトの画像を出す。
+const fallbackImage = { src: "https://roseu.net/images/R%20OS.3u.png", alt: "R OS.3u", width: 1600, height: 900 };
+
+// 共有したときのカード（OGP）と、検索エンジンやAIが読む構造化データ（JSON-LD）も出す。
 export const meta = ({ data }: { data?: ArticleData }) => {
   const article = data?.article;
   if (!article) return [{ title: `記事 | ${siteConfig.fullName}` }];
+  const title = article.title || "無題";
+  const url = articleUrl(article.id);
+  const image = article.image ?? fallbackImage;
+  const published = new Date(article.firstPublishedAt).toISOString();
+  const modified = new Date(article.contentPublishedAt).toISOString();
   return [
-    { title: `${article.title || "無題"} | ${siteConfig.fullName}` },
+    { title: `${title} | ${siteConfig.fullName}` },
     { name: "description", content: article.description },
+    { name: "author", content: siteConfig.owner },
     // 限定公開は、URLを知っている人だけが読む記事なので、検索結果に載せない。
     ...(article.status === "unlisted" ? [{ name: "robots", content: "noindex" }] : []),
+    { property: "og:type", content: "article" },
+    { property: "og:title", content: title },
+    { property: "og:description", content: article.description },
+    { property: "og:url", content: url },
+    { property: "og:site_name", content: siteConfig.name },
+    { property: "og:locale", content: "ja_JP" },
+    { property: "og:image", content: image.src },
+    ...(image.width && image.height ? [{ property: "og:image:width", content: String(image.width) }, { property: "og:image:height", content: String(image.height) }] : []),
+    ...(image.alt ? [{ property: "og:image:alt", content: image.alt }] : []),
+    { property: "article:published_time", content: published },
+    { property: "article:modified_time", content: modified },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:creator", content: "@Roseu_7" },
+    {
+      "script:ld+json": {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: title,
+        description: article.description,
+        url,
+        mainEntityOfPage: url,
+        image: [image.src],
+        datePublished: published,
+        dateModified: modified,
+        inLanguage: "ja",
+        author: { "@type": "Person", name: siteConfig.owner, url: "https://roseu.net/about" },
+      },
+    },
   ];
 };
+
+export const links = ({ data }: { data?: ArticleData }) =>
+  data?.article ? [{ rel: "canonical", href: articleUrl(data.article.id) }] : [];
 
 // 目次は、見出しが少ない短い記事では出さない。
 const MIN_OUTLINE_ITEMS = 3;
 
 export default function ArticlePage() {
   const { article, adjacent } = useLoaderData<typeof loader>();
-  const shareUrl = `https://roseu.net/articles/${article.id}`;
+  const shareUrl = articleUrl(article.id);
   const title = article.title || "無題";
   const hasOutline = article.outline.length >= MIN_OUTLINE_ITEMS;
   const { pathname } = useLocation();

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { notFound, redirect, useRouterState } from "@tanstack/react-router";
+import { notFound, redirect, useRouterState, type MetaDescriptor } from "@tanstack/react-router";
 import { loadPageOnServer, type PageResult } from "./handlers.server";
 import type { AppLoadContext, JsonValue } from "./http";
 import { MAIN_SITE_HOSTS, isMcDashboardHost } from "~/utils/host-config";
@@ -56,6 +56,6 @@ export function PageState({ route, children }: { route: string; children: ReactN
   </PageContext.Provider>;
 }
 export function usePageState() { return useContext(PageContext); }
-export function pageHead(meta: (...args: never[]) => Array<{ [key: string]: string | undefined }>, data: unknown) {
+export function pageHead(meta: (...args: never[]) => MetaDescriptor[], data: unknown) {
   return { meta: Reflect.apply(meta, undefined, [{ data }]) as ReturnType<typeof meta> };
 }

@@ -288,3 +288,16 @@ export function articleExcerpt(body: JSONContent, maxLength = 120) {
   const text = paragraph ? textOf(paragraph).replace(/\s+/g, " ").trim() : "";
   return text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
 }
+
+// 共有したときのカードに使う、本文の最初の画像。入れ子（引用やリストの中）も見る。
+export function articleFirstImage(node: JSONContent): { src: string; alt: string; width: number | null; height: number | null } | null {
+  if (node.type === "figure" && typeof node.attrs?.src === "string") {
+    const { src, alt, width, height } = node.attrs as { src: string; alt?: string; width?: number | null; height?: number | null };
+    return { src, alt: alt ?? "", width: width ?? null, height: height ?? null };
+  }
+  for (const child of node.content ?? []) {
+    const found = articleFirstImage(child);
+    if (found) return found;
+  }
+  return null;
+}
