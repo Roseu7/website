@@ -1,0 +1,338 @@
+@layer feature {
+  :root { --article-target: 2.5rem; }
+  @media (pointer: coarse), (max-width: 47.99rem) { :root { --article-target: 2.75rem; } }
+
+  .article-admin {
+    max-inline-size: 48rem;
+    margin-inline: auto;
+    padding: 0 1rem 6rem;
+    color: var(--ink-1);
+  }
+
+  /* 一覧 */
+  .article-admin__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 2rem 1.25rem;
+    border-block-end: 1px solid var(--line-strong);
+  }
+  .article-admin__head h1 { margin: 0; font-size: 1.75rem; font-weight: 400; }
+  .article-admin__head .site-button { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .article-list { margin: 0; padding: 0; list-style: none; }
+  .article-list__item {
+    display: grid;
+    gap: 0.35rem;
+    padding-block: 1rem;
+    border-block-end: 1px solid var(--line-soft);
+    color: inherit;
+    text-decoration: none;
+  }
+  .article-list__item:hover .article-list__title,
+  .article-list__item:focus-visible .article-list__title { text-decoration: underline; text-underline-offset: 0.2em; }
+  .article-list__title { font-size: 1.0625rem; }
+  .article-list__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.9rem; color: var(--ink-3); font-size: 0.8rem; }
+  .article-list__changed { color: var(--ink-2); }
+
+  .article-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.05rem 0.45rem;
+    border: 1px solid var(--line-soft);
+    color: var(--ink-2);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+  .article-status[data-status="published"] { border-color: var(--line-strong); color: var(--ink-1); }
+
+  /* 編集画面の上の帯 */
+  .article-admin__bar {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin-inline: -1rem;
+    padding: 0.5rem 1rem;
+    padding-block-start: max(0.5rem, env(safe-area-inset-top, 0px));
+    background: var(--bg-base);
+    border-block-end: 1px solid var(--line-soft);
+  }
+  .article-admin__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-block-size: var(--article-target);
+    color: inherit;
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+  .article-admin__back:hover { text-decoration: underline; }
+  .article-save-state { color: var(--ink-3); font-size: 0.8rem; }
+  .article-save-state[data-state="error"],
+  .article-save-state[data-state="conflict"] { color: var(--ink-1); font-weight: 700; }
+  .article-admin__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-inline-start: auto; }
+  .article-admin__actions .site-button { display: inline-flex; align-items: center; gap: 0.35rem; min-block-size: var(--article-target); }
+
+  .article-admin__messages { display: grid; gap: 0.5rem; margin-block-start: 0.75rem; }
+  .article-admin__messages:empty { display: none; }
+  .article-banner {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-strong);
+    font-size: 0.9rem;
+  }
+  .article-banner p { margin: 0; }
+  .article-banner div { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .article-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0.4rem 0.4rem 0.4rem 1rem;
+    background: var(--bg-muted);
+    font-size: 0.85rem;
+  }
+  .article-notice__close {
+    inline-size: var(--article-target);
+    block-size: var(--article-target);
+    border: 0;
+    background: none;
+    color: inherit;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  /* 書く部分 */
+  .article-compose { display: grid; gap: 0.75rem; padding-block-start: 1.5rem; }
+  .article-compose[hidden] { display: none; }
+  .article-compose__title,
+  .article-compose__summary {
+    inline-size: 100%;
+    max-inline-size: var(--article-measure);
+    border: 0;
+    border-block-end: 1px solid var(--line-soft);
+    background: transparent;
+    color: var(--ink-1);
+    resize: none;
+    field-sizing: content;
+  }
+  .article-compose__title {
+    padding: 0.25rem 0;
+    font-family: var(--article-font);
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.4;
+    min-block-size: 2.6em;
+  }
+  .article-compose__summary {
+    padding: 0.25rem 0;
+    font-family: var(--article-font);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    min-block-size: 3.6em;
+  }
+  .article-compose__title:focus-visible,
+  .article-compose__summary:focus-visible { outline: none; border-block-end-color: var(--line-strong); }
+  .article-compose__summary-label { color: var(--ink-3); font-size: 0.75rem; margin-block-start: 0.5rem; }
+
+  /* 概要と見出し一覧の折りたたみ。summary を flex にすると標準の開閉の印が消えるので、自前で描く。 */
+  .article-fold { font-size: 0.85rem; border-block-start: 1px solid var(--line-soft); }
+  .article-fold:last-of-type { border-block-end: 1px solid var(--line-soft); }
+  .article-fold > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-block-size: var(--article-target);
+    cursor: pointer;
+    color: var(--ink-2);
+    list-style: none;
+  }
+  .article-fold > summary::-webkit-details-marker { display: none; }
+  .article-fold > summary::before {
+    content: "";
+    inline-size: 0;
+    block-size: 0;
+    border-block: 0.3rem solid transparent;
+    border-inline-start: 0.45rem solid currentColor;
+    transition: rotate var(--motion-fast) ease;
+  }
+  .article-fold[open] > summary::before { rotate: 90deg; }
+  @media (prefers-reduced-motion: reduce) { .article-fold > summary::before { transition: none; } }
+  .article-fold .article-compose__summary { margin-block-end: 0.75rem; }
+  .article-outline ol { margin: 0 0 0.5rem; padding: 0; list-style: none; }
+  .article-outline li[data-level="3"] { padding-inline-start: 1.25rem; }
+  .article-outline button {
+    inline-size: 100%;
+    min-block-size: var(--article-target);
+    padding: 0.25rem 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .article-outline button:hover { text-decoration: underline; }
+
+  .article-toolbar {
+    position: sticky;
+    inset-block-start: var(--article-bar-height, 3.5rem);
+    z-index: 15;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    padding-block: 0.35rem;
+    background: var(--bg-base);
+    border-block-end: 1px solid var(--line-soft);
+  }
+  .article-toolbar [role="group"] { display: flex; gap: 0.15rem; }
+  .article-toolbar [role="separator"] { inline-size: 1px; block-size: 1.5rem; background: var(--line-soft); margin-inline: 0.2rem; }
+  .article-tool {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--article-target);
+    block-size: var(--article-target);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-1);
+    cursor: pointer;
+  }
+  .article-tool:hover { border-color: var(--line-soft); }
+  .article-tool[aria-pressed="true"] { background: var(--ink-1); color: var(--bg-base); }
+  .article-tool:disabled { opacity: 0.4; cursor: progress; }
+  .article-tool:focus-visible { outline: 2px solid var(--line-strong); outline-offset: 1px; }
+
+  /* 狭い画面では、ツールバーをキーボードのすぐ上に置き、横にスクロールさせる。
+     上の帯は固定せず、本文と一緒にスクロールさせて書く場所を広く取る。 */
+  @media (max-width: 47.99rem) {
+    html:has(.article-admin--edit) { scroll-padding-block-end: calc(var(--article-target) + 1.5rem + env(safe-area-inset-bottom, 0px)); }
+    .article-admin__bar { position: static; }
+    .article-toolbar {
+      position: fixed;
+      inset-inline: 0;
+      inset-block: auto var(--keyboard-offset, 0px);
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 0.25rem max(0.5rem, env(safe-area-inset-left, 0px));
+      padding-block-end: max(0.25rem, env(safe-area-inset-bottom, 0px));
+      border-block: 1px solid var(--line-soft);
+      scrollbar-width: none;
+      /* 右に続きがあることが分かるよう、右端を薄くする。 */
+      mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+      /* 最後までスクロールしたとき、最後のボタンが薄い部分にかからないようにする。 */
+      padding-inline-end: 2.5rem;
+    }
+    /* キーボードが出ているあいだは、ホームバーの分の余白は要らない。 */
+    html[data-keyboard-open] .article-toolbar { padding-block-end: 0.25rem; }
+    .article-toolbar [role="group"] { flex: none; }
+    .article-toolbar [role="separator"] { flex: none; }
+  }
+
+  .article-compose__body .article-editor {
+    min-block-size: 50vh;
+    padding-block: 0.5rem 2rem;
+    outline: none;
+  }
+  .article-editor .article-figure__caption[data-empty]::before { content: "キャプション（任意）"; float: inline-start; block-size: 0; color: var(--ink-3); pointer-events: none; }
+  .article-editor p.is-empty::before {
+    content: attr(data-placeholder);
+    float: inline-start;
+    block-size: 0;
+    color: var(--ink-3);
+    pointer-events: none;
+  }
+  .article-editor .article-figure.is-selected img,
+  .article-editor .ProseMirror-selectednode img,
+  .article-editor [data-youtube-video-id].ProseMirror-selectednode { outline: 2px solid var(--line-strong); outline-offset: 2px; }
+  .article-editor .article-figure__caption { min-block-size: 1.6em; color: var(--ink-3); font-size: 0.875rem; line-height: 1.6; }
+  .article-figure__tools { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .article-figure__tool {
+    min-block-size: var(--article-target);
+    padding: 0 0.6rem;
+    border: 1px solid var(--line-soft);
+    background: transparent;
+    color: var(--ink-2);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  .article-figure__tool:hover { border-color: var(--line-strong); color: var(--ink-1); }
+  .article-figure__tool[aria-expanded="true"] { border-color: var(--line-strong); color: var(--ink-1); }
+  .article-figure__alt { display: grid; gap: 0.15rem; font-family: var(--font-mono, monospace); font-size: 0.75rem; color: var(--ink-3); }
+  .article-figure__alt[hidden] { display: none; }
+  .article-figure__alt input {
+    min-block-size: var(--article-target);
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--line-soft);
+    background: var(--bg-strong);
+    color: var(--ink-1);
+    font: inherit;
+    font-size: 0.85rem;
+  }
+
+  /* プレビュー */
+  .article-preview { padding-block: 1.5rem 3rem; }
+  .article-preview__title {
+    max-inline-size: 38rem;
+    margin: 0 0 1.5rem;
+    font-family: var(--article-font);
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  /* ダイアログ */
+  /* Tailwindのリセットが dialog の margin を消すので、中央に置き直す。 */
+  .article-dialog {
+    margin: auto;
+    max-block-size: calc(100dvh - 2rem);
+    inline-size: min(28rem, calc(100vw - 2rem));
+    padding: 1.25rem;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-base);
+    color: var(--ink-1);
+    overscroll-behavior: contain;
+  }
+  .article-dialog::backdrop { background: rgb(0 0 0 / 0.4); }
+  .article-dialog h2 { margin: 0 0 0.75rem; font-size: 1.1rem; font-weight: 400; }
+  .article-dialog p { margin: 0 0 0.75rem; color: var(--ink-2); font-size: 0.85rem; }
+  .article-dialog form { display: grid; gap: 0.5rem; }
+  .article-dialog label { font-size: 0.85rem; }
+  .article-dialog input[type="text"] {
+    min-block-size: var(--article-target);
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-strong);
+    color: var(--ink-1);
+    font-family: system-ui, sans-serif;
+    font-size: 1rem;
+  }
+  .article-dialog__error { min-block-size: 1.2em; margin: 0; color: var(--ink-1) !important; font-weight: 700; }
+  .article-dialog__warning { margin: 0.25rem 0 0 !important; color: var(--ink-1) !important; }
+  .article-dialog__choices { display: grid; gap: 0.5rem; margin: 0; padding: 0; border: 0; }
+  .article-dialog__choices label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.1rem 0.6rem;
+    min-block-size: var(--article-target);
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--line-soft);
+    cursor: pointer;
+  }
+  .article-dialog__choices label:has(:checked) { border-color: var(--line-strong); }
+  .article-dialog__choices span { grid-column: 2; color: var(--ink-3); font-size: 0.75rem; }
+  .article-dialog__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; margin-block-start: 0.5rem; }
+  .article-dialog__actions--stack { flex-direction: column; align-items: stretch; }
+  .article-dialog .site-button { min-block-size: var(--article-target); }
+}

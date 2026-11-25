@@ -1,6 +1,6 @@
 export const MAX_FORM_BODY_BYTES = 64 * 1024;
 
-async function readLimitedBytes(request: Request, maxBytes: number): Promise<Uint8Array> {
+export async function readLimitedBytes(request: Request, maxBytes: number): Promise<Uint8Array> {
   const contentLength = request.headers.get("Content-Length");
   if (contentLength && /^\d+$/.test(contentLength) && Number(contentLength) > maxBytes) {
     throw new Response("Request body is too large.", { status: 413 });

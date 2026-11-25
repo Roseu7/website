@@ -93,6 +93,7 @@
     "CF_ACCESS_TEAM_DOMAIN": "roseu.cloudflareaccess.com",
     "CF_ACCESS_AUD": "96b9c9c9fd0eb49cdba0eab8b3fd4f3b987e89f5972bbfb8ec953d8f81e70549",
     "UMIGAME_ACCESS_AUD": "be861d10bd1c5a96e3b9e3120cc86803111421eca67fa4e1fa711927901bb344",
+    "ARTICLES_ACCESS_AUD": "1852e48f9f186dfc92b5502ca852fa9fd2763b569ac26f6eacda514d9e1ade65",
     "JEV_NEURONS_PER_MILLION_INPUT": "21818"
   },
   "observability": {
@@ -129,6 +130,18 @@
       "database_name": "umigame",
       "database_id": "20b0d67b-0d82-4a59-ad55-a98f2b5a702a",
       "migrations_dir": "db/umigame-migrations"
+    },
+    {
+      "binding": "ARTICLES_DB",
+      "database_name": "articles",
+      "database_id": "f5a88634-5477-4810-8cfb-87f3fceee68a",
+      "migrations_dir": "db/articles-migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ARTICLE_ASSETS",
+      "bucket_name": "assets"
     }
   ],
   "queues": {

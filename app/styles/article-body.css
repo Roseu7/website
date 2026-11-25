@@ -1,0 +1,82 @@
+@layer feature {
+  /* 記事の本文だけ、長文を読むための標準フォントにする。枠や操作部分は DotGothic16 のまま。
+     タイトルや概要の欄も同じ書体と行の長さにそろえるため、変数にしておく。 */
+  :root {
+    --article-font: system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Meiryo", sans-serif;
+    --article-measure: calc(38 * 1.0625rem);
+  }
+  .article-body {
+    --font-body: var(--article-font);
+    --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Code", Consolas, "BIZ UDGothic", monospace;
+    max-inline-size: var(--article-measure);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.9;
+    color: var(--ink-1);
+    overflow-wrap: anywhere;
+    line-break: strict;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  /* サイト共通のCSSは見出しを選べなくしているが、記事の見出しはコピーできるようにする。 */
+  .article-body :is(h2, h3) { -webkit-user-select: text; user-select: text; }
+  /* 空の段落も、書いているときと同じく1行分の高さを取る。 */
+  .article-body p:empty::before { content: "\00a0"; }
+
+  .article-body > * { margin-block: 0; }
+  .article-body > * + * { margin-block-start: 1.1em; }
+  .article-body h2,
+  .article-body h3 {
+    font-family: var(--font-body);
+    font-weight: 700;
+    line-height: 1.45;
+    text-wrap: pretty;
+    scroll-margin-block-start: 5rem;
+  }
+  .article-body h2 { font-size: 1.4em; }
+  .article-body h3 { font-size: 1.15em; }
+  .article-body > * + h2 { margin-block-start: 2.4em; }
+  .article-body > * + h3 { margin-block-start: 1.9em; }
+  .article-body h2 + *,
+  .article-body h3 + * { margin-block-start: 0.6em; }
+
+  .article-body a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+  .article-body mark { background: color-mix(in srgb, #f3d35c 55%, transparent); color: inherit; padding-inline: 0.1em; }
+  /* ダークでは黄色を濃く乗せると明るい文字との差が小さくなるので、薄くする。 */
+  .dark .article-body mark { background: color-mix(in srgb, #f3d35c 26%, transparent); }
+  .article-body code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    padding: 0.1em 0.3em;
+    background: var(--bg-muted);
+  }
+  .article-body pre {
+    overflow-x: auto;
+    padding: 0.9em 1em;
+    background: var(--bg-muted);
+    border: 1px solid var(--line-soft);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+  .article-body pre code { padding: 0; background: none; font-size: inherit; overflow-wrap: normal; white-space: pre; }
+  .article-body blockquote {
+    padding-inline-start: 1em;
+    border-inline-start: 3px solid var(--line-soft);
+    color: var(--ink-2);
+  }
+  .article-body ul,
+  .article-body ol { padding-inline-start: 1.5em; }
+  .article-body ul { list-style: disc; }
+  .article-body ol { list-style: decimal; }
+  .article-body li > p { margin: 0; }
+  .article-body li + li { margin-block-start: 0.3em; }
+  .article-body hr { border: 0; border-block-start: 1px solid var(--line-soft); margin-block: 2.4em; }
+
+  /* 列を minmax(0, 1fr) にしないと、列幅が画像の元の幅に引っ張られて本文からはみ出す。 */
+  .article-body .article-figure { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5em; }
+  .article-body .article-figure img { display: block; max-inline-size: 100%; block-size: auto; }
+  .article-body .article-figure figcaption { color: var(--ink-3); font-size: 0.875rem; line-height: 1.6; }
+  .article-body .article-figure figcaption:empty { display: none; }
+
+  .article-body .article-embed iframe { display: block; inline-size: 100%; aspect-ratio: 16 / 9; border: 0; }
+}

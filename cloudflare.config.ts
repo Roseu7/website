@@ -35,6 +35,7 @@ export default defineConfig({
 			CF_ACCESS_TEAM_DOMAIN: bindings.text("roseu.cloudflareaccess.com"),
 			CF_ACCESS_AUD: bindings.text("96b9c9c9fd0eb49cdba0eab8b3fd4f3b987e89f5972bbfb8ec953d8f81e70549"),
 			UMIGAME_ACCESS_AUD: bindings.text("be861d10bd1c5a96e3b9e3120cc86803111421eca67fa4e1fa711927901bb344"),
+			ARTICLES_ACCESS_AUD: bindings.text("1852e48f9f186dfc92b5502ca852fa9fd2763b569ac26f6eacda514d9e1ade65"),
 			JEV_NEURONS_PER_MILLION_INPUT: bindings.text("21818"),
 			UMIGAME_SESSION_SECRET: bindings.secret(),
 			SURVCORE_SESSION_SECRET: bindings.secret(),
@@ -47,6 +48,12 @@ export default defineConfig({
 				name: "umigame",
 				id: "20b0d67b-0d82-4a59-ad55-a98f2b5a702a",
 			}),
+			ARTICLES_DB: bindings.d1({
+				name: "articles",
+				id: "f5a88634-5477-4810-8cfb-87f3fceee68a",
+			}),
+			ARTICLE_ASSETS: bindings.r2({ name: "assets" }),
+			ARTICLES_ADMIN_EMAILS: bindings.secret(),
 			UMIGAME_AI_QUEUE: bindings.queue({
 				name: "umigame-ai",
 			}),

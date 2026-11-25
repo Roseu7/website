@@ -51,5 +51,5 @@ export function getOsPage(pathname: string) {
 
 export function isOsPath(pathname: string) {
   pathname = pathname.replace(/\/+$/, "") || "/";
-  return !/^\/(?:api(?:\/|$)|auth(?:\/|$)|map(?:\/|$)|apply(?:\/|$)|wsolver(?:\/|$))/.test(pathname);
+  return !/^\/(?:api(?:\/|$)|auth(?:\/|$)|map(?:\/|$)|apply(?:\/|$)|wsolver(?:\/|$)|admin(?:\/|$))/.test(pathname);
 }

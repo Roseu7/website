@@ -14,6 +14,8 @@ import mcCss from "~/styles/mc.css?url";
 import settingsCss from "~/styles/pages/settings.css?url";
 import consoleCss from "~/styles/pages/console.css?url";
 import notepadCss from "~/styles/pages/notepad.css?url";
+import articleBodyCss from "~/styles/article-body.css?url";
+import articlesAdminCss from "~/styles/pages/articles-admin.css?url";
 import { isOsPath } from "~/utils/os";
 
 export function getPageStyles(pathname: string, osEnabled: boolean, data?: unknown, failed = false) {
@@ -34,6 +36,7 @@ export function getPageStyles(pathname: string, osEnabled: boolean, data?: unkno
   else if (pathname === "/projects") styles.push(projectsCss);
   else if (["/contact", "/licenses", "/privacy", "/terms"].includes(pathname)) styles.push(legalCss);
   else if (pathname === "/apply") styles.push(mcCss);
+  else if (pathname.startsWith("/admin/articles")) styles.push(articleBodyCss, articlesAdminCss);
   else if (pathname === "/" && !osEnabled) {
     if (data && typeof data === "object" && "isMcDashboardHost" in data && data.isMcDashboardHost) styles.push(mcCss);
     else styles.push(homeCss);

@@ -11,16 +11,20 @@ export function withSecurityHeaders(request: Request, response: Response, nonce:
     && response.status === 200
     && nextHeaders.get("X-Map-Proxy-Origin-Status") === "200"
     && /^text\/html(?:;|$)/i.test(nextHeaders.get("Content-Type") ?? "");
-  const isContactRoute = new URL(request.url).pathname === "/contact";
+  const pathname = new URL(request.url).pathname;
+  const isContactRoute = pathname === "/contact";
+  // 記事の埋め込み動画を表示するページだけ、YouTubeのiframeを許可する。
+  const isArticleRoute = /^\/admin\/articles\/[^/]+$/.test(pathname);
   const scriptSrc = `script-src 'self' 'nonce-${nonce}'${isMapDocument ? " 'unsafe-eval'" : ""}`;
   const turnstileSource = isContactRoute ? " https://challenges.cloudflare.com" : "";
+  const youtubeSource = isArticleRoute ? " https://www.youtube-nocookie.com" : "";
   const csp = [
     "default-src 'self'",
     "base-uri 'self'",
     "frame-ancestors 'none'",
     "object-src 'none'",
     `${scriptSrc}${turnstileSource}`,
-    `frame-src 'self'${turnstileSource}`,
+    `frame-src 'self'${turnstileSource}${youtubeSource}`,
     "worker-src 'self' blob:",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",

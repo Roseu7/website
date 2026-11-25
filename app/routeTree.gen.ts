@@ -26,6 +26,7 @@ import { Route as SettingsRouteImport } from './start-routes/settings'
 import { Route as TermsRouteImport } from './start-routes/terms'
 import { Route as ToolsRouteImport } from './start-routes/tools'
 import { Route as WsolverRouteImport } from './start-routes/wsolver'
+import { Route as AdminArticlesRouteImport } from './start-routes/admin_.articles'
 import { Route as ApiConsoleRouteImport } from './start-routes/api_.console'
 import { Route as ApiJevRouteImport } from './start-routes/api_.jev'
 import { Route as ApiNextRouteImport } from './start-routes/api_.next'
@@ -39,6 +40,8 @@ import { Route as SettingsDeveloperRouteImport } from './start-routes/settings_.
 import { Route as SettingsHistoryRouteImport } from './start-routes/settings_.history'
 import { Route as ToolsJevRouteImport } from './start-routes/tools_.jev'
 import { Route as ToolsWsolverRouteImport } from './start-routes/tools_.wsolver'
+import { Route as AdminApiImagesRouteImport } from './start-routes/admin_.api_.images'
+import { Route as AdminArticlesIdRouteImport } from './start-routes/admin_.articles_.$id'
 import { Route as ApiDiscordInteractionsRouteImport } from './start-routes/api_.discord_.interactions'
 import { Route as ApiJevLoginRouteImport } from './start-routes/api_.jev_.login'
 import { Route as ApiMcLinkCodesRouteImport } from './start-routes/api_.mc_.link-codes'
@@ -59,6 +62,7 @@ import { Route as GamesUmigameNewRouteImport } from './start-routes/games_.umiga
 import { Route as GamesUmigameRankingsRouteImport } from './start-routes/games_.umigame_.rankings'
 import { Route as GamesUmigameRecommendRouteImport } from './start-routes/games_.umigame_.recommend'
 import { Route as GamesUmigameResultsRouteImport } from './start-routes/games_.umigame_.results'
+import { Route as AdminApiArticlesIdRouteImport } from './start-routes/admin_.api_.articles_.$id'
 import { Route as ApiUmigamePuzzlesIdRouteImport } from './start-routes/api_.umigame_.puzzles_.$id'
 import { Route as GamesUmigameAdminJevRouteImport } from './start-routes/games_.umigame_.admin_.jev'
 import { Route as GamesUmigameAuthorQualityRouteImport } from './start-routes/games_.umigame_.author_.quality'
@@ -162,6 +166,11 @@ const WsolverRoute = WsolverRouteImport.update({
   path: '/wsolver',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminArticlesRoute = AdminArticlesRouteImport.update({
+  id: '/admin_/articles',
+  path: '/admin/articles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiConsoleRoute = ApiConsoleRouteImport.update({
   id: '/api_/console',
   path: '/api/console',
@@ -225,6 +234,16 @@ const ToolsJevRoute = ToolsJevRouteImport.update({
 const ToolsWsolverRoute = ToolsWsolverRouteImport.update({
   id: '/tools_/wsolver',
   path: '/tools/wsolver',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminApiImagesRoute = AdminApiImagesRouteImport.update({
+  id: '/admin_/api_/images',
+  path: '/admin/api/images',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminArticlesIdRoute = AdminArticlesIdRouteImport.update({
+  id: '/admin_/articles_/$id',
+  path: '/admin/articles/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDiscordInteractionsRoute = ApiDiscordInteractionsRouteImport.update({
@@ -325,6 +344,11 @@ const GamesUmigameRecommendRoute = GamesUmigameRecommendRouteImport.update({
 const GamesUmigameResultsRoute = GamesUmigameResultsRouteImport.update({
   id: '/games_/umigame_/results',
   path: '/games/umigame/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminApiArticlesIdRoute = AdminApiArticlesIdRouteImport.update({
+  id: '/admin_/api_/articles_/$id',
+  path: '/admin/api/articles/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiUmigamePuzzlesIdRoute = ApiUmigamePuzzlesIdRouteImport.update({
@@ -441,6 +465,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/wsolver': typeof WsolverRoute
+  '/admin/articles': typeof AdminArticlesRoute
   '/api/console': typeof ApiConsoleRoute
   '/api/jev': typeof ApiJevRoute
   '/api/next': typeof ApiNextRoute
@@ -454,6 +479,8 @@ export interface FileRoutesByFullPath {
   '/settings/history': typeof SettingsHistoryRoute
   '/tools/jev': typeof ToolsJevRoute
   '/tools/wsolver': typeof ToolsWsolverRoute
+  '/admin/api/images': typeof AdminApiImagesRoute
+  '/admin/articles/$id': typeof AdminArticlesIdRoute
   '/api/discord/interactions': typeof ApiDiscordInteractionsRoute
   '/api/jev/login': typeof ApiJevLoginRoute
   '/api/mc/link-codes': typeof ApiMcLinkCodesRoute
@@ -474,6 +501,7 @@ export interface FileRoutesByFullPath {
   '/games/umigame/rankings': typeof GamesUmigameRankingsRoute
   '/games/umigame/recommend': typeof GamesUmigameRecommendRoute
   '/games/umigame/results': typeof GamesUmigameResultsRoute
+  '/admin/api/articles/$id': typeof AdminApiArticlesIdRoute
   '/api/umigame/puzzles/$id': typeof ApiUmigamePuzzlesIdRoute
   '/games/umigame/admin/jev': typeof GamesUmigameAdminJevRoute
   '/games/umigame/author/quality': typeof GamesUmigameAuthorQualityRoute
@@ -510,6 +538,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/wsolver': typeof WsolverRoute
+  '/admin/articles': typeof AdminArticlesRoute
   '/api/console': typeof ApiConsoleRoute
   '/api/jev': typeof ApiJevRoute
   '/api/next': typeof ApiNextRoute
@@ -523,6 +552,8 @@ export interface FileRoutesByTo {
   '/settings/history': typeof SettingsHistoryRoute
   '/tools/jev': typeof ToolsJevRoute
   '/tools/wsolver': typeof ToolsWsolverRoute
+  '/admin/api/images': typeof AdminApiImagesRoute
+  '/admin/articles/$id': typeof AdminArticlesIdRoute
   '/api/discord/interactions': typeof ApiDiscordInteractionsRoute
   '/api/jev/login': typeof ApiJevLoginRoute
   '/api/mc/link-codes': typeof ApiMcLinkCodesRoute
@@ -543,6 +574,7 @@ export interface FileRoutesByTo {
   '/games/umigame/rankings': typeof GamesUmigameRankingsRoute
   '/games/umigame/recommend': typeof GamesUmigameRecommendRoute
   '/games/umigame/results': typeof GamesUmigameResultsRoute
+  '/admin/api/articles/$id': typeof AdminApiArticlesIdRoute
   '/api/umigame/puzzles/$id': typeof ApiUmigamePuzzlesIdRoute
   '/games/umigame/admin/jev': typeof GamesUmigameAdminJevRoute
   '/games/umigame/author/quality': typeof GamesUmigameAuthorQualityRoute
@@ -580,6 +612,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/wsolver': typeof WsolverRoute
+  '/admin_/articles': typeof AdminArticlesRoute
   '/api_/console': typeof ApiConsoleRoute
   '/api_/jev': typeof ApiJevRoute
   '/api_/next': typeof ApiNextRoute
@@ -593,6 +626,8 @@ export interface FileRoutesById {
   '/settings_/history': typeof SettingsHistoryRoute
   '/tools_/jev': typeof ToolsJevRoute
   '/tools_/wsolver': typeof ToolsWsolverRoute
+  '/admin_/api_/images': typeof AdminApiImagesRoute
+  '/admin_/articles_/$id': typeof AdminArticlesIdRoute
   '/api_/discord_/interactions': typeof ApiDiscordInteractionsRoute
   '/api_/jev_/login': typeof ApiJevLoginRoute
   '/api_/mc_/link-codes': typeof ApiMcLinkCodesRoute
@@ -613,6 +648,7 @@ export interface FileRoutesById {
   '/games_/umigame_/rankings': typeof GamesUmigameRankingsRoute
   '/games_/umigame_/recommend': typeof GamesUmigameRecommendRoute
   '/games_/umigame_/results': typeof GamesUmigameResultsRoute
+  '/admin_/api_/articles_/$id': typeof AdminApiArticlesIdRoute
   '/api_/umigame_/puzzles_/$id': typeof ApiUmigamePuzzlesIdRoute
   '/games_/umigame_/admin_/jev': typeof GamesUmigameAdminJevRoute
   '/games_/umigame_/author_/quality': typeof GamesUmigameAuthorQualityRoute
@@ -651,6 +687,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tools'
     | '/wsolver'
+    | '/admin/articles'
     | '/api/console'
     | '/api/jev'
     | '/api/next'
@@ -664,6 +701,8 @@ export interface FileRouteTypes {
     | '/settings/history'
     | '/tools/jev'
     | '/tools/wsolver'
+    | '/admin/api/images'
+    | '/admin/articles/$id'
     | '/api/discord/interactions'
     | '/api/jev/login'
     | '/api/mc/link-codes'
@@ -684,6 +723,7 @@ export interface FileRouteTypes {
     | '/games/umigame/rankings'
     | '/games/umigame/recommend'
     | '/games/umigame/results'
+    | '/admin/api/articles/$id'
     | '/api/umigame/puzzles/$id'
     | '/games/umigame/admin/jev'
     | '/games/umigame/author/quality'
@@ -720,6 +760,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tools'
     | '/wsolver'
+    | '/admin/articles'
     | '/api/console'
     | '/api/jev'
     | '/api/next'
@@ -733,6 +774,8 @@ export interface FileRouteTypes {
     | '/settings/history'
     | '/tools/jev'
     | '/tools/wsolver'
+    | '/admin/api/images'
+    | '/admin/articles/$id'
     | '/api/discord/interactions'
     | '/api/jev/login'
     | '/api/mc/link-codes'
@@ -753,6 +796,7 @@ export interface FileRouteTypes {
     | '/games/umigame/rankings'
     | '/games/umigame/recommend'
     | '/games/umigame/results'
+    | '/admin/api/articles/$id'
     | '/api/umigame/puzzles/$id'
     | '/games/umigame/admin/jev'
     | '/games/umigame/author/quality'
@@ -789,6 +833,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tools'
     | '/wsolver'
+    | '/admin_/articles'
     | '/api_/console'
     | '/api_/jev'
     | '/api_/next'
@@ -802,6 +847,8 @@ export interface FileRouteTypes {
     | '/settings_/history'
     | '/tools_/jev'
     | '/tools_/wsolver'
+    | '/admin_/api_/images'
+    | '/admin_/articles_/$id'
     | '/api_/discord_/interactions'
     | '/api_/jev_/login'
     | '/api_/mc_/link-codes'
@@ -822,6 +869,7 @@ export interface FileRouteTypes {
     | '/games_/umigame_/rankings'
     | '/games_/umigame_/recommend'
     | '/games_/umigame_/results'
+    | '/admin_/api_/articles_/$id'
     | '/api_/umigame_/puzzles_/$id'
     | '/games_/umigame_/admin_/jev'
     | '/games_/umigame_/author_/quality'
@@ -859,6 +907,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   ToolsRoute: typeof ToolsRoute
   WsolverRoute: typeof WsolverRoute
+  AdminArticlesRoute: typeof AdminArticlesRoute
   ApiConsoleRoute: typeof ApiConsoleRoute
   ApiJevRoute: typeof ApiJevRoute
   ApiNextRoute: typeof ApiNextRoute
@@ -872,6 +921,8 @@ export interface RootRouteChildren {
   SettingsHistoryRoute: typeof SettingsHistoryRoute
   ToolsJevRoute: typeof ToolsJevRoute
   ToolsWsolverRoute: typeof ToolsWsolverRoute
+  AdminApiImagesRoute: typeof AdminApiImagesRoute
+  AdminArticlesIdRoute: typeof AdminArticlesIdRoute
   ApiDiscordInteractionsRoute: typeof ApiDiscordInteractionsRoute
   ApiJevLoginRoute: typeof ApiJevLoginRoute
   ApiMcLinkCodesRoute: typeof ApiMcLinkCodesRoute
@@ -892,6 +943,7 @@ export interface RootRouteChildren {
   GamesUmigameRankingsRoute: typeof GamesUmigameRankingsRoute
   GamesUmigameRecommendRoute: typeof GamesUmigameRecommendRoute
   GamesUmigameResultsRoute: typeof GamesUmigameResultsRoute
+  AdminApiArticlesIdRoute: typeof AdminApiArticlesIdRoute
   ApiUmigamePuzzlesIdRoute: typeof ApiUmigamePuzzlesIdRoute
   GamesUmigameAdminJevRoute: typeof GamesUmigameAdminJevRoute
   GamesUmigameAuthorQualityRoute: typeof GamesUmigameAuthorQualityRoute
@@ -1032,6 +1084,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WsolverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin_/articles': {
+      id: '/admin_/articles'
+      path: '/admin/articles'
+      fullPath: '/admin/articles'
+      preLoaderRoute: typeof AdminArticlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api_/console': {
       id: '/api_/console'
       path: '/api/console'
@@ -1121,6 +1180,20 @@ declare module '@tanstack/react-router' {
       path: '/tools/wsolver'
       fullPath: '/tools/wsolver'
       preLoaderRoute: typeof ToolsWsolverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin_/api_/images': {
+      id: '/admin_/api_/images'
+      path: '/admin/api/images'
+      fullPath: '/admin/api/images'
+      preLoaderRoute: typeof AdminApiImagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin_/articles_/$id': {
+      id: '/admin_/articles_/$id'
+      path: '/admin/articles/$id'
+      fullPath: '/admin/articles/$id'
+      preLoaderRoute: typeof AdminArticlesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api_/discord_/interactions': {
@@ -1263,6 +1336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GamesUmigameResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin_/api_/articles_/$id': {
+      id: '/admin_/api_/articles_/$id'
+      path: '/admin/api/articles/$id'
+      fullPath: '/admin/api/articles/$id'
+      preLoaderRoute: typeof AdminApiArticlesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api_/umigame_/puzzles_/$id': {
       id: '/api_/umigame_/puzzles_/$id'
       path: '/api/umigame/puzzles/$id'
@@ -1403,6 +1483,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   ToolsRoute: ToolsRoute,
   WsolverRoute: WsolverRoute,
+  AdminArticlesRoute: AdminArticlesRoute,
   ApiConsoleRoute: ApiConsoleRoute,
   ApiJevRoute: ApiJevRoute,
   ApiNextRoute: ApiNextRoute,
@@ -1416,6 +1497,8 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsHistoryRoute: SettingsHistoryRoute,
   ToolsJevRoute: ToolsJevRoute,
   ToolsWsolverRoute: ToolsWsolverRoute,
+  AdminApiImagesRoute: AdminApiImagesRoute,
+  AdminArticlesIdRoute: AdminArticlesIdRoute,
   ApiDiscordInteractionsRoute: ApiDiscordInteractionsRoute,
   ApiJevLoginRoute: ApiJevLoginRoute,
   ApiMcLinkCodesRoute: ApiMcLinkCodesRoute,
@@ -1436,6 +1519,7 @@ const rootRouteChildren: RootRouteChildren = {
   GamesUmigameRankingsRoute: GamesUmigameRankingsRoute,
   GamesUmigameRecommendRoute: GamesUmigameRecommendRoute,
   GamesUmigameResultsRoute: GamesUmigameResultsRoute,
+  AdminApiArticlesIdRoute: AdminApiArticlesIdRoute,
   ApiUmigamePuzzlesIdRoute: ApiUmigamePuzzlesIdRoute,
   GamesUmigameAdminJevRoute: GamesUmigameAdminJevRoute,
   GamesUmigameAuthorQualityRoute: GamesUmigameAuthorQualityRoute,
