@@ -172,6 +172,17 @@ export function useArticleSaver({ id, initialRevision, getDraft, onWritten }: {
     window.location.reload();
   }, []);
 
+  // 記事を消したあとに使う。保存の予約を止め、離脱の警告を出さないようにし、この記事の控えをすべて消す。
+  const forgetArticle = useCallback(() => {
+    leaving.current = true;
+    clearTimeout(timer.current);
+    let keys: string[] = [];
+    try {
+      keys = Object.keys(localStorage).filter(key => key.startsWith(backupPrefix(id)));
+    } catch { /* 保存領域が使えなければ、消す控えも無い */ }
+    keys.forEach(removeStoredBackup);
+  }, [id]);
+
   // 戻した控えは、控えを作ったときの版番号をもとに保存する。サーバーが先に進んでいれば競合として扱う。
   const restoreFrom = useCallback((baseRevision: number) => {
     revision.current = baseRevision;
@@ -192,5 +203,5 @@ export function useArticleSaver({ id, initialRevision, getDraft, onWritten }: {
     };
   }, [saveNow]);
 
-  return { state, message, backupFailed, ownBackupKey: ownKey.current, markChanged, saveNow, publish, overwriteAfterConflict, discardAndReload, restoreFrom };
+  return { state, message, backupFailed, ownBackupKey: ownKey.current, markChanged, saveNow, publish, overwriteAfterConflict, discardAndReload, forgetArticle, restoreFrom };
 }

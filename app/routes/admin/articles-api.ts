@@ -10,6 +10,7 @@ import {
 } from "~/utils/articles/content";
 import { getArticlesEnv, requireArticlesDb } from "~/utils/articles/env.server";
 import {
+  deleteArticle,
   publishArticle,
   saveDraft,
   setVisibility,
@@ -90,6 +91,10 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
           ? jsonNoStore({ status: body.status })
           : jsonError(409, "STATUS_CHANGED", "公開の状態がほかの画面で変わっています。ページを読み込み直してください。");
       }
+      case "delete":
+        return (await deleteArticle(db, id))
+          ? jsonNoStore({ deleted: true })
+          : jsonError(404, "NOT_FOUND", "記事が見つかりません。");
       case "unpublish":
         return (await unpublishArticle(db, id))
           ? jsonNoStore({ status: "draft" })

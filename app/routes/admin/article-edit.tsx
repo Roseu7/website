@@ -125,6 +125,8 @@ export default function ArticleEditPage() {
   const youtubeDialog = useDialog();
   const publishDialog = useDialog();
   const settingsDialog = useDialog();
+  const deleteDialog = useDialog();
+  const [deleting, setDeleting] = useState(false);
   const [linkValue, setLinkValue] = useState("");
   const [youtubeValue, setYoutubeValue] = useState("");
   const [youtubeError, setYoutubeError] = useState("");
@@ -372,6 +374,23 @@ export default function ArticleEditPage() {
     }
   };
 
+  const deleteArticle = async () => {
+    setDeleting(true);
+    const response = await fetch(`/admin/api/articles/${article.id}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ op: "delete" }),
+    }).catch(() => null);
+    if (!response?.ok) {
+      setDeleting(false);
+      deleteDialog.close();
+      setNotice("削除できませんでした。");
+      return;
+    }
+    saver.forgetArticle();
+    window.location.assign("/admin/articles");
+  };
+
   const busy = imageJobs > 0;
   const blocked = saver.state === "conflict";
   const canPublishUpdate = !blocked && !busy && (hasUnpublishedChanges || saver.state !== "saved");
@@ -508,6 +527,10 @@ export default function ArticleEditPage() {
             if (files.length) void insertImages(files, imageTarget.current);
           }}
         />
+        {/* 取り消せない操作なので、公開ボタンの近くではなく画面のいちばん下に置く。 */}
+        <div className="article-compose__danger">
+          <button type="button" className="site-button site-button--ghost site-button--small" onClick={deleteDialog.open}>この記事を削除…</button>
+        </div>
       </div>
 
       <dialog ref={linkDialog.ref} className="article-dialog" aria-labelledby="link-dialog-title" {...{ closedby: "any" }}>
@@ -554,6 +577,15 @@ export default function ArticleEditPage() {
             <button type="submit" className="site-button site-button--small" disabled={blocked || busy}>公開する</button>
           </div>
         </form>
+      </dialog>
+
+      <dialog ref={deleteDialog.ref} className="article-dialog" aria-labelledby="delete-dialog-title" {...{ closedby: "any" }}>
+        <h2 id="delete-dialog-title">記事を削除</h2>
+        <p>「{title || "無題"}」を削除します。{status === "draft" ? "" : "公開ページも見られなくなります。"}元に戻せません。アップロードした画像は残ります。</p>
+        <div className="article-dialog__actions">
+          <button type="button" className="site-button site-button--ghost site-button--small" onClick={deleteDialog.close} autoFocus>やめる</button>
+          <button type="button" className="site-button site-button--small" disabled={deleting} onClick={() => void deleteArticle()}>削除する</button>
+        </div>
       </dialog>
 
       <dialog ref={settingsDialog.ref} className="article-dialog" aria-labelledby="settings-dialog-title" {...{ closedby: "any" }}>

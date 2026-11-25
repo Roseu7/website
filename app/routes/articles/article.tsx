@@ -51,7 +51,6 @@ export default function ArticlePage() {
             <div className="article-page__meta">
               <span>公開 <time dateTime={published.toISOString()}>{articleDate.format(published)}</time></span>
               {showUpdated && <span>更新 <time dateTime={updated.toISOString()}>{articleDate.format(updated)}</time></span>}
-              <ShareButton title={title} url={shareUrl} />
             </div>
           </header>
           {hasOutline && (
@@ -74,14 +73,14 @@ export default function ArticlePage() {
         <nav className="article-pager" aria-label="前後の記事">
           {adjacent.previous && (
             <Link to={`/articles/${adjacent.previous.id}`} className="article-pager__item" data-direction="previous">
-              <span className="article-pager__label">前の記事</span>
+              <span className="article-pager__label">← 前の記事</span>
               <span className="article-pager__title">{adjacent.previous.title || "無題"}</span>
               <time className="article-pager__date" dateTime={new Date(adjacent.previous.firstPublishedAt).toISOString()}>{articleDate.format(adjacent.previous.firstPublishedAt)}</time>
             </Link>
           )}
           {adjacent.next && (
             <Link to={`/articles/${adjacent.next.id}`} className="article-pager__item" data-direction="next">
-              <span className="article-pager__label">次の記事</span>
+              <span className="article-pager__label">次の記事 →</span>
               <span className="article-pager__title">{adjacent.next.title || "無題"}</span>
               <time className="article-pager__date" dateTime={new Date(adjacent.next.firstPublishedAt).toISOString()}>{articleDate.format(adjacent.next.firstPublishedAt)}</time>
             </Link>
@@ -89,7 +88,7 @@ export default function ArticlePage() {
         </nav>
       )}
       <div className="article-page__footer">
-        <Link to="/articles">記事の一覧へ</Link>
+        <Link to="/articles">← 記事の一覧へ</Link>
         <ShareButton title={title} url={shareUrl} />
       </div>
     </PageLayout>

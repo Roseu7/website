@@ -245,6 +245,12 @@ export async function setVisibility(
 }
 
 // 非公開に戻す。公開版は空にし、書いている版と初公開日は残す。
+// 記事を消す。公開中でも消せる（公開ページは404になる）。アップロードした画像はR2に残る。
+export async function deleteArticle(db: D1Database, id: string) {
+  const result = await db.prepare("DELETE FROM articles WHERE id = ?").bind(id).run();
+  return result.meta.changes > 0;
+}
+
 export async function unpublishArticle(db: D1Database, id: string) {
   const result = await db.prepare(
     "UPDATE articles SET status = 'draft', published_title = NULL, published_summary = NULL, published_body_json = NULL, content_published_at = NULL WHERE id = ? AND status <> 'draft'",

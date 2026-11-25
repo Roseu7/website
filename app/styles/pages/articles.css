@@ -69,10 +69,13 @@
   .article-page__back--top { font-size: 0.8125rem; }
 
   .article-page__meta { align-items: center; }
-  .article-page__meta .article-share { margin-inline-start: auto; }
+  /* タイトルと日付の下に区切り線を引く。すぐ下に目次があるときは、目次の上の線と重ねない。 */
+  .article-page__header { padding-block-end: 1.25rem; border-block-end: 1px solid var(--line-soft); }
+  .article-page__header + .article-toc { border-block-start: 0; }
 
-  /* 前後の記事。狭いときは縦に積み、広いときは左右に並べる。 */
-  .article-pager { display: grid; gap: 0.75rem; }
+  /* 前後の記事。左に前（古い）、右に次（新しい）を同じ高さに並べる。片方しかなくても位置は変えない。 */
+  .article-pager { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .article-pager__item[data-direction="next"] { grid-column: 2; }
   .article-pager__item {
     display: grid;
     gap: 0.25rem;
@@ -109,10 +112,6 @@
 
   /* ウィンドウの幅で切り替える。R OSのウィンドウを最大化したときや広げたときにも効く。 */
   .article-page { container: article-page / inline-size; }
-  @container article-page (min-width: 60rem) {
-    .article-pager { grid-template-columns: 1fr 1fr; }
-    .article-pager__item[data-direction="next"] { grid-column: 2; }
-  }
   @container article-page (min-width: 62rem) {
     /* 目次のある記事では、本文の右に目次の列を足し、ページのほかの部分も本文の列にそろえる。 */
     .article-page:has(.article-page__layout--toc) {
