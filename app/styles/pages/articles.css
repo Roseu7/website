@@ -155,7 +155,7 @@
     gap: 0.75rem;
     inline-size: 100%;
     min-block-size: 2.75rem;
-    padding: 0.4rem 0.4rem 0.4rem 0.75rem;
+    padding: 0.4rem 0.75rem;
     border: 1px solid var(--line-soft);
     background: var(--bg-strong);
     color: var(--ink-1);
@@ -174,15 +174,8 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  .article-share-dialog__url-action {
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.2rem 0.5rem;
-    background: var(--accent-soft);
-    font-size: 0.8125rem;
-  }
+  .article-share-dialog__url[data-copied] { border-color: var(--os-edge, var(--line-strong)); background: var(--accent-soft); }
+  .article-share-dialog__url[data-copied] .article-share-dialog__url-text { font-family: inherit; text-align: center; }
   .article-share-dialog__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
   .article-page__footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; font-size: 0.9375rem; }
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Copy, Share2, X } from "lucide-react";
+import { Share2, X } from "lucide-react";
 
 // 共有ボタン。押すと小さなウィンドウを開き、URLのコピーとXへの投稿を選べるようにする。
 // OSの共有画面が使える端末（スマホなど）では、ほかのアプリへ送るボタンも出す。
@@ -53,9 +53,9 @@ export function ShareButton({ title, url }: { title: string; url: string }) {
           <button type="button" className="article-share-dialog__close" aria-label="閉じる" title="閉じる" onClick={close}><X size={16} aria-hidden /></button>
         </div>
         <div className="article-share-dialog__body">
-          <button type="button" className="article-share-dialog__url" onClick={() => void copy()} autoFocus>
-            <span className="article-share-dialog__url-text">{url}</span>
-            <span className="article-share-dialog__url-action"><Copy size={14} aria-hidden />{copied ? "コピーしました" : "コピー"}</span>
+          {/* URLの欄そのものを押すとコピーする。コピーしたら、少しのあいだURLの代わりにその旨を出す。 */}
+          <button type="button" className="article-share-dialog__url" title="押すとURLをコピーします" aria-label={`URLをコピー：${url}`} data-copied={copied || undefined} onClick={() => void copy()} autoFocus>
+            <span className="article-share-dialog__url-text">{copied ? "コピーしました" : url}</span>
           </button>
           <p className="sr-only" role="status">{copied ? "URLをコピーしました" : ""}</p>
           <div className="article-share-dialog__actions">
