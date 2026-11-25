@@ -33,7 +33,8 @@ export function ShareButton({ title, url }: { title: string; url: string }) {
       // 共有画面を閉じただけのときも含め、このウィンドウはそのまま残す。
     }
   };
-  const postUrl = `https://x.com/intent/post?${new URLSearchParams({ text: title, url })}`;
+  // url の引数で渡すとXが本文の直後に空白1つで付けるので、空行を挟めるようURLも本文に入れる。
+  const postUrl = `https://x.com/intent/post?${new URLSearchParams({ text: `${title} | roseu.net\n\n${url}` })}`;
 
   return (
     <>
