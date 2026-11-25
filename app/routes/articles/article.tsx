@@ -5,6 +5,7 @@ import { PageLayout } from "~/components/layout/PageLayout";
 import { ArticleBody } from "~/components/articles/ArticleBody";
 import { ArticleSideToc } from "~/components/articles/ArticleSideToc";
 import { ShareButton } from "~/components/articles/ShareButton";
+import { ReadingProgress } from "~/components/articles/ReadingProgress";
 import { siteConfig } from "~/utils/site";
 import { articleDate } from "~/utils/articles/date";
 import type { loader } from "./article.server";
@@ -91,6 +92,7 @@ export default function ArticlePage() {
         <Link to="/articles">← 記事の一覧へ</Link>
         <ShareButton title={title} url={shareUrl} />
       </div>
+      <ReadingProgress targetSelector=".article-page__article" />
     </PageLayout>
   );
 }

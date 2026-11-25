@@ -1,19 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { scrollerOf } from "./scroller";
 
 interface OutlineItem { id: string; level: 2 | 3; text: string }
 
 // 見出しのうち、表示領域の上から READING_LINE までに入った最後のものを「今読んでいる節」とみなす。
 const READING_LINE = 96;
-
-function scrollerOf(element: Element): HTMLElement | Window {
-  let node = element.parentElement;
-  while (node) {
-    const overflow = getComputedStyle(node).overflowY;
-    if ((overflow === "auto" || overflow === "scroll") && node.scrollHeight > node.clientHeight) return node;
-    node = node.parentElement;
-  }
-  return window;
-}
 
 // 広い画面で本文の右に出す目次。読んでいる位置に合わせて、今の節を強調する。
 export function ArticleSideToc({ outline }: { outline: OutlineItem[] }) {
@@ -24,7 +15,6 @@ export function ArticleSideToc({ outline }: { outline: OutlineItem[] }) {
     if (!nav) return;
     const headings = outline.map(item => document.getElementById(item.id)).filter((element): element is HTMLElement => element !== null);
     if (!headings.length) return;
-    // R OSではウィンドウの中身がスクロールするので、見出しを含むスクロール領域を探して見張る。
     const scroller = scrollerOf(headings[0]);
     let frame = 0;
     const update = () => {

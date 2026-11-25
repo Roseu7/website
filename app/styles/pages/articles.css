@@ -26,7 +26,7 @@
 
   /* 本文のページ。ウィンドウを広げても本文の行は伸ばさず、中央に置く。
      グリッドの列を minmax(0, 1fr) にしないと、長いコードの行に列幅が引っ張られてページごとはみ出す。 */
-  .article-page { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; padding-block-end: 2rem; }
+  .article-page { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
   .article-page > * { inline-size: 100%; max-inline-size: var(--article-measure); margin-inline: auto; }
   .article-page__article { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
   .article-page__article > * { min-inline-size: 0; }
@@ -138,6 +138,28 @@
       overflow-y: auto;
     }
   }
+
+  /* 読んでいる位置のバー。ページの最後の要素にし、スクロール領域の下端に貼り付ける。
+     いちばん下までスクロールしたときに浮かないよう、下の余白はバーの上に移す（overrides のレイヤーを参照）。 */
+  .article-page > .article-progress {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 1;
+    max-inline-size: none;
+    block-size: 3px;
+    margin-block-start: 1rem;
+    background: var(--line-soft);
+    visibility: hidden;
+  }
+  .article-page > .article-progress[data-scrollable] { visibility: visible; }
+  .article-progress::before {
+    content: "";
+    display: block;
+    block-size: 100%;
+    background: var(--accent);
+    transform: scaleX(var(--progress, 0));
+    transform-origin: left;
+  }
 }
 
 /* OSのCSS（overrides のレイヤー）は、ウィンドウ内の h2・h3 を細字・固定の大きさにしている。
@@ -150,4 +172,6 @@
   .os-page-content .article-body :is(h2, h3) { font-weight: 700; letter-spacing: normal; line-height: 1.45; }
   .os-page-content .article-body h2 { font-size: 1.4em; }
   .os-page-content .article-body h3 { font-size: 1.15em; }
+  /* 読んでいる位置のバーをウィンドウの下端まで下げるため、記事のページだけウィンドウの下の余白をなくす。 */
+  .os-window-content:has(> .article-page) { padding-block-end: 0; }
 }
