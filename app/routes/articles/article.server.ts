@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from "~/framework/http";
-import { articleExcerpt, articleFirstImage, articleOutline, isArticleId } from "~/utils/articles/content";
+import { articleCharCount, articleExcerpt, articleFirstImage, readingMinutes, articleOutline, isArticleId } from "~/utils/articles/content";
 import { getArticlesEnv, requireArticlesDb } from "~/utils/articles/env.server";
 import { renderArticleHtml } from "~/utils/articles/render";
 import { getAdjacentArticles, getPublicArticle } from "~/utils/articles/store.server";
@@ -24,6 +24,7 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
       firstPublishedAt: article.firstPublishedAt,
       contentPublishedAt: article.contentPublishedAt,
       tags: article.tags,
+      readingMinutes: readingMinutes(articleCharCount(article.body)),
       image: articleFirstImage(article.body),
       html: renderArticleHtml(article.body),
       outline: articleOutline(article.body),

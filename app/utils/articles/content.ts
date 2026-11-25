@@ -312,6 +312,20 @@ export function articleOutline(body: JSONContent): OutlineItem[] {
   return items;
 }
 
+// 文字数は本文（見出し・キャプション・コードを含む）の文字だけを数え、空白・タブ・改行・全角スペースは数えない。
+// 公開側の一覧はD1のSQLで同じ数え方をしているので（store.server.ts の CHAR_COUNT）、変えるときは両方を直す。
+const UNCOUNTED_CHARACTERS = /[ \t\n　]/g;
+export function articleCharCount(node: JSONContent): number {
+  if (node.type === "text") return [...(node.text ?? "").replace(UNCOUNTED_CHARACTERS, "")].length;
+  return (node.content ?? []).reduce((sum, child) => sum + articleCharCount(child), 0);
+}
+
+// 日本語の文章を読む速さを1分に500字とみなす。短い記事も「1分」と出す。
+const READING_CHARS_PER_MINUTE = 500;
+export function readingMinutes(charCount: number) {
+  return Math.max(1, Math.ceil(charCount / READING_CHARS_PER_MINUTE));
+}
+
 export function articleExcerpt(body: JSONContent, maxLength = 120) {
   const paragraph = (body.content ?? []).find(node => node.type === "paragraph" && textOf(node).trim());
   const text = paragraph ? textOf(paragraph).replace(/\s+/g, " ").trim() : "";

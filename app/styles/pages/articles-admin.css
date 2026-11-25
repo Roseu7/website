@@ -233,6 +233,32 @@
     cursor: pointer;
   }
   .article-outline button:hover { text-decoration: underline; }
+  .article-outline__empty { margin: 0 0 0.5rem; color: var(--ink-3); }
+  .article-outline__stats { margin: 0 0 0.75rem; padding-block-start: 0.5rem; border-block-start: 1px solid var(--line-soft); color: var(--ink-3); font-size: 0.8rem; }
+
+  /* 本文の右の目次。書く欄（48rem）の右に14rem＋間隔が入る画面幅のときだけ出し、畳んだ目次は隠す。 */
+  .article-compose__aside { display: none; }
+  @media (min-width: 82rem) {
+    .article-outline--fold { display: none; }
+    .article-compose__aside {
+      display: block;
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: calc(100% + 2rem);
+      inline-size: 14rem;
+    }
+    .article-compose__aside-inner {
+      position: sticky;
+      inset-block-start: calc(var(--article-bar-height, 3.5rem) + 1.5rem);
+      max-block-size: calc(100vh - var(--article-bar-height, 3.5rem) - 3rem);
+      overflow-y: auto;
+      padding-block-start: 1.5rem;
+      font-size: 0.85rem;
+    }
+    .article-compose__aside-title { margin: 0 0 0.25rem; color: var(--ink-2); }
+    .article-compose__aside .article-outline button { min-block-size: 2rem; color: var(--ink-2); }
+    .article-compose__aside .article-outline button:hover { color: var(--ink-1); }
+  }
 
   .article-toolbar {
     position: sticky;

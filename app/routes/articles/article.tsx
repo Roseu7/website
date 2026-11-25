@@ -58,6 +58,7 @@ export const meta = ({ data }: { data?: ArticleData }) => {
         datePublished: published,
         dateModified: modified,
         inLanguage: "ja",
+        timeRequired: `PT${article.readingMinutes}M`,
         ...(article.tags.length ? { keywords: article.tags } : {}),
         author: { "@type": "Person", name: siteConfig.owner, url: "https://roseu.net/about" },
       },
@@ -91,7 +92,7 @@ export default function ArticlePage() {
         <article className="article-page__article">
           <header className="article-page__header">
             <h1 className="article-page__title">{title}</h1>
-            <ArticleDates published={article.firstPublishedAt} updated={article.contentPublishedAt} className="article-page__meta" />
+            <ArticleDates published={article.firstPublishedAt} updated={article.contentPublishedAt} readingMinutes={article.readingMinutes} className="article-page__meta" />
             <ArticleTags tags={article.tags} />
           </header>
           {hasOutline && (

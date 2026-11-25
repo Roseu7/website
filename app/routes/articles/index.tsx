@@ -31,7 +31,7 @@ export default function ArticlesPage() {
               <li key={article.id}>
                 <Link to={`/articles/${article.id}`} className="articles-list__item">
                   <h2 className="articles-list__title">{article.title || "無題"}</h2>
-                  <ArticleDates published={article.firstPublishedAt} updated={article.contentPublishedAt} className="articles-list__dates" />
+                  <ArticleDates published={article.firstPublishedAt} updated={article.contentPublishedAt} readingMinutes={article.readingMinutes} className="articles-list__dates" />
                   {article.summary && <p className="articles-list__summary">{article.summary}</p>}
                   {/* 項目全体が記事へのリンクなので、ここのタグはリンクにしない（記事のページのタグから絞り込める）。 */}
                   {article.tags.length > 0 && <p className="articles-list__tags">{article.tags.map(item => <span key={item}>#{item}</span>)}</p>}

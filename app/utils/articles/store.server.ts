@@ -125,27 +125,34 @@ export interface PublicListItem {
   // 概要が空の記事だけ、抜粋を作るために本文を持たせる。
   body: JSONContent | null;
   tags: string[];
+  charCount: number;
   firstPublishedAt: number;
   contentPublishedAt: number;
 }
+
+// 公開版の本文の文字数。content.ts の articleCharCount と同じく、テキストの節の文字から空白・タブ・改行・全角スペースを除いて数える。
+// 一覧で本文をすべて読み出さずに読み時間を出すため、SQLで数える。
+const CHAR_COUNT = `(SELECT COALESCE(SUM(length(replace(replace(replace(replace(t.value, ' ', ''), char(9), ''), char(10), ''), '　', ''))), 0)
+  FROM json_tree(published_body_json) AS t WHERE t.key = 'text' AND t.type = 'text') AS char_count`;
 
 // 一覧に出すのは一般公開だけ。限定公開は、URLを知っている人だけが読める。
 // 並びは前後の記事と同じ（初めて公開した日時、同じなら記事ID）。
 // 本文は、概要が空で抜粋を作る必要がある記事の分だけ読む。tag を渡すと、そのタグが付いた記事だけにする。
 export async function listPublicArticles(db: D1Database, tag: string | null): Promise<PublicListItem[]> {
   const { results } = await db.prepare(
-    `SELECT id, published_title, published_summary, published_tags_json, first_published_at, content_published_at,
+    `SELECT id, published_title, published_summary, published_tags_json, first_published_at, content_published_at, ${CHAR_COUNT},
        CASE WHEN published_summary = '' THEN published_body_json END AS excerpt_body_json
      FROM articles WHERE status = 'published'
        AND (?1 IS NULL OR EXISTS (SELECT 1 FROM json_each(published_tags_json) WHERE value = ?1))
      ORDER BY first_published_at DESC, id DESC`,
-  ).bind(tag).all<{ id: string; published_title: string; published_summary: string; published_tags_json: string; first_published_at: number; content_published_at: number; excerpt_body_json: string | null }>();
+  ).bind(tag).all<{ id: string; published_title: string; published_summary: string; published_tags_json: string; first_published_at: number; content_published_at: number; char_count: number; excerpt_body_json: string | null }>();
   return results.map(row => ({
     id: row.id,
     title: row.published_title,
     summary: row.published_summary,
     body: row.excerpt_body_json ? JSON.parse(row.excerpt_body_json) as JSONContent : null,
     tags: JSON.parse(row.published_tags_json) as string[],
+    charCount: row.char_count,
     firstPublishedAt: row.first_published_at,
     contentPublishedAt: row.content_published_at,
   }));

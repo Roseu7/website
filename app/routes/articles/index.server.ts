@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from "~/framework/http";
-import { MAX_TAG_LENGTH, articleExcerpt, normalizeTag } from "~/utils/articles/content";
+import { MAX_TAG_LENGTH, articleExcerpt, normalizeTag, readingMinutes } from "~/utils/articles/content";
 import { getArticlesEnv, requireArticlesDb } from "~/utils/articles/env.server";
 import { listPublicArticles } from "~/utils/articles/store.server";
 
@@ -18,6 +18,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
       firstPublishedAt: article.firstPublishedAt,
       contentPublishedAt: article.contentPublishedAt,
       tags: article.tags,
+      readingMinutes: readingMinutes(article.charCount),
     })),
   };
 }

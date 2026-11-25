@@ -14,7 +14,7 @@ import { FigureView } from "~/components/articles/FigureView";
 import { uploadArticleImage, type UploadedImage } from "~/components/articles/image-upload";
 import { findBackup, removeStoredBackup, useArticleSaver, type PublishMode, type StoredBackup } from "~/components/articles/useArticleSaver";
 import {
-  Figure, MAX_SUMMARY_LENGTH, MAX_TITLE_LENGTH, articleExtensions, articleOutline, isAllowedLink, parseYoutubeId,
+  Figure, MAX_SUMMARY_LENGTH, MAX_TITLE_LENGTH, articleCharCount, articleExtensions, articleOutline, isAllowedLink, parseYoutubeId, readingMinutes,
 } from "~/utils/articles/content";
 import { renderArticleHtml } from "~/utils/articles/render";
 import type { loader } from "./article-edit.server";
@@ -116,6 +116,7 @@ export default function ArticleEditPage() {
   const [backup, setBackup] = useState<StoredBackup | null>(null);
   const [linkError, setLinkError] = useState("");
   const [outline, setOutline] = useState(() => articleOutline(article.body as JSONContent));
+  const [charCount, setCharCount] = useState(() => articleCharCount(article.body as JSONContent));
   const titleRef = useRef(title);
   const summaryRef = useRef(summary);
   const tagsRef = useRef(tags);
@@ -251,7 +252,9 @@ export default function ArticleEditPage() {
     },
     onUpdate: ({ editor: current }) => {
       saverRef.current.markChanged();
-      setOutline(articleOutline(current.getJSON()));
+      const json = current.getJSON();
+      setOutline(articleOutline(json));
+      setCharCount(articleCharCount(json));
     },
   });
   editorRef.current = editor;
@@ -290,6 +293,7 @@ export default function ArticleEditPage() {
     tagsRef.current = storedTags;
     editor.commands.setContent(body, { emitUpdate: false });
     setOutline(articleOutline(body));
+    setCharCount(articleCharCount(body));
     saver.restoreFrom(baseRevision);
     removeStoredBackup(backup.key);
     setBackup(null);
@@ -416,6 +420,23 @@ export default function ArticleEditPage() {
     window.location.assign("/admin/articles");
   };
 
+  const outlineContent = (
+    <>
+      {outline.length
+        ? (
+          <ol>
+            {outline.map(item => (
+              <li key={item.id} data-level={item.level}>
+                <button type="button" onClick={() => jumpTo(item.id)}>{item.text || "（空の見出し）"}</button>
+              </li>
+            ))}
+          </ol>
+        )
+        : <p className="article-outline__empty">見出しはまだありません。</p>}
+      <p className="article-outline__stats">{charCount.toLocaleString("ja-JP")}字{charCount > 0 && `・約${readingMinutes(charCount)}分で読めます`}</p>
+    </>
+  );
+
   const busy = imageJobs > 0;
   const blocked = saver.state === "conflict";
   const canPublishUpdate = !blocked && !busy && (hasUnpublishedChanges || saver.state !== "saved");
@@ -522,18 +543,11 @@ export default function ArticleEditPage() {
           <summary id="article-tags-label">タグ{tags.length ? `（${tags.length}）` : "（任意）"}</summary>
           <TagInput value={tags} suggestions={tagSuggestions} labelledBy="article-tags-label" onChange={changeTags} />
         </details>
-        {outline.length > 0 && (
-          <details className="article-outline article-fold">
-            <summary>見出し一覧（{outline.length}）</summary>
-            <ol>
-              {outline.map(item => (
-                <li key={item.id} data-level={item.level}>
-                  <button type="button" onClick={() => jumpTo(item.id)}>{item.text || "（空の見出し）"}</button>
-                </li>
-              ))}
-            </ol>
-          </details>
-        )}
+        {/* 狭い画面では畳んで本文の上に、広い画面では本文の右に、目次と文字数を出す（どちらを見せるかはCSSで切り替える）。 */}
+        <details className="article-outline article-fold article-outline--fold">
+          <summary>目次{outline.length ? `（${outline.length}）` : ""}</summary>
+          {outlineContent}
+        </details>
         {editor && (
           <EditorToolbar
             editor={editor}
@@ -544,6 +558,12 @@ export default function ArticleEditPage() {
           />
         )}
         <EditorContent editor={editor} className="article-compose__body" />
+        <aside className="article-compose__aside" aria-label="目次と文字数">
+          <div className="article-outline article-compose__aside-inner">
+            <p className="article-compose__aside-title">目次</p>
+            {outlineContent}
+          </div>
+        </aside>
         {editor && <LinkBubble editor={editor} onEdit={openLinkDialog} />}
         <input
           ref={fileInput}
