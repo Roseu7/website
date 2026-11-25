@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createRootRoute, HeadContent, Outlet, Scripts, useRouter, useRouterState } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, isNotFound, Outlet, Scripts, useRouter, useRouterState } from "@tanstack/react-router";
 import { loadDocument, OsRouteDataContext } from "~/framework/page";
 import { OsShell } from "~/components/os/OsShell";
 import { useOsPage } from "~/components/os/OsContext";
@@ -15,7 +15,8 @@ export const Route = createRootRoute({
   head: ({ loaderData, matches }) => {
     const current = matches[matches.length - 1];
     const failed = current.status === "error";
-    const stop = current.status === "notFound" || String(current.routeId) === "/$" || (failed && errorStatus(current.error) >= 500);
+    // ページのローダーが notFound() を投げると、404はルートのマッチに付き、ページ側のマッチは "notFound" にならない。
+    const stop = isNotFound(matches[0]?.error) || current.status === "notFound" || String(current.routeId) === "/$" || (failed && errorStatus(current.error) >= 500);
     const styles = stop ? [] : getPageStyles(current.pathname, loaderData?.osEnabled ?? false, current.loaderData, failed);
     return { meta: [{ charSet: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1" }], links: [
     ...[appCss, ...styles].map(href => ({ rel: "stylesheet", href, precedence: "app" })),
@@ -52,7 +53,11 @@ function Application() {
   const document = Route.useLoaderData();
   const match = useRouterState({ select: s => s.matches[s.matches.length - 1] });
   const loading = useRouterState({ select: s => s.status === "pending" });
-  const missing = match.status === "notFound" || match.routeId === "/$";
+  // ページのローダーが notFound() を投げると、TanStack Router は notFoundComponent を持つルートを受け皿にし、
+  // 404はルートのマッチの error に付く（ページ側のマッチは "notFound" にならない）。R OSは Outlet を通さずに
+  // ページを直接描画するので、ここで見ないとデータの無いページを描画して落ちる。
+  const rootNotFound = useRouterState({ select: s => isNotFound(s.matches[0]?.error) });
+  const missing = rootNotFound || match.status === "notFound" || match.routeId === "/$";
   const failed = match.status === "error";
   const status = failed ? errorStatus(match.error) : undefined;
   const stop = missing || (status !== undefined && status >= 500);
