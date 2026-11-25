@@ -3,7 +3,7 @@ import { flushSync } from "react-dom";
 import { Extension, type JSONContent } from "@tiptap/core";
 import { EditorContent, ReactNodeViewRenderer, useEditor, type Editor } from "@tiptap/react";
 import { Placeholder } from "@tiptap/extensions";
-import { ArrowLeft, Eye, PenLine } from "lucide-react";
+import { ArrowLeft, ExternalLink, Eye, PenLine } from "lucide-react";
 import { useLoaderData } from "~/framework/navigation";
 import { ArticleBody } from "~/components/articles/ArticleBody";
 import { EditorToolbar } from "~/components/articles/EditorToolbar";
@@ -13,6 +13,7 @@ import { findBackup, removeStoredBackup, useArticleSaver, type PublishMode, type
 import {
   Figure, MAX_SUMMARY_LENGTH, MAX_TITLE_LENGTH, articleExtensions, articleOutline, isAllowedLink, parseYoutubeId,
 } from "~/utils/articles/content";
+import { renderArticleHtml } from "~/utils/articles/render";
 import type { loader } from "./article-edit.server";
 
 const STATUS_LABEL = { draft: "下書き", unlisted: "限定公開", published: "公開中" } as const;
@@ -105,7 +106,7 @@ export default function ArticleEditPage() {
   const [summary, setSummary] = useState(article.summary);
   const [status, setStatus] = useState(article.status);
   const [hasUnpublishedChanges, setHasUnpublishedChanges] = useState(article.hasUnpublishedChanges);
-  const [preview, setPreview] = useState<JSONContent | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [imageJobs, setImageJobs] = useState(0);
   const [notice, setNotice] = useState("");
   const [backup, setBackup] = useState<StoredBackup | null>(null);
@@ -128,6 +129,7 @@ export default function ArticleEditPage() {
   const [youtubeError, setYoutubeError] = useState("");
   const [confirmUnpublish, setConfirmUnpublish] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const [urlCopied, setUrlCopied] = useState(false);
   useKeyboardOffset();
   const barRef = useBarHeight();
 
@@ -258,7 +260,7 @@ export default function ArticleEditPage() {
   const openPreview = () => {
     if (!editor) return;
     returnScroll.current = window.scrollY;
-    setPreview(editor.getJSON());
+    setPreview(renderArticleHtml(editor.getJSON()));
     window.scrollTo({ top: 0 });
   };
   const closePreview = () => {
@@ -340,6 +342,17 @@ export default function ArticleEditPage() {
     setNotice(result.status === "draft" ? "非公開に戻しました。" : result.status === "published" ? "一般公開にしました。" : "限定公開にしました。");
   };
 
+  const publicUrl = `https://roseu.net/articles/${article.id}`;
+  const copyPublicUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      setUrlCopied(true);
+      setTimeout(() => setUrlCopied(false), 1500);
+    } catch {
+      document.querySelector<HTMLInputElement>("#public-url")?.select();
+    }
+  };
+
   const busy = imageJobs > 0;
   const blocked = saver.state === "conflict";
   const canPublishUpdate = !blocked && !busy && (hasUnpublishedChanges || saver.state !== "saved");
@@ -408,7 +421,7 @@ export default function ArticleEditPage() {
       {preview && (
         <article className="article-preview" aria-label="プレビュー">
           <h1 className="article-preview__title">{title || "無題"}</h1>
-          <ArticleBody body={preview} />
+          <ArticleBody html={preview} shareUrl={publicUrl} />
         </article>
       )}
 
@@ -527,6 +540,14 @@ export default function ArticleEditPage() {
       <dialog ref={settingsDialog.ref} className="article-dialog" aria-labelledby="settings-dialog-title" {...{ closedby: "any" }}>
         <h2 id="settings-dialog-title">公開設定</h2>
         <p>いまは{status === "published" ? "一般公開（記事一覧に載ります）" : "限定公開（URLを知っている人だけが読めます）"}です。公開の種類を変えても、書きかけの修正は公開されません。</p>
+        <div className="article-dialog__url">
+          <label htmlFor="public-url">公開URL</label>
+          <div>
+            <input id="public-url" type="text" readOnly value={publicUrl} onFocus={event => event.currentTarget.select()} />
+            <button type="button" className="site-button site-button--ghost site-button--small" onClick={() => void copyPublicUrl()}>{urlCopied ? "コピーしました" : "コピー"}</button>
+          </div>
+          <a href={`/articles/${article.id}`} target="_blank" rel="noopener">公開ページを新しいタブで開く<ExternalLink size={13} aria-hidden /></a>
+        </div>
         <div className="article-dialog__actions article-dialog__actions--stack">
           {status === "unlisted"
             ? <button type="button" className="site-button site-button--small" onClick={() => void postStatus({ op: "visibility", from: "unlisted", status: "published" })}>一般公開にする</button>

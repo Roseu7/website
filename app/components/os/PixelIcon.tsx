@@ -64,6 +64,17 @@ export function PixelIcon({ kind }: { kind: OsApp["icon"] | "system" | "info" })
         <path fill="#a2c8f1" d="M8 7h8v2H8z" />
         <path fill="#5022c4" d="M8 11h8v1H8zM8 14h8v1H8zM8 17h5v1H8z" />
       </>}
+      {kind === "articles" && <>
+        <path fill="#5022c4" d="M4 4h14v18H4z" />
+        <path fill="#fff8ff" d="M5 5h12v16H5z" />
+        <path fill="#c4a5ee" d="M5 20h12v1H5zM16 5h1v15h-1z" />
+        <path fill="#5022c4" d="M6 2h1v4H6zM9 2h1v4H9zM12 2h1v4h-1zM15 2h1v4h-1z" />
+        <path fill="#a2c8f1" d="M7 8h6v1H7zM7 11h7v1H7zM7 14h5v1H7zM7 17h8v1H7z" />
+        <path fill="#5022c4" d="M19 6h3v3h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-2v-2h1v-1h1v-1h1v-1h1v-1h1v-1h1V7h1z" />
+        <path fill="#eeabe7" d="M20 7h1v1h-1z" />
+        <path fill="#ed65be" d="M19 8h1v1h-1zM18 9h1v1h-1zM17 10h1v1h-1zM16 11h1v1h-1zM15 12h1v1h-1zM14 13h1v1h-1z" />
+        <path fill="#fff8ff" d="M13 15h1v1h-1z" />
+      </>}
       {kind === "mail" && <>
         <path fill="#5022c4" d="M3 5h18v1h1v13h-1v1H3v-1H2V6h1z" />
         <path fill="#bff3f3" d="M3 6h18v13H3z" />

@@ -1,0 +1,82 @@
+@layer feature {
+  /* 一覧。枠と見出しは DotGothic16 のまま、概要は本文と同じ標準フォントで読みやすくする。 */
+  .articles-list { margin: 0; padding: 0; list-style: none; }
+  .articles-list__item {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1rem;
+    border-block-end: 1px solid var(--line-soft);
+    color: var(--ink-1);
+    text-decoration: none !important;
+  }
+  .articles-list li:last-child .articles-list__item { border-block-end: 0; }
+  .articles-list__item:hover,
+  .articles-list__item:focus-visible { background: var(--accent-soft); }
+  /* 大きさと行の高さは、OSのウィンドウ内の h2 の指定（20px）に合わせる。 */
+  .articles-list__title { margin: 0; font-weight: 400; }
+  .articles-list__date { color: var(--ink-3); font-size: 0.8125rem; }
+  .articles-list__summary {
+    margin: 0;
+    max-inline-size: var(--article-measure);
+    color: var(--ink-2);
+    font-family: var(--article-font);
+    font-size: 0.9375rem;
+    line-height: 1.8;
+  }
+
+  /* 本文のページ。ウィンドウを広げても本文の行は伸ばさず、中央に置く。
+     グリッドの列を minmax(0, 1fr) にしないと、長いコードの行に列幅が引っ張られてページごとはみ出す。 */
+  .article-page { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; padding-block-end: 2rem; }
+  .article-page > * { inline-size: 100%; max-inline-size: var(--article-measure); margin-inline: auto; }
+  .article-page__article { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .article-page__article > * { min-inline-size: 0; }
+  .article-page__header { display: grid; gap: 0.5rem; }
+  .article-page__title {
+    margin: 0;
+    font-family: var(--article-font);
+    font-size: clamp(1.375rem, 5vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.4;
+    text-wrap: pretty;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  .article-page__meta { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0; color: var(--ink-3); font-size: 0.8125rem; }
+
+  .article-toc { border-block: 1px solid var(--line-soft); font-size: 0.9375rem; }
+  .article-toc summary {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-block-size: 2.75rem;
+    cursor: pointer;
+    list-style: none;
+  }
+  .article-toc summary::-webkit-details-marker { display: none; }
+  .article-toc summary::before {
+    content: "";
+    border-block: 0.3rem solid transparent;
+    border-inline-start: 0.45rem solid currentColor;
+    transition: rotate var(--motion-fast, 160ms) ease;
+  }
+  .article-toc details[open] > summary::before { rotate: 90deg; }
+  @media (prefers-reduced-motion: reduce) { .article-toc summary::before { transition: none; } }
+  .article-toc ol { margin: 0 0 0.75rem; padding: 0; list-style: none; font-family: var(--article-font); }
+  .article-toc li[data-level="3"] { padding-inline-start: 1.25rem; }
+  .article-toc a { display: block; padding-block: 0.4rem; color: var(--ink-1); }
+
+  .article-page__back { margin-block: 0; font-size: 0.9375rem; }
+  .article-page__back--top { font-size: 0.8125rem; }
+}
+
+/* OSのCSS（overrides のレイヤー）は、ウィンドウ内の h2・h3 を細字・固定の大きさにしている。
+   記事の本文では、編集画面と同じ見出しの組み方に戻す。 */
+@layer overrides {
+  /* 目次はリンクが並ぶので、OSの「リンクは常に下線」をやめ、ポインターとフォーカスのときだけ下線を出す。 */
+  /* OSの指定（.os-page-content a:not(.btn):not(...):not(...)）より詳細度を上げるため、li を足して同じ :not を重ねる。 */
+  .os-page-content .article-toc li a:not(.btn):not(.os-directory-entry):not(.os-directory-info) { text-decoration: none; }
+  .os-page-content .article-toc li a:not(.btn):not(.os-directory-entry):not(.os-directory-info):is(:hover, :focus-visible) { text-decoration: underline; text-underline-offset: 3px; }
+  .os-page-content .article-body :is(h2, h3) { font-weight: 700; letter-spacing: normal; line-height: 1.45; }
+  .os-page-content .article-body h2 { font-size: 1.4em; }
+  .os-page-content .article-body h3 { font-size: 1.15em; }
+}

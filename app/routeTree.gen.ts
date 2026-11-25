@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './start-routes/index'
 import { Route as SplatRouteImport } from './start-routes/$'
 import { Route as AboutRouteImport } from './start-routes/about'
 import { Route as ApplyRouteImport } from './start-routes/apply'
+import { Route as ArticlesRouteImport } from './start-routes/articles'
 import { Route as ConsoleRouteImport } from './start-routes/console'
 import { Route as ContactRouteImport } from './start-routes/contact'
 import { Route as GamesRouteImport } from './start-routes/games'
@@ -31,6 +32,7 @@ import { Route as ApiConsoleRouteImport } from './start-routes/api_.console'
 import { Route as ApiJevRouteImport } from './start-routes/api_.jev'
 import { Route as ApiNextRouteImport } from './start-routes/api_.next'
 import { Route as ApiSmanageRouteImport } from './start-routes/api_.smanage'
+import { Route as ArticlesIdRouteImport } from './start-routes/articles_.$id'
 import { Route as AuthLogoutRouteImport } from './start-routes/auth_.logout'
 import { Route as GamesProgLangGuessRouteImport } from './start-routes/games_.prog-lang-guess'
 import { Route as GamesUmigameRouteImport } from './start-routes/games_.umigame'
@@ -99,6 +101,11 @@ const AboutRoute = AboutRouteImport.update({
 const ApplyRoute = ApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArticlesRoute = ArticlesRouteImport.update({
+  id: '/articles',
+  path: '/articles',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConsoleRoute = ConsoleRouteImport.update({
@@ -189,6 +196,11 @@ const ApiNextRoute = ApiNextRouteImport.update({
 const ApiSmanageRoute = ApiSmanageRouteImport.update({
   id: '/api_/smanage',
   path: '/api/smanage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArticlesIdRoute = ArticlesIdRouteImport.update({
+  id: '/articles_/$id',
+  path: '/articles/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLogoutRoute = AuthLogoutRouteImport.update({
@@ -452,6 +464,7 @@ export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
+  '/articles': typeof ArticlesRoute
   '/console': typeof ConsoleRoute
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
@@ -470,6 +483,7 @@ export interface FileRoutesByFullPath {
   '/api/jev': typeof ApiJevRoute
   '/api/next': typeof ApiNextRoute
   '/api/smanage': typeof ApiSmanageRoute
+  '/articles/$id': typeof ArticlesIdRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/games/prog-lang-guess': typeof GamesProgLangGuessRoute
   '/games/umigame': typeof GamesUmigameRoute
@@ -525,6 +539,7 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
+  '/articles': typeof ArticlesRoute
   '/console': typeof ConsoleRoute
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
@@ -543,6 +558,7 @@ export interface FileRoutesByTo {
   '/api/jev': typeof ApiJevRoute
   '/api/next': typeof ApiNextRoute
   '/api/smanage': typeof ApiSmanageRoute
+  '/articles/$id': typeof ArticlesIdRoute
   '/auth/logout': typeof AuthLogoutRoute
   '/games/prog-lang-guess': typeof GamesProgLangGuessRoute
   '/games/umigame': typeof GamesUmigameRoute
@@ -599,6 +615,7 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
+  '/articles': typeof ArticlesRoute
   '/console': typeof ConsoleRoute
   '/contact': typeof ContactRoute
   '/games': typeof GamesRoute
@@ -617,6 +634,7 @@ export interface FileRoutesById {
   '/api_/jev': typeof ApiJevRoute
   '/api_/next': typeof ApiNextRoute
   '/api_/smanage': typeof ApiSmanageRoute
+  '/articles_/$id': typeof ArticlesIdRoute
   '/auth_/logout': typeof AuthLogoutRoute
   '/games_/prog-lang-guess': typeof GamesProgLangGuessRoute
   '/games_/umigame': typeof GamesUmigameRoute
@@ -674,6 +692,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/apply'
+    | '/articles'
     | '/console'
     | '/contact'
     | '/games'
@@ -692,6 +711,7 @@ export interface FileRouteTypes {
     | '/api/jev'
     | '/api/next'
     | '/api/smanage'
+    | '/articles/$id'
     | '/auth/logout'
     | '/games/prog-lang-guess'
     | '/games/umigame'
@@ -747,6 +767,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/apply'
+    | '/articles'
     | '/console'
     | '/contact'
     | '/games'
@@ -765,6 +786,7 @@ export interface FileRouteTypes {
     | '/api/jev'
     | '/api/next'
     | '/api/smanage'
+    | '/articles/$id'
     | '/auth/logout'
     | '/games/prog-lang-guess'
     | '/games/umigame'
@@ -820,6 +842,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/apply'
+    | '/articles'
     | '/console'
     | '/contact'
     | '/games'
@@ -838,6 +861,7 @@ export interface FileRouteTypes {
     | '/api_/jev'
     | '/api_/next'
     | '/api_/smanage'
+    | '/articles_/$id'
     | '/auth_/logout'
     | '/games_/prog-lang-guess'
     | '/games_/umigame'
@@ -894,6 +918,7 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
   ApplyRoute: typeof ApplyRoute
+  ArticlesRoute: typeof ArticlesRoute
   ConsoleRoute: typeof ConsoleRoute
   ContactRoute: typeof ContactRoute
   GamesRoute: typeof GamesRoute
@@ -912,6 +937,7 @@ export interface RootRouteChildren {
   ApiJevRoute: typeof ApiJevRoute
   ApiNextRoute: typeof ApiNextRoute
   ApiSmanageRoute: typeof ApiSmanageRoute
+  ArticlesIdRoute: typeof ArticlesIdRoute
   AuthLogoutRoute: typeof AuthLogoutRoute
   GamesProgLangGuessRoute: typeof GamesProgLangGuessRoute
   GamesUmigameRoute: typeof GamesUmigameRoute
@@ -991,6 +1017,13 @@ declare module '@tanstack/react-router' {
       path: '/apply'
       fullPath: '/apply'
       preLoaderRoute: typeof ApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/articles': {
+      id: '/articles'
+      path: '/articles'
+      fullPath: '/articles'
+      preLoaderRoute: typeof ArticlesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/console': {
@@ -1117,6 +1150,13 @@ declare module '@tanstack/react-router' {
       path: '/api/smanage'
       fullPath: '/api/smanage'
       preLoaderRoute: typeof ApiSmanageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/articles_/$id': {
+      id: '/articles_/$id'
+      path: '/articles/$id'
+      fullPath: '/articles/$id'
+      preLoaderRoute: typeof ArticlesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth_/logout': {
@@ -1470,6 +1510,7 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
   ApplyRoute: ApplyRoute,
+  ArticlesRoute: ArticlesRoute,
   ConsoleRoute: ConsoleRoute,
   ContactRoute: ContactRoute,
   GamesRoute: GamesRoute,
@@ -1488,6 +1529,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiJevRoute: ApiJevRoute,
   ApiNextRoute: ApiNextRoute,
   ApiSmanageRoute: ApiSmanageRoute,
+  ArticlesIdRoute: ArticlesIdRoute,
   AuthLogoutRoute: AuthLogoutRoute,
   GamesProgLangGuessRoute: GamesProgLangGuessRoute,
   GamesUmigameRoute: GamesUmigameRoute,

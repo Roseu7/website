@@ -1,6 +1,7 @@
 export const osApps = [
   { id: "projects", label: "プロジェクト.pdf", path: "/projects", icon: "pdf" },
   { id: "about", label: "プロフィール", path: "/about", icon: "profile" },
+  { id: "articles", label: "記事", path: "/articles", icon: "articles" },
   { id: "games", label: "ゲーム", path: "/games", icon: "game" },
   { id: "tools", label: "ツール", path: "/tools", icon: "tools" },
   { id: "documents", label: "ドキュメント", path: "/licenses", icon: "document" },
@@ -42,7 +43,8 @@ export function getOsPage(pathname: string) {
   if (pathname === "/notepad") return { ...notepadApp, title: notepadApp.label };
   const document = osDocuments.find((item) => item.path === pathname);
   if (document) return { ...getOsApp("documents"), title: "ドキュメント" };
-  const app = osApps.find((item) => item.path === pathname || (item.id === "settings" && pathname.startsWith("/settings/")));
+  // 記事は一覧と本文を同じウィンドウで開く。
+  const app = osApps.find((item) => item.path === pathname || ((item.id === "settings" || item.id === "articles") && pathname.startsWith(`${item.path}/`)));
   if (app) return { ...app, title: app.label };
   const child = childApps.find(app => pathname === app.path || pathname.startsWith(app.path + "/"));
   if (child) return { ...child, title: `${getOsApp(child.parent).label}｜${child.label}` };

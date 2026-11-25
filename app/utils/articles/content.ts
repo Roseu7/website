@@ -9,7 +9,7 @@ import { Plugin } from "@tiptap/pm/state";
 const ID_ALPHABET = "0123456789abcdefghjkmnpqrstvwxyz";
 export const ARTICLE_ID_PATTERN = /^[0-9abcdefghjkmnpqrstvwxyz]{12}$/;
 const HEADING_ID_PATTERN = /^[0-9abcdefghjkmnpqrstvwxyz]{8}$/;
-const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+export const YOUTUBE_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 export const ARTICLE_IMAGE_URL_PREFIX = "https://assets.roseu.net/articles/";
 // iOSのSafariはcanvasからWebPを書き出せないので、JPEGも受け付ける。
 const ARTICLE_IMAGE_URL_PATTERN = /^https:\/\/assets\.roseu\.net\/articles\/\d{4}\/[0-9a-f-]{36}\.(?:webp|jpg)$/;
@@ -150,7 +150,7 @@ export const YoutubeEmbed = Node.create({
         src: `https://www.youtube-nocookie.com/embed/${videoId}`,
         title: "YouTube動画",
         allow: "accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
-        // 静的描画はReactの要素を作るので、Reactの属性名で書く。エディタのDOMでは大文字小文字は区別されない。
+        // HTMLの属性名は大文字小文字を区別しないので、エディタのDOMでもHTML文字列の描画でもこのままでよい。
         allowFullScreen: "true",
         loading: "lazy",
         referrerPolicy: "strict-origin-when-cross-origin",

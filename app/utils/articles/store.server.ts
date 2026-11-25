@@ -58,6 +58,72 @@ function toEditable(row: ArticleRow): EditableArticle {
   };
 }
 
+export interface PublicArticle {
+  id: string;
+  status: Exclude<ArticleStatus, "draft">;
+  title: string;
+  summary: string;
+  body: JSONContent;
+  firstPublishedAt: number;
+  contentPublishedAt: number;
+}
+
+interface PublicRow {
+  id: string;
+  status: Exclude<ArticleStatus, "draft">;
+  published_title: string;
+  published_summary: string;
+  published_body_json: string;
+  first_published_at: number;
+  content_published_at: number;
+}
+
+const PUBLIC_COLUMNS = "id, status, published_title, published_summary, published_body_json, first_published_at, content_published_at";
+
+function toPublic(row: PublicRow): PublicArticle {
+  return {
+    id: row.id,
+    status: row.status,
+    title: row.published_title,
+    summary: row.published_summary,
+    body: JSON.parse(row.published_body_json) as JSONContent,
+    firstPublishedAt: row.first_published_at,
+    contentPublishedAt: row.content_published_at,
+  };
+}
+
+// 公開側は公開版の列だけを読む。下書きと存在しないIDは、どちらも「行がない」という同じ経路で404にする。
+export async function getPublicArticle(db: D1Database, id: string) {
+  const row = await db.prepare(`SELECT ${PUBLIC_COLUMNS} FROM articles WHERE id = ? AND status <> 'draft'`).bind(id).first<PublicRow>();
+  return row ? toPublic(row) : null;
+}
+
+export interface PublicListItem {
+  id: string;
+  title: string;
+  summary: string;
+  // 概要が空の記事だけ、抜粋を作るために本文を持たせる。
+  body: JSONContent | null;
+  firstPublishedAt: number;
+}
+
+// 一覧に出すのは一般公開だけ。限定公開は、URLを知っている人だけが読める。
+// 本文は、概要が空で抜粋を作る必要がある記事の分だけ読む。
+export async function listPublicArticles(db: D1Database): Promise<PublicListItem[]> {
+  const { results } = await db.prepare(
+    `SELECT id, published_title, published_summary, first_published_at,
+       CASE WHEN published_summary = '' THEN published_body_json END AS excerpt_body_json
+     FROM articles WHERE status = 'published' ORDER BY first_published_at DESC`,
+  ).all<{ id: string; published_title: string; published_summary: string; first_published_at: number; excerpt_body_json: string | null }>();
+  return results.map(row => ({
+    id: row.id,
+    title: row.published_title,
+    summary: row.published_summary,
+    body: row.excerpt_body_json ? JSON.parse(row.excerpt_body_json) as JSONContent : null,
+    firstPublishedAt: row.first_published_at,
+  }));
+}
+
 export async function listArticles(db: D1Database): Promise<ArticleListItem[]> {
   const { results } = await db.prepare(
     `SELECT id, title, status, updated_at, ${HAS_UNPUBLISHED_CHANGES} FROM articles ORDER BY updated_at DESC`,

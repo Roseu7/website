@@ -79,4 +79,50 @@
   .article-body .article-figure figcaption:empty { display: none; }
 
   .article-body .article-embed iframe { display: block; inline-size: 100%; aspect-ratio: 16 / 9; border: 0; }
+
+  /* 見出しの横の「#」。見出しとボタンを入れ物に並べる（ボタンを見出しの外に出すため）。 */
+  .article-body > * + .article-heading[data-level="2"] { margin-block-start: 2.4em; }
+  .article-body > * + .article-heading[data-level="3"] { margin-block-start: 1.9em; }
+  .article-body .article-heading + * { margin-block-start: 0.6em; }
+  .article-body .article-heading { display: flex; align-items: center; gap: 0.25rem; }
+  /* ツールチップはボタンの真下に出す。ふだんは右に伸ばし、本文の右端に収まらないときだけ左に伸ばす（ArticleBody.tsx で判定）。 */
+  .article-body .article-anchor-wrap { position: relative; flex: none; display: inline-flex; }
+  .article-body .article-heading > :is(h2, h3) { margin: 0; }
+  .article-body .article-anchor {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 2rem;
+    block-size: 2rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink-3);
+    font: inherit;
+    font-size: 1rem;
+    opacity: 0.45;
+    cursor: pointer;
+  }
+  .article-body .article-heading:hover .article-anchor,
+  .article-body .article-anchor:focus-visible { opacity: 1; }
+  @media (pointer: coarse), (max-width: 47.99rem) {
+    .article-body .article-anchor { inline-size: 2.75rem; block-size: 2.75rem; opacity: 0.7; }
+  }
+  .article-body .article-anchor-tip {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    z-index: 1;
+    display: none;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-strong);
+    color: var(--ink-1);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .article-body .article-anchor-tip[data-align="end"] { inset-inline-start: auto; inset-inline-end: 0; }
+  .article-body .article-anchor:hover + .article-anchor-tip,
+  .article-body .article-anchor:focus-visible + .article-anchor-tip,
+  .article-body .article-anchor-tip[data-show] { display: block; }
 }

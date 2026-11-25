@@ -64,6 +64,8 @@ export const routeModules = {
   "/api/mc/unlink": { path: "/api/mc/unlink", load: () => import("~/routes/api/mc/unlink") },
   "/api/smanage": { path: "/api/smanage", load: () => import("~/routes/api/smanage") },
   "/api/discord/interactions": { path: "/api/discord/interactions", load: () => import("~/routes/api/discord/interactions") },
+  "/articles": { path: "/articles", load: () => import("~/routes/articles/index.server") },
+  "/articles/:id": { path: "/articles/:id", load: () => import("~/routes/articles/article.server") },
   "/admin/articles": { path: "/admin/articles", load: () => import("~/routes/admin/articles.server") },
   "/admin/articles/:id": { path: "/admin/articles/:id", load: () => import("~/routes/admin/article-edit.server") },
   "/admin/api/articles/:id": { path: "/admin/api/articles/:id", load: () => import("~/routes/admin/articles-api") },
@@ -71,4 +73,4 @@ export const routeModules = {
   "/*": { path: "/*", load: () => import("~/routes/$.server") },
 };
 
-export const pageRoutes = new Set<string>(["/","/projects","/about","/licenses","/privacy","/terms","/contact","/settings","/settings/about","/settings/history","/settings/developer","/notepad","/console","/tools","/tools/wsolver","/tools/jev","/games","/games/prog-lang-guess","/auth/access/logout","/apply","/wsolver","/games/umigame","/games/umigame/about","/games/umigame/admin","/games/umigame/admin/jev","/games/umigame/favorites","/games/umigame/licenses","/games/umigame/rankings","/games/umigame/recommend","/games/umigame/results","/games/umigame/author/quality","/games/umigame/new","/games/umigame/p/:id","/games/umigame/p/:id/edit","/games/umigame/p/:id/play","/games/umigame/u/:username","/games/umigame/settings/profile","/admin/articles","/admin/articles/:id","/*"]);
+export const pageRoutes = new Set<string>(["/","/projects","/about","/licenses","/privacy","/terms","/contact","/settings","/settings/about","/settings/history","/settings/developer","/notepad","/console","/tools","/tools/wsolver","/tools/jev","/games","/games/prog-lang-guess","/auth/access/logout","/apply","/wsolver","/games/umigame","/games/umigame/about","/games/umigame/admin","/games/umigame/admin/jev","/games/umigame/favorites","/games/umigame/licenses","/games/umigame/rankings","/games/umigame/recommend","/games/umigame/results","/games/umigame/author/quality","/games/umigame/new","/games/umigame/p/:id","/games/umigame/p/:id/edit","/games/umigame/p/:id/play","/games/umigame/u/:username","/games/umigame/settings/profile","/admin/articles","/admin/articles/:id","/articles","/articles/:id","/*"]);

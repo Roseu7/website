@@ -1,3 +1,5 @@
+import { MAIN_SITE_HOSTS } from "../app/utils/host-config";
+
 function isMapRequest(request: Request): boolean {
   const url = new URL(request.url);
   return url.hostname === "mc.roseu.net" && (url.pathname === "/map" || url.pathname.startsWith("/map/"));
@@ -13,11 +15,13 @@ export function withSecurityHeaders(request: Request, response: Response, nonce:
     && /^text\/html(?:;|$)/i.test(nextHeaders.get("Content-Type") ?? "");
   const pathname = new URL(request.url).pathname;
   const isContactRoute = pathname === "/contact";
-  // 記事の埋め込み動画を表示するページだけ、YouTubeのiframeを許可する。
-  const isArticleRoute = /^\/admin\/articles\/[^/]+$/.test(pathname);
+  // 記事のYouTube埋め込みを許可する。CSPは最初に読み込んだ文書で決まり、R OSは読み込み直さずに
+  // ページを移るので、記事のページだけに付けると、ほかのページから開いた記事で遮断される。
+  // そのためメインのサイトの文書すべてに付ける（管理画面の編集画面もこのホストにある）。
+  const allowsArticleEmbeds = MAIN_SITE_HOSTS.has(new URL(request.url).hostname);
   const scriptSrc = `script-src 'self' 'nonce-${nonce}'${isMapDocument ? " 'unsafe-eval'" : ""}`;
   const turnstileSource = isContactRoute ? " https://challenges.cloudflare.com" : "";
-  const youtubeSource = isArticleRoute ? " https://www.youtube-nocookie.com" : "";
+  const youtubeSource = allowsArticleEmbeds ? " https://www.youtube-nocookie.com" : "";
   const csp = [
     "default-src 'self'",
     "base-uri 'self'",

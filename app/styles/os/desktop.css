@@ -54,6 +54,12 @@
   .os-window:not(.os-window--maximized)[data-app="games"] { height: min(360px, calc(100% - 140px)); }
   .os-window:not(.os-window--maximized)[data-app="tools"] { height: min(440px, calc(100% - 140px)); }
 
+/* アプリが8個になり、1列だと高さが約852px未満で最後のアイコンが見切れる。
+   その範囲では、アイコンの大きさは変えずに2列（4段）に並べる。730px以下は下の設定に任せる。 */
+@media (min-width: 761px) and (min-height: 731px) and (max-height: 851px) {
+  .os-app-grid { grid-auto-flow: column; grid-template-rows: repeat(4, auto); grid-template-columns: repeat(2, 112px); width: 224px; }
+}
+
 @media (min-width: 761px) and (max-height: 730px) {
   .os-stage { min-height: 460px; }
   .os-app-grid { gap: 0; }

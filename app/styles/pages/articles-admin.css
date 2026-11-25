@@ -112,7 +112,8 @@
   }
 
   /* 書く部分 */
-  .article-compose { display: grid; gap: 0.75rem; padding-block-start: 1.5rem; }
+  /* 列を minmax(0, 1fr) にしないと、長いコードの行に列幅が引っ張られて画面からはみ出す。 */
+  .article-compose { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.75rem; padding-block-start: 1.5rem; }
   .article-compose[hidden] { display: none; }
   .article-compose__title,
   .article-compose__summary {
@@ -334,5 +335,20 @@
   .article-dialog__choices span { grid-column: 2; color: var(--ink-3); font-size: 0.75rem; }
   .article-dialog__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; margin-block-start: 0.5rem; }
   .article-dialog__actions--stack { flex-direction: column; align-items: stretch; }
+  .article-dialog__url { display: grid; gap: 0.35rem; margin-block-end: 0.75rem; font-size: 0.85rem; }
+  .article-dialog__url > div { display: flex; gap: 0.5rem; }
+  /* .article-dialog input[type="text"] より後で効かせるため、同じ詳細度にそろえる。 */
+  .article-dialog .article-dialog__url input[type="text"] {
+    flex: 1;
+    min-inline-size: 0;
+    min-block-size: var(--article-target);
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--line-soft);
+    background: var(--bg-strong);
+    color: var(--ink-1);
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.8rem;
+  }
+  .article-dialog__url a { justify-self: start; color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
   .article-dialog .site-button { min-block-size: var(--article-target); }
 }
