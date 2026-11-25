@@ -44,7 +44,10 @@
   .article-body > h2 + *,
   .article-body > h3 + * { margin-block-start: 0.6em; }
 
-  .article-body a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+  /* 下線の装飾と見分けられるよう、リンクは色も変える。 */
+  .article-body { --article-link: #2448c2; }
+  .dark .article-body { --article-link: #9db4ff; }
+  .article-body a { color: var(--article-link); text-decoration: underline; text-underline-offset: 0.2em; }
   .article-body mark { background: color-mix(in srgb, #f3d35c 55%, transparent); color: inherit; padding-inline: 0.1em; }
   /* ダークでは黄色を濃く乗せると明るい文字との差が小さくなるので、薄くする。 */
   .dark .article-body mark { background: color-mix(in srgb, #f3d35c 26%, transparent); }

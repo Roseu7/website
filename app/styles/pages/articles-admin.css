@@ -355,6 +355,51 @@
   .article-dialog__choices span { grid-column: 2; color: var(--ink-3); font-size: 0.75rem; }
   .article-dialog__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; margin-block-start: 0.5rem; }
   .article-dialog__actions--stack { flex-direction: column; align-items: stretch; }
+  /* 取り消しにくい「外す」は、決定のボタンから離して左端に置く。 */
+  .article-dialog__start { margin-inline-end: auto; }
+
+  /* リンクの中にカーソルがあるときに出す吹き出し。位置は LinkBubble が測って決める。 */
+  .article-compose { position: relative; }
+  .article-link-bubble {
+    position: absolute;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    max-inline-size: min(26rem, 100%);
+    padding: 0.25rem;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-strong);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+    font-size: 0.85rem;
+  }
+  .article-link-bubble__url {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-inline-size: 0;
+    min-block-size: var(--article-target);
+    padding-inline: 0.5rem;
+    color: var(--ink-1);
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+  .article-link-bubble__url span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .article-link-bubble__url svg { flex: none; }
+  .article-link-bubble__url:hover span { text-decoration: underline; text-underline-offset: 0.2em; }
+  .article-link-bubble__action {
+    flex: none;
+    min-block-size: var(--article-target);
+    padding-inline: 0.6rem;
+    border: 1px solid transparent;
+    background: none;
+    color: var(--ink-1);
+    font: inherit;
+    cursor: pointer;
+  }
+  .article-link-bubble__action:hover { border-color: var(--line-soft); }
+  .article-link-bubble :focus-visible { outline: 2px solid var(--ink-1); outline-offset: 1px; }
   .article-dialog__url { display: grid; gap: 0.35rem; margin-block-end: 0.75rem; font-size: 0.85rem; }
   .article-dialog__url > div { display: flex; gap: 0.5rem; }
   /* .article-dialog input[type="text"] より後で効かせるため、同じ詳細度にそろえる。 */

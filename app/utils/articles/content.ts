@@ -165,6 +165,9 @@ export const YoutubeEmbed = Node.create({
 // 外部リンクに付ける noopener noreferrer が上書きされるので、ほかの属性は固定値にする。
 const LINK_FIXED_ATTRS = { target: null, rel: "noopener noreferrer", class: null, title: null } as const;
 const ArticleLink = Link.extend({
+  // 自動リンクを有効にすると、Tiptapはリンクの直後に打った文字もリンクに含める。
+  // 見た目では続きがリンクかどうか分からないので、リンクの外に打った文字はリンクにしない。
+  inclusive: () => false,
   addAttributes() {
     const fixed = Object.fromEntries(Object.entries(LINK_FIXED_ATTRS).map(([name, value]) => [name, { default: value, parseHTML: () => value }]));
     return { ...this.parent?.(), ...fixed };

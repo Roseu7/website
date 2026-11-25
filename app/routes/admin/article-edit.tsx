@@ -8,6 +8,7 @@ import { ArrowLeft, ExternalLink, Eye, PenLine } from "lucide-react";
 import { useLoaderData } from "~/framework/navigation";
 import { ArticleBody } from "~/components/articles/ArticleBody";
 import { EditorToolbar } from "~/components/articles/EditorToolbar";
+import { LinkBubble } from "~/components/articles/LinkBubble";
 import { FigureView } from "~/components/articles/FigureView";
 import { uploadArticleImage, type UploadedImage } from "~/components/articles/image-upload";
 import { findBackup, removeStoredBackup, useArticleSaver, type PublishMode, type StoredBackup } from "~/components/articles/useArticleSaver";
@@ -128,6 +129,9 @@ export default function ArticleEditPage() {
   const deleteDialog = useDialog();
   const [deleting, setDeleting] = useState(false);
   const [linkValue, setLinkValue] = useState("");
+  const [linkText, setLinkText] = useState("");
+  // ダイアログを開いたときの対象。リンクの中なら、そのリンク全体。複数の段落にまたがる範囲は文字を書き換えられない。
+  const [linkTarget, setLinkTarget] = useState({ from: 0, to: 0, text: "", existing: false, editableText: true });
   const [youtubeValue, setYoutubeValue] = useState("");
   const [youtubeError, setYoutubeError] = useState("");
   const [confirmUnpublish, setConfirmUnpublish] = useState(false);
@@ -148,6 +152,13 @@ export default function ArticleEditPage() {
   const openLinkDialog = useCallback(() => {
     const editor = editorRef.current;
     if (!editor) return;
+    const existing = editor.isActive("link");
+    if (existing) editor.commands.extendMarkRange("link");
+    const { from, to, $from, $to } = editor.state.selection;
+    const editableText = $from.sameParent($to);
+    const text = editableText ? editor.state.doc.textBetween(from, to) : "";
+    setLinkTarget({ from, to, text, existing, editableText });
+    setLinkText(text);
     setLinkValue((editor.getAttributes("link").href as string | undefined) ?? "");
     setLinkError("");
     linkDialog.open();
@@ -317,15 +328,22 @@ export default function ArticleEditPage() {
     event.preventDefault();
     if (!editor) return;
     const value = linkValue.trim();
-    if (!value) {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    if (!value) { setLinkError("URLを入れてください。"); return; }
+    const href = /^[a-z][a-z0-9+.-]*:/i.test(value) ? value : `https://${value}`;
+    if (!isAllowedLink(href)) { setLinkError("リンクに使えるのは http、https、mailto のURLだけです。"); return; }
+    const { from, to, text, editableText } = linkTarget;
+    // 表示する文字が空なら、URLをそのまま表示する。
+    const label = linkText.trim() ? linkText : value;
+    if (!editableText || (label === text && from !== to)) {
+      // 文字を変えないときは、太字などのほかの装飾を残したままリンクだけ付け替える。
+      editor.chain().focus().setTextSelection({ from, to }).setLink({ href }).setTextSelection(to).run();
     } else {
-      const href = /^[a-z][a-z0-9+.-]*:/i.test(value) ? value : `https://${value}`;
-      if (!isAllowedLink(href)) { setLinkError("リンクに使えるのは http、https、mailto のURLだけです。"); return; }
-      const chain = editor.chain().focus().extendMarkRange("link");
-      if (editor.state.selection.empty && !editor.isActive("link")) chain.insertContent({ type: "text", text: value, marks: [{ type: "link", attrs: { href } }] }).run();
-      else chain.setLink({ href }).run();
+      editor.chain().focus().insertContentAt({ from, to }, { type: "text", text: label, marks: [{ type: "link", attrs: { href } }] }).run();
     }
+    linkDialog.close();
+  };
+  const removeLink = () => {
+    editor?.chain().focus().setTextSelection({ from: linkTarget.from, to: linkTarget.to }).unsetLink().setTextSelection(linkTarget.to).run();
     linkDialog.close();
   };
 
@@ -515,6 +533,7 @@ export default function ArticleEditPage() {
           />
         )}
         <EditorContent editor={editor} className="article-compose__body" />
+        {editor && <LinkBubble editor={editor} onEdit={openLinkDialog} />}
         <input
           ref={fileInput}
           type="file"
@@ -536,10 +555,17 @@ export default function ArticleEditPage() {
       <dialog ref={linkDialog.ref} className="article-dialog" aria-labelledby="link-dialog-title" {...{ closedby: "any" }}>
         <form onSubmit={applyLink}>
           <h2 id="link-dialog-title">リンク</h2>
-          <label htmlFor="link-url">URL（空にするとリンクを外します）</label>
+          {linkTarget.editableText && (
+            <>
+              <label htmlFor="link-text">表示する文字</label>
+              <input id="link-text" type="text" value={linkText} onChange={event => setLinkText(event.target.value)} placeholder="空ならURLをそのまま表示" />
+            </>
+          )}
+          <label htmlFor="link-url">URL</label>
           <input id="link-url" type="text" inputMode="url" autoComplete="url" spellCheck={false} autoCapitalize="none" autoFocus value={linkValue} onChange={event => setLinkValue(event.target.value)} placeholder="https://" aria-describedby="link-error" aria-invalid={linkError ? true : undefined} />
           <p id="link-error" className="article-dialog__error">{linkError}</p>
           <div className="article-dialog__actions">
+            {linkTarget.existing && <button type="button" className="site-button site-button--ghost site-button--small article-dialog__start" onClick={removeLink}>リンクを外す</button>}
             <button type="button" className="site-button site-button--ghost site-button--small" onClick={linkDialog.close}>やめる</button>
             <button type="submit" className="site-button site-button--small">決定</button>
           </div>
