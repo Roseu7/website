@@ -160,7 +160,7 @@
     background: var(--bg-strong);
     color: var(--ink-1);
     font: inherit;
-    text-align: start;
+    text-align: center;
     cursor: copy;
   }
   .article-share-dialog__url:hover { border-color: var(--os-edge, var(--line-strong)); }
@@ -175,7 +175,7 @@
     text-overflow: ellipsis;
   }
   .article-share-dialog__url[data-copied] { border-color: var(--os-edge, var(--line-strong)); background: var(--accent-soft); }
-  .article-share-dialog__url[data-copied] .article-share-dialog__url-text { font-family: inherit; text-align: center; }
+  .article-share-dialog__url[data-copied] .article-share-dialog__url-text { font-family: inherit; }
   .article-share-dialog__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
   .article-page__footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; font-size: 0.9375rem; }
 
