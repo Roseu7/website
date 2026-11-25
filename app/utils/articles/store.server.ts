@@ -23,6 +23,8 @@ export interface ArticleListItem {
   id: string;
   title: string;
   status: ArticleStatus;
+  createdAt: number;
+  firstPublishedAt: number | null;
   updatedAt: number;
   hasUnpublishedChanges: boolean;
 }
@@ -117,33 +119,39 @@ export interface PublicListItem {
   // 概要が空の記事だけ、抜粋を作るために本文を持たせる。
   body: JSONContent | null;
   firstPublishedAt: number;
+  contentPublishedAt: number;
 }
 
 // 一覧に出すのは一般公開だけ。限定公開は、URLを知っている人だけが読める。
+// 並びは前後の記事と同じ（初めて公開した日時、同じなら記事ID）。読者にとっての「書いた日」は初めて公開した日なので、
+// 管理画面の作成日時の順とは、下書きのまま置いてから公開した記事の分だけ違うことがある。
 // 本文は、概要が空で抜粋を作る必要がある記事の分だけ読む。
 export async function listPublicArticles(db: D1Database): Promise<PublicListItem[]> {
   const { results } = await db.prepare(
-    `SELECT id, published_title, published_summary, first_published_at,
+    `SELECT id, published_title, published_summary, first_published_at, content_published_at,
        CASE WHEN published_summary = '' THEN published_body_json END AS excerpt_body_json
-     FROM articles WHERE status = 'published' ORDER BY first_published_at DESC`,
-  ).all<{ id: string; published_title: string; published_summary: string; first_published_at: number; excerpt_body_json: string | null }>();
+     FROM articles WHERE status = 'published' ORDER BY first_published_at DESC, id DESC`,
+  ).all<{ id: string; published_title: string; published_summary: string; first_published_at: number; content_published_at: number; excerpt_body_json: string | null }>();
   return results.map(row => ({
     id: row.id,
     title: row.published_title,
     summary: row.published_summary,
     body: row.excerpt_body_json ? JSON.parse(row.excerpt_body_json) as JSONContent : null,
     firstPublishedAt: row.first_published_at,
+    contentPublishedAt: row.content_published_at,
   }));
 }
 
 export async function listArticles(db: D1Database): Promise<ArticleListItem[]> {
   const { results } = await db.prepare(
-    `SELECT id, title, status, updated_at, ${HAS_UNPUBLISHED_CHANGES} FROM articles ORDER BY updated_at DESC`,
-  ).all<Pick<ArticleRow, "id" | "title" | "status" | "updated_at" | "has_unpublished_changes">>();
+    `SELECT id, title, status, created_at, first_published_at, updated_at, ${HAS_UNPUBLISHED_CHANGES} FROM articles ORDER BY created_at DESC, id DESC`,
+  ).all<Pick<ArticleRow, "id" | "title" | "status" | "first_published_at" | "updated_at" | "has_unpublished_changes"> & { created_at: number }>();
   return results.map(row => ({
     id: row.id,
     title: row.title,
     status: row.status,
+    createdAt: row.created_at,
+    firstPublishedAt: row.first_published_at,
     updatedAt: row.updated_at,
     hasUnpublishedChanges: row.has_unpublished_changes === 1,
   }));

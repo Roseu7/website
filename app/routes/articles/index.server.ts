@@ -12,6 +12,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
       title: article.title,
       summary: article.summary || (article.body ? articleExcerpt(article.body) : ""),
       firstPublishedAt: article.firstPublishedAt,
+      contentPublishedAt: article.contentPublishedAt,
     })),
   };
 }

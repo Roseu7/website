@@ -6,6 +6,7 @@ import { ArticleBody } from "~/components/articles/ArticleBody";
 import { ArticleSideToc } from "~/components/articles/ArticleSideToc";
 import { ShareButton } from "~/components/articles/ShareButton";
 import { ReadingProgress } from "~/components/articles/ReadingProgress";
+import { ArticleDates } from "~/components/articles/ArticleDates";
 import { siteConfig } from "~/utils/site";
 import { articleDate } from "~/utils/articles/date";
 import type { loader } from "./article.server";
@@ -38,9 +39,6 @@ export default function ArticlePage() {
     setWindowTitle?.({ path: pathname, title });
     return () => setWindowTitle?.(null);
   }, [setWindowTitle, pathname, title]);
-  const published = new Date(article.firstPublishedAt);
-  const updated = new Date(article.contentPublishedAt);
-  const showUpdated = articleDate.format(updated) !== articleDate.format(published);
   return (
     <PageLayout contentClassName="article-page">
       <p className="article-page__back article-page__back--top"><Link to="/articles">← 記事の一覧へ</Link></p>
@@ -49,10 +47,7 @@ export default function ArticlePage() {
         <article className="article-page__article">
           <header className="article-page__header">
             <h1 className="article-page__title">{title}</h1>
-            <div className="article-page__meta">
-              <span>公開 <time dateTime={published.toISOString()}>{articleDate.format(published)}</time></span>
-              {showUpdated && <span>更新 <time dateTime={updated.toISOString()}>{articleDate.format(updated)}</time></span>}
-            </div>
+            <ArticleDates published={article.firstPublishedAt} updated={article.contentPublishedAt} className="article-page__meta" />
           </header>
           {hasOutline && (
             <nav className="article-toc" aria-label="目次">

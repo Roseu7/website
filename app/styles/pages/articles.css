@@ -14,7 +14,7 @@
   .articles-list__item:focus-visible { background: var(--accent-soft); }
   /* 大きさと行の高さは、OSのウィンドウ内の h2 の指定（20px）に合わせる。 */
   .articles-list__title { margin: 0; font-weight: 400; }
-  .articles-list__date { color: var(--ink-3); font-size: 0.8125rem; }
+  .articles-list__dates { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; color: var(--ink-3); font-size: 0.8125rem; }
   .articles-list__summary {
     margin: 0;
     max-inline-size: var(--article-measure);

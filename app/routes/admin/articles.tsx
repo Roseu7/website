@@ -11,6 +11,10 @@ export const meta = () => [
 const STATUS_LABEL = { draft: "下書き", unlisted: "限定公開", published: "公開中" } as const;
 const dateFormat = new Intl.DateTimeFormat("ja-JP", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Tokyo" });
 
+function AdminDate({ label, at }: { label: string; at: number }) {
+  return <span>{label} <time dateTime={new Date(at).toISOString()}>{dateFormat.format(at)}</time></span>;
+}
+
 export default function ArticlesAdminPage() {
   const { articles } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
@@ -35,7 +39,11 @@ export default function ArticlesAdminPage() {
                   <span className="article-list__meta">
                     <span className="article-status" data-status={article.status}>{STATUS_LABEL[article.status]}</span>
                     {article.hasUnpublishedChanges && <span className="article-list__changed">公開版と違う変更あり</span>}
-                    <time dateTime={new Date(article.updatedAt).toISOString()}>{dateFormat.format(article.updatedAt)}</time>
+                  </span>
+                  <span className="article-list__meta">
+                    <AdminDate label="作成" at={article.createdAt} />
+                    {article.firstPublishedAt !== null && <AdminDate label="初回公開" at={article.firstPublishedAt} />}
+                    <AdminDate label="更新" at={article.updatedAt} />
                   </span>
                 </a>
               </li>
