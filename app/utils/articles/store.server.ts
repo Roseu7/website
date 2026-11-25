@@ -123,8 +123,7 @@ export interface PublicListItem {
 }
 
 // 一覧に出すのは一般公開だけ。限定公開は、URLを知っている人だけが読める。
-// 並びは前後の記事と同じ（初めて公開した日時、同じなら記事ID）。読者にとっての「書いた日」は初めて公開した日なので、
-// 管理画面の作成日時の順とは、下書きのまま置いてから公開した記事の分だけ違うことがある。
+// 並びは前後の記事と同じ（初めて公開した日時、同じなら記事ID）。
 // 本文は、概要が空で抜粋を作る必要がある記事の分だけ読む。
 export async function listPublicArticles(db: D1Database): Promise<PublicListItem[]> {
   const { results } = await db.prepare(
@@ -142,9 +141,11 @@ export async function listPublicArticles(db: D1Database): Promise<PublicListItem
   }));
 }
 
+// 公開側の一覧と同じ順に並べる。まだ公開していない記事は、作成日時をその代わりにする。
+// 非公開に戻した記事は初回公開日時が残っているので、公開していたときの位置のままにする。
 export async function listArticles(db: D1Database): Promise<ArticleListItem[]> {
   const { results } = await db.prepare(
-    `SELECT id, title, status, created_at, first_published_at, updated_at, ${HAS_UNPUBLISHED_CHANGES} FROM articles ORDER BY created_at DESC, id DESC`,
+    `SELECT id, title, status, created_at, first_published_at, updated_at, ${HAS_UNPUBLISHED_CHANGES} FROM articles ORDER BY COALESCE(first_published_at, created_at) DESC, id DESC`,
   ).all<Pick<ArticleRow, "id" | "title" | "status" | "first_published_at" | "updated_at" | "has_unpublished_changes"> & { created_at: number }>();
   return results.map(row => ({
     id: row.id,
