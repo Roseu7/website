@@ -53,6 +53,10 @@
   .os-window:not(.os-window--maximized)[data-app="about"] { height: min(520px, calc(100% - 140px)); }
   .os-window:not(.os-window--maximized)[data-app="games"] { height: min(360px, calc(100% - 140px)); }
   .os-window:not(.os-window--maximized)[data-app="tools"] { height: min(440px, calc(100% - 140px)); }
+  /* 記事は長く読むので、ほかのアプリより大きく開く。幅は、本文の右に目次が出る大きさ（本文の領域が62rem以上）に届くようにし、
+     高さは開く位置（上から76px）からタスクバーの手前までにする。
+     幅の上限は、ふだん開く位置（左から max(180px, 17vw)、OsWindow と同じ式）から右端までに収め、狭い画面で左のアイコンにかぶらないようにする。 */
+  .os-window:not(.os-window--maximized)[data-app="articles"] { width: min(1080px, calc(100% - max(180px, 17vw) - 24px)); height: calc(100% - 96px); }
 
 /* アプリが8個になり、1列だと高さが約852px未満で最後のアイコンが見切れる。
    その範囲では、アイコンの大きさは変えずに2列（4段）に並べる。730px以下は下の設定に任せる。 */
