@@ -170,6 +170,55 @@
   .article-fold[open] > summary::before { rotate: 90deg; }
   @media (prefers-reduced-motion: reduce) { .article-fold > summary::before { transition: none; } }
   .article-fold .article-compose__summary { margin-block-end: 0.75rem; }
+
+  .article-tags { display: grid; gap: 0.5rem; margin-block-end: 0.75rem; }
+  .article-tags__chosen { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+  .article-tags__chosen li {
+    display: inline-flex;
+    align-items: center;
+    padding-inline-start: 0.6rem;
+    border: 1px solid var(--line-strong);
+    font-family: var(--article-font);
+    font-size: 0.85rem;
+  }
+  .article-tags__chosen button {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 2rem;
+    block-size: 2rem;
+    border: 0;
+    background: none;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .article-tags__chosen button:hover { color: var(--ink-1); }
+  .article-tags__entry { display: flex; gap: 0.5rem; }
+  .article-tags__entry input {
+    flex: 1;
+    min-inline-size: 0;
+    min-block-size: var(--article-target);
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--line-soft);
+    background: var(--bg-strong);
+    color: var(--ink-1);
+    font-family: var(--article-font);
+    font-size: 1rem;
+  }
+  .article-tags__entry input:focus-visible { outline: 2px solid var(--ink-1); outline-offset: 1px; }
+  .article-tags__entry .site-button { min-block-size: var(--article-target); }
+  .article-tags__suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .article-tags__suggestions button {
+    min-block-size: 2rem;
+    padding: 0.15rem 0.6rem;
+    border: 1px dashed var(--line-soft);
+    background: none;
+    color: var(--ink-2);
+    font-family: var(--article-font);
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .article-tags__suggestions button::before { content: "+ "; color: var(--ink-3); }
+  .article-tags__suggestions button:hover { border-color: var(--line-strong); color: var(--ink-1); }
   .article-outline ol { margin: 0 0 0.5rem; padding: 0; list-style: none; }
   .article-outline li[data-level="3"] { padding-inline-start: 1.25rem; }
   .article-outline button {

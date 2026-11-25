@@ -9,6 +9,7 @@ import { useLoaderData } from "~/framework/navigation";
 import { ArticleBody } from "~/components/articles/ArticleBody";
 import { EditorToolbar } from "~/components/articles/EditorToolbar";
 import { LinkBubble } from "~/components/articles/LinkBubble";
+import { TagInput } from "~/components/articles/TagInput";
 import { FigureView } from "~/components/articles/FigureView";
 import { uploadArticleImage, type UploadedImage } from "~/components/articles/image-upload";
 import { findBackup, removeStoredBackup, useArticleSaver, type PublishMode, type StoredBackup } from "~/components/articles/useArticleSaver";
@@ -103,9 +104,10 @@ function useDialog() {
 }
 
 export default function ArticleEditPage() {
-  const { article } = useLoaderData<typeof loader>();
+  const { article, tagSuggestions } = useLoaderData<typeof loader>();
   const [title, setTitle] = useState(article.title);
   const [summary, setSummary] = useState(article.summary);
+  const [tags, setTags] = useState(article.tags);
   const [status, setStatus] = useState(article.status);
   const [hasUnpublishedChanges, setHasUnpublishedChanges] = useState(article.hasUnpublishedChanges);
   const [preview, setPreview] = useState<string | null>(null);
@@ -116,8 +118,10 @@ export default function ArticleEditPage() {
   const [outline, setOutline] = useState(() => articleOutline(article.body as JSONContent));
   const titleRef = useRef(title);
   const summaryRef = useRef(summary);
+  const tagsRef = useRef(tags);
   titleRef.current = title;
   summaryRef.current = summary;
+  tagsRef.current = tags;
   const editorRef = useRef<Editor | null>(null);
   const returnScroll = useRef(0);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -143,7 +147,7 @@ export default function ArticleEditPage() {
   const saver = useArticleSaver({
     id: article.id,
     initialRevision: article.revision,
-    getDraft: () => ({ title: titleRef.current, summary: summaryRef.current, body: editorRef.current?.getJSON() ?? (article.body as JSONContent) }),
+    getDraft: () => ({ title: titleRef.current, summary: summaryRef.current, tags: tagsRef.current, body: editorRef.current?.getJSON() ?? (article.body as JSONContent) }),
     onWritten: result => setHasUnpublishedChanges(result.hasUnpublishedChanges),
   });
   const saverRef = useRef(saver);
@@ -271,16 +275,19 @@ export default function ArticleEditPage() {
 
   const changeTitle = (value: string) => { setTitle(value); titleRef.current = value; saver.markChanged(); };
   const changeSummary = (value: string) => { setSummary(value); summaryRef.current = value; saver.markChanged(); };
+  const changeTags = (value: string[]) => { setTags(value); tagsRef.current = value; saver.markChanged(); };
 
   // 戻す候補の控えは、このタブの控えとは別のキーにあるので、判断するまで編集しても消えない。
   // 戻したら、その内容はこのタブの控えに書き写してから元の控えを消す。
   const restoreBackup = () => {
     if (!backup || !editor) return;
-    const { title: storedTitle, summary: storedSummary, body, baseRevision } = backup.backup;
+    const { title: storedTitle, summary: storedSummary, tags: storedTags, body, baseRevision } = backup.backup;
     setTitle(storedTitle);
     setSummary(storedSummary);
+    setTags(storedTags);
     titleRef.current = storedTitle;
     summaryRef.current = storedSummary;
+    tagsRef.current = storedTags;
     editor.commands.setContent(body, { emitUpdate: false });
     setOutline(articleOutline(body));
     saver.restoreFrom(baseRevision);
@@ -510,6 +517,10 @@ export default function ArticleEditPage() {
             value={summary}
             onChange={event => changeSummary(event.target.value)}
           />
+        </details>
+        <details className="article-fold" open={article.tags.length > 0 || undefined}>
+          <summary id="article-tags-label">タグ{tags.length ? `（${tags.length}）` : "（任意）"}</summary>
+          <TagInput value={tags} suggestions={tagSuggestions} labelledBy="article-tags-label" onChange={changeTags} />
         </details>
         {outline.length > 0 && (
           <details className="article-outline article-fold">

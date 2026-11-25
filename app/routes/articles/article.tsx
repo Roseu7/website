@@ -7,6 +7,7 @@ import { ArticleSideToc } from "~/components/articles/ArticleSideToc";
 import { ShareButton } from "~/components/articles/ShareButton";
 import { ReadingProgress } from "~/components/articles/ReadingProgress";
 import { ArticleDates } from "~/components/articles/ArticleDates";
+import { ArticleTags } from "~/components/articles/ArticleTags";
 import { siteConfig } from "~/utils/site";
 import { articleDate } from "~/utils/articles/date";
 import type { loader } from "./article.server";
@@ -57,6 +58,7 @@ export const meta = ({ data }: { data?: ArticleData }) => {
         datePublished: published,
         dateModified: modified,
         inLanguage: "ja",
+        ...(article.tags.length ? { keywords: article.tags } : {}),
         author: { "@type": "Person", name: siteConfig.owner, url: "https://roseu.net/about" },
       },
     },
@@ -90,6 +92,7 @@ export default function ArticlePage() {
           <header className="article-page__header">
             <h1 className="article-page__title">{title}</h1>
             <ArticleDates published={article.firstPublishedAt} updated={article.contentPublishedAt} className="article-page__meta" />
+            <ArticleTags tags={article.tags} />
           </header>
           {hasOutline && (
             <nav className="article-toc" aria-label="目次">

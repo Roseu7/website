@@ -7,6 +7,7 @@ export interface ArticleDraft {
   title: string;
   summary: string;
   body: JSONContent;
+  tags: string[];
 }
 
 export interface EditableArticle extends ArticleDraft {
@@ -35,6 +36,7 @@ interface ArticleRow {
   title: string;
   summary: string;
   body_json: string;
+  tags_json: string;
   status: ArticleStatus;
   updated_at: number;
   first_published_at: number | null;
@@ -43,7 +45,7 @@ interface ArticleRow {
 }
 
 // 時刻ではなく値で比べる。一文を直して元に戻したときに「変更あり」と出さないため。
-const HAS_UNPUBLISHED_CHANGES = `(status <> 'draft' AND (title IS NOT published_title OR summary IS NOT published_summary OR body_json IS NOT published_body_json)) AS has_unpublished_changes`;
+const HAS_UNPUBLISHED_CHANGES = `(status <> 'draft' AND (title IS NOT published_title OR summary IS NOT published_summary OR body_json IS NOT published_body_json OR tags_json IS NOT published_tags_json)) AS has_unpublished_changes`;
 
 function toEditable(row: ArticleRow): EditableArticle {
   return {
@@ -52,6 +54,7 @@ function toEditable(row: ArticleRow): EditableArticle {
     title: row.title,
     summary: row.summary,
     body: JSON.parse(row.body_json) as JSONContent,
+    tags: JSON.parse(row.tags_json) as string[],
     status: row.status,
     updatedAt: row.updated_at,
     firstPublishedAt: row.first_published_at,
@@ -66,6 +69,7 @@ export interface PublicArticle {
   title: string;
   summary: string;
   body: JSONContent;
+  tags: string[];
   firstPublishedAt: number;
   contentPublishedAt: number;
 }
@@ -76,11 +80,12 @@ interface PublicRow {
   published_title: string;
   published_summary: string;
   published_body_json: string;
+  published_tags_json: string;
   first_published_at: number;
   content_published_at: number;
 }
 
-const PUBLIC_COLUMNS = "id, status, published_title, published_summary, published_body_json, first_published_at, content_published_at";
+const PUBLIC_COLUMNS = "id, status, published_title, published_summary, published_body_json, published_tags_json, first_published_at, content_published_at";
 
 function toPublic(row: PublicRow): PublicArticle {
   return {
@@ -89,6 +94,7 @@ function toPublic(row: PublicRow): PublicArticle {
     title: row.published_title,
     summary: row.published_summary,
     body: JSON.parse(row.published_body_json) as JSONContent,
+    tags: JSON.parse(row.published_tags_json) as string[],
     firstPublishedAt: row.first_published_at,
     contentPublishedAt: row.content_published_at,
   };
@@ -118,24 +124,28 @@ export interface PublicListItem {
   summary: string;
   // 概要が空の記事だけ、抜粋を作るために本文を持たせる。
   body: JSONContent | null;
+  tags: string[];
   firstPublishedAt: number;
   contentPublishedAt: number;
 }
 
 // 一覧に出すのは一般公開だけ。限定公開は、URLを知っている人だけが読める。
 // 並びは前後の記事と同じ（初めて公開した日時、同じなら記事ID）。
-// 本文は、概要が空で抜粋を作る必要がある記事の分だけ読む。
-export async function listPublicArticles(db: D1Database): Promise<PublicListItem[]> {
+// 本文は、概要が空で抜粋を作る必要がある記事の分だけ読む。tag を渡すと、そのタグが付いた記事だけにする。
+export async function listPublicArticles(db: D1Database, tag: string | null): Promise<PublicListItem[]> {
   const { results } = await db.prepare(
-    `SELECT id, published_title, published_summary, first_published_at, content_published_at,
+    `SELECT id, published_title, published_summary, published_tags_json, first_published_at, content_published_at,
        CASE WHEN published_summary = '' THEN published_body_json END AS excerpt_body_json
-     FROM articles WHERE status = 'published' ORDER BY first_published_at DESC, id DESC`,
-  ).all<{ id: string; published_title: string; published_summary: string; first_published_at: number; content_published_at: number; excerpt_body_json: string | null }>();
+     FROM articles WHERE status = 'published'
+       AND (?1 IS NULL OR EXISTS (SELECT 1 FROM json_each(published_tags_json) WHERE value = ?1))
+     ORDER BY first_published_at DESC, id DESC`,
+  ).bind(tag).all<{ id: string; published_title: string; published_summary: string; published_tags_json: string; first_published_at: number; content_published_at: number; excerpt_body_json: string | null }>();
   return results.map(row => ({
     id: row.id,
     title: row.published_title,
     summary: row.published_summary,
     body: row.excerpt_body_json ? JSON.parse(row.excerpt_body_json) as JSONContent : null,
+    tags: JSON.parse(row.published_tags_json) as string[],
     firstPublishedAt: row.first_published_at,
     contentPublishedAt: row.content_published_at,
   }));
@@ -158,9 +168,17 @@ export async function listArticles(db: D1Database): Promise<ArticleListItem[]> {
   }));
 }
 
+// 管理画面のタグの候補。下書きのタグも含め、使っている記事の多い順に並べる。
+export async function listArticleTags(db: D1Database) {
+  const { results } = await db.prepare(
+    "SELECT tag.value AS name FROM articles, json_each(articles.tags_json) AS tag GROUP BY tag.value ORDER BY COUNT(*) DESC, tag.value",
+  ).all<{ name: string }>();
+  return results.map(row => row.name);
+}
+
 export async function getEditableArticle(db: D1Database, id: string) {
   const row = await db.prepare(
-    `SELECT id, revision, title, summary, body_json, status, updated_at, first_published_at, content_published_at, ${HAS_UNPUBLISHED_CHANGES} FROM articles WHERE id = ?`,
+    `SELECT id, revision, title, summary, body_json, tags_json, status, updated_at, first_published_at, content_published_at, ${HAS_UNPUBLISHED_CHANGES} FROM articles WHERE id = ?`,
   ).bind(id).first<ArticleRow>();
   return row ? toEditable(row) : null;
 }
@@ -203,8 +221,8 @@ async function conflictOrMissing(db: D1Database, id: string, baseRevision: numbe
 export async function saveDraft(db: D1Database, id: string, baseRevision: number, draft: ArticleDraft): Promise<WriteResult> {
   const now = Date.now();
   const row = await db.prepare(
-    `UPDATE articles SET title = ?, summary = ?, body_json = ?, revision = revision + 1, updated_at = ? WHERE id = ? AND revision = ? RETURNING revision, ${HAS_UNPUBLISHED_CHANGES}`,
-  ).bind(draft.title, draft.summary, JSON.stringify(draft.body), now, id, baseRevision).first<WrittenRow>();
+    `UPDATE articles SET title = ?, summary = ?, body_json = ?, tags_json = ?, revision = revision + 1, updated_at = ? WHERE id = ? AND revision = ? RETURNING revision, ${HAS_UNPUBLISHED_CHANGES}`,
+  ).bind(draft.title, draft.summary, JSON.stringify(draft.body), JSON.stringify(draft.tags), now, id, baseRevision).first<WrittenRow>();
   return row ? written(row, now) : conflictOrMissing(db, id, baseRevision);
 }
 
@@ -229,15 +247,15 @@ export async function publishArticle(
   const first = mode.kind === "first";
   const row = await db.prepare(
     `UPDATE articles SET
-       title = ?1, summary = ?2, body_json = ?3,
-       published_title = ?1, published_summary = ?2, published_body_json = ?3,
+       title = ?1, summary = ?2, body_json = ?3, tags_json = ?8,
+       published_title = ?1, published_summary = ?2, published_body_json = ?3, published_tags_json = ?8,
        status = ${first ? "?4" : "status"},
        first_published_at = COALESCE(first_published_at, ?5),
        content_published_at = ?5,
        revision = revision + 1, updated_at = ?5
      WHERE id = ?6 AND revision = ?7 AND ${first ? "status = 'draft'" : "status <> 'draft'"}
      RETURNING revision, ${HAS_UNPUBLISHED_CHANGES}`,
-  ).bind(draft.title, draft.summary, body, first ? mode.status : null, now, id, baseRevision).first<WrittenRow>();
+  ).bind(draft.title, draft.summary, body, first ? mode.status : null, now, id, baseRevision, JSON.stringify(draft.tags)).first<WrittenRow>();
   return row ? written(row, now) : conflictOrMissing(db, id, baseRevision);
 }
 
@@ -253,16 +271,16 @@ export async function setVisibility(
   return result.meta.changes > 0;
 }
 
-// 非公開に戻す。公開版は空にし、書いている版と初公開日は残す。
 // 記事を消す。公開中でも消せる（公開ページは404になる）。アップロードした画像はR2に残る。
 export async function deleteArticle(db: D1Database, id: string) {
   const result = await db.prepare("DELETE FROM articles WHERE id = ?").bind(id).run();
   return result.meta.changes > 0;
 }
 
+// 非公開に戻す。公開版は空にし、書いている版と初公開日は残す。
 export async function unpublishArticle(db: D1Database, id: string) {
   const result = await db.prepare(
-    "UPDATE articles SET status = 'draft', published_title = NULL, published_summary = NULL, published_body_json = NULL, content_published_at = NULL WHERE id = ? AND status <> 'draft'",
+    "UPDATE articles SET status = 'draft', published_title = NULL, published_summary = NULL, published_body_json = NULL, published_tags_json = '[]', content_published_at = NULL WHERE id = ? AND status <> 'draft'",
   ).bind(id).run();
   return result.meta.changes > 0;
 }

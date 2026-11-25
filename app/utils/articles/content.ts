@@ -216,6 +216,32 @@ export function emptyArticleBody(): JSONContent {
 
 export class ArticleContentError extends Error {}
 
+export const MAX_TAGS = 10;
+export const MAX_TAG_LENGTH = 24;
+
+// 入力されたタグをそろえる。先頭の「#」は付けて書く人が多いので外し、空白は1つにまとめる。
+export function normalizeTag(raw: string) {
+  return raw.replace(/[\p{Cc}\p{Cf}]/gu, "").replace(/^[#＃]+/, "").replace(/\s+/g, " ").trim();
+}
+
+// 大文字と小文字だけが違うタグは同じものとみなし、先に書いたほうを残す。
+export function validateTags(value: unknown): string[] {
+  if (!Array.isArray(value)) throw new ArticleContentError("タグの形式が正しくありません。");
+  const tags: string[] = [];
+  const seen = new Set<string>();
+  for (const item of value) {
+    if (typeof item !== "string") throw new ArticleContentError("タグの形式が正しくありません。");
+    const tag = normalizeTag(item);
+    if (!tag) continue;
+    if (tag.length > MAX_TAG_LENGTH) throw new ArticleContentError(`タグは${MAX_TAG_LENGTH}文字までです。`);
+    if (seen.has(tag.toLowerCase())) continue;
+    seen.add(tag.toLowerCase());
+    tags.push(tag);
+  }
+  if (tags.length > MAX_TAGS) throw new ArticleContentError(`タグは${MAX_TAGS}個までです。`);
+  return tags;
+}
+
 let cachedSchema: ReturnType<typeof getSchema> | undefined;
 function articleSchema() {
   cachedSchema ??= getSchema(articleExtensions);

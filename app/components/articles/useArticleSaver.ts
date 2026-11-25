@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { JSONContent } from "@tiptap/core";
 
-export interface DraftValue { title: string; summary: string; body: JSONContent }
+export interface DraftValue { title: string; summary: string; body: JSONContent; tags: string[] }
 export type SaveState = "saved" | "dirty" | "saving" | "error" | "conflict";
 export type PublishMode = { kind: "first"; status: "unlisted" | "published" } | { kind: "update" };
 

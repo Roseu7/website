@@ -23,6 +23,7 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
       description: article.summary || articleExcerpt(article.body),
       firstPublishedAt: article.firstPublishedAt,
       contentPublishedAt: article.contentPublishedAt,
+      tags: article.tags,
       image: articleFirstImage(article.body),
       html: renderArticleHtml(article.body),
       outline: articleOutline(article.body),

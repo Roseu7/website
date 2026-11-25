@@ -7,6 +7,7 @@ import {
   MAX_TITLE_LENGTH,
   isArticleId,
   validateArticleBody,
+  validateTags,
 } from "~/utils/articles/content";
 import { getArticlesEnv, requireArticlesDb } from "~/utils/articles/env.server";
 import {
@@ -36,7 +37,7 @@ function parseDraft(body: Record<string, unknown>): ArticleDraft {
   if (new TextEncoder().encode(JSON.stringify(normalized)).byteLength > MAX_BODY_JSON_BYTES) {
     throw new ArticleContentError("本文が長すぎます。");
   }
-  return { title, summary, body: normalized };
+  return { title, summary, body: normalized, tags: validateTags(body.tags) };
 }
 
 function isPublicStatus(value: unknown): value is Exclude<ArticleStatus, "draft"> {
