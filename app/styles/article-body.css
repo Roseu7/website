@@ -15,6 +15,9 @@
     color: var(--ink-1);
     overflow-wrap: anywhere;
     line-break: strict;
+    /* タブや連続した空白を、編集画面（ProseMirrorは pre-wrap）と同じように表示する。 */
+    white-space: pre-wrap;
+    tab-size: 2em;
     -webkit-user-select: text;
     user-select: text;
   }
@@ -37,8 +40,9 @@
   .article-body h3 { font-size: 1.15em; }
   .article-body > * + h2 { margin-block-start: 2.4em; }
   .article-body > * + h3 { margin-block-start: 1.9em; }
-  .article-body h2 + *,
-  .article-body h3 + * { margin-block-start: 0.6em; }
+  /* 本文の直下の見出しのすぐ後だけ。見出しの入れ物（.article-heading）の中の「#」には当てない。 */
+  .article-body > h2 + *,
+  .article-body > h3 + * { margin-block-start: 0.6em; }
 
   .article-body a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
   .article-body mark { background: color-mix(in srgb, #f3d35c 55%, transparent); color: inherit; padding-inline: 0.1em; }
@@ -84,10 +88,14 @@
   .article-body > * + .article-heading[data-level="2"] { margin-block-start: 2.4em; }
   .article-body > * + .article-heading[data-level="3"] { margin-block-start: 1.9em; }
   .article-body .article-heading + * { margin-block-start: 0.6em; }
-  .article-body .article-heading { display: flex; align-items: center; gap: 0.25rem; }
+  /* 見出しが折り返しても「#」は1行目の真ん中に置く。入れ物の高さを見出しの1行分（文字の大きさ×行の高さ）にそろえる。 */
+  .article-body .article-heading { display: flex; align-items: flex-start; gap: 0.25rem; }
+  .article-body .article-heading[data-level="2"] { --heading-line: calc(1.4em * 1.45); }
+  .article-body .article-heading[data-level="3"] { --heading-line: calc(1.15em * 1.45); }
   /* ツールチップはボタンの真下に出す。ふだんは右に伸ばし、本文の右端に収まらないときだけ左に伸ばす（ArticleBody.tsx で判定）。 */
-  .article-body .article-anchor-wrap { position: relative; flex: none; display: inline-flex; }
+  .article-body .article-anchor-wrap { position: relative; flex: none; display: inline-flex; align-items: center; block-size: var(--heading-line); }
   .article-body .article-heading > :is(h2, h3) { margin: 0; }
+  /* PCでは、見出しにポインターを当てるかフォーカスするまで出さない。 */
   .article-body .article-anchor {
     display: inline-grid;
     place-items: center;
@@ -99,13 +107,16 @@
     color: var(--ink-3);
     font: inherit;
     font-size: 1rem;
-    opacity: 0.45;
+    opacity: 0;
     cursor: pointer;
+    transition: opacity var(--motion-fast, 160ms) ease;
   }
-  .article-body .article-heading:hover .article-anchor,
-  .article-body .article-anchor:focus-visible { opacity: 1; }
+  .article-body .article-heading:is(:hover, :focus-within) .article-anchor { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .article-body .article-anchor { transition: none; } }
+  /* ポインターを当てられない端末では、薄く出しておく。 */
+  @media (hover: none) { .article-body .article-anchor { opacity: 0.55; } }
   @media (pointer: coarse), (max-width: 47.99rem) {
-    .article-body .article-anchor { inline-size: 2.75rem; block-size: 2.75rem; opacity: 0.7; }
+    .article-body .article-anchor { inline-size: 2.75rem; block-size: 2.75rem; }
   }
   .article-body .article-anchor-tip {
     position: absolute;

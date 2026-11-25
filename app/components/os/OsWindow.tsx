@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useNavigationType } from "~/framework/navigation";
 import { getOsPage, osDocuments } from "~/utils/os";
-import { OsWindowActiveContext, OsCloseAppContext } from "./OsContext";
+import { OsWindowActiveContext, OsCloseAppContext, OsWindowTitleContext } from "./OsContext";
 import { animateOsWindow, stopOsMotion, type OsOpening, type OsRect } from "./motion";
 import { stepOsWheel } from "./scroll";
 
@@ -29,6 +29,9 @@ export function OsWindow({ path, active, error, background, openingSource, modal
   opening?: OsOpening;
 }) {
   const page = getOsPage(path)!;
+  // 副題は、設定したページのパスにいる間だけ出す。ほかのページへ移ったら、アプリの名前だけに戻る。
+  const [subtitle, setSubtitle] = useState<{ path: string; title: string } | null>(null);
+  const title = subtitle && subtitle.path === path ? `${page.title}｜${subtitle.title}` : page.title;
   const frameRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const position = useRef({ x: 180 + slot * 24, y: 76 + slot * 24 });
@@ -112,7 +115,7 @@ export function OsWindow({ path, active, error, background, openingSource, modal
     frameRef.current?.classList.remove("is-dragging");
   }
 
-  return <section ref={frameRef} data-app={page.id} data-opening-source={openingSource || undefined} style={{ zIndex: modal ? 101 : order }} className={`os-window${active ? " is-active" : ""}${error ? " os-window--error" : ""}${background ? " os-window--backdrop" : ""}${minimized ? " is-minimized" : ""}${maximized ? " os-window--maximized" : ""}${page.id === "documents" ? " os-window--text" : ""}${page.id === "projects" ? " os-window--pdf" : ""}`} role={error ? "dialog" : undefined} aria-modal={modal || undefined} aria-hidden={background || openingSource || undefined} inert={background || openingSource} aria-label={page.title} onKeyDown={event => {
+  return <section ref={frameRef} data-app={page.id} data-opening-source={openingSource || undefined} style={{ zIndex: modal ? 101 : order }} className={`os-window${active ? " is-active" : ""}${error ? " os-window--error" : ""}${background ? " os-window--backdrop" : ""}${minimized ? " is-minimized" : ""}${maximized ? " os-window--maximized" : ""}${page.id === "documents" ? " os-window--text" : ""}${page.id === "projects" ? " os-window--pdf" : ""}`} role={error ? "dialog" : undefined} aria-modal={modal || undefined} aria-hidden={background || openingSource || undefined} inert={background || openingSource} aria-label={title} onKeyDown={event => {
     if (modal && event.key === "Tab") { event.preventDefault(); contentRef.current?.querySelector<HTMLButtonElement>(".os-system-error__ok")?.focus(); }
   }} onPointerDownCapture={(event) => {
     if (!(event.target as Element).closest(".os-window-controls")) onFocus();
@@ -156,9 +159,9 @@ export function OsWindow({ path, active, error, background, openingSource, modal
         const delta = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[event.key];
         if (delta) { event.preventDefault(); place(position.current.x + delta[0], position.current.y + delta[1]); }
         if (event.key === "Home") { event.preventDefault(); place(180, 76); }
-      }}><span className="os-titlebar__mark" aria-hidden="true" /><span>{page.id === "settings" ? "システム" : page.title}</span></button>
+      }}><span className="os-titlebar__mark" aria-hidden="true" /><span>{page.id === "settings" ? "システム" : title}</span></button>
       {!error && page.id === "settings" && path !== "/settings" && <Link to="/settings" className="os-settings-back" aria-label="設定に戻る"><svg className="os-settings-back__edge" viewBox="0 0 56 44" preserveAspectRatio="none" aria-hidden="true"><path d="M11 1H51Q55 1 55 5V39Q55 43 51 43H11L1 22Z" fill="none" stroke="var(--ink-2)" strokeWidth="1" vectorEffect="non-scaling-stroke" /><path d="M11.5 2H51Q54 2 54 5M11 2L2 22" fill="none" stroke="var(--os-light)" strokeWidth="1" vectorEffect="non-scaling-stroke" /></svg>設定</Link>}
-      <div className="os-titlebar__name os-titlebar__name--mobile"><span className="os-titlebar__mark" aria-hidden="true" /><span>{page.id === "console" ? "コンソール" : page.id === "projects" ? "プロジェクト" : page.id === "settings" && path === "/settings/about" ? "このOSについて" : page.id === "settings" && path === "/settings/history" ? "更新履歴" : page.id === "settings" && path === "/settings/developer" ? "開発者向けオプション" : page.title}</span></div>
+      <div className="os-titlebar__name os-titlebar__name--mobile"><span className="os-titlebar__mark" aria-hidden="true" /><span>{page.id === "console" ? "コンソール" : page.id === "projects" ? "プロジェクト" : page.id === "settings" && path === "/settings/about" ? "このOSについて" : page.id === "settings" && path === "/settings/history" ? "更新履歴" : page.id === "settings" && path === "/settings/developer" ? "開発者向けオプション" : title}</span></div>
       <div className="os-window-controls" data-ui-actions>
         {!error && page.id !== "settings" && <>
         <WindowControl id={`os-${page.id}-min-tooltip`} label="最小化" onClick={onMinimize}><span className="os-control-min" aria-hidden="true" /></WindowControl>
@@ -168,6 +171,6 @@ export function OsWindow({ path, active, error, background, openingSource, modal
       </div>
     </header>
     {!error && page.id === "documents" && <nav className="os-document-tabs" aria-label="文書一覧" inert={!active}>{osDocuments.map((item) => <Link key={item.path} to={item.path} className={path === item.path ? "active" : ""} aria-current={path === item.path ? "page" : undefined}><span className="os-document-tab-label">{item.path === "/privacy" ? <>プライバシー<wbr />ポリシー<wbr /><span className="os-document-extension">.txt</span></> : <>{item.label.slice(0, -4)}<wbr /><span className="os-document-extension">.txt</span></>}</span></Link>)}</nav>}
-    <div id={`os-content-${page.id}`} ref={contentRef} className="os-window-content" tabIndex={-1} inert={!active}><OsWindowActiveContext.Provider value={active && !minimized}><OsCloseAppContext.Provider value={onClose}>{children}</OsCloseAppContext.Provider></OsWindowActiveContext.Provider></div>
+    <div id={`os-content-${page.id}`} ref={contentRef} className="os-window-content" tabIndex={-1} inert={!active}><OsWindowActiveContext.Provider value={active && !minimized}><OsCloseAppContext.Provider value={onClose}><OsWindowTitleContext.Provider value={setSubtitle}>{children}</OsWindowTitleContext.Provider></OsCloseAppContext.Provider></OsWindowActiveContext.Provider></div>
   </section>;
 }

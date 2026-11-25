@@ -41,7 +41,7 @@
     -webkit-user-select: text;
     user-select: text;
   }
-  .article-page__meta { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0; color: var(--ink-3); font-size: 0.8125rem; }
+  .article-page__meta { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0; color: var(--ink-3); font-family: var(--article-font); font-size: 0.8125rem; }
 
   .article-toc { border-block: 1px solid var(--line-soft); font-size: 0.9375rem; }
   .article-toc summary {
@@ -67,6 +67,78 @@
 
   .article-page__back { margin-block: 0; font-size: 0.9375rem; }
   .article-page__back--top { font-size: 0.8125rem; }
+
+  .article-page__meta { align-items: center; }
+  .article-page__meta .article-share { margin-inline-start: auto; }
+
+  /* 前後の記事。狭いときは縦に積み、広いときは左右に並べる。 */
+  .article-pager { display: grid; gap: 0.75rem; }
+  .article-pager__item {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line-soft);
+    background: var(--bg-strong);
+    color: var(--ink-1);
+    text-decoration: none !important;
+  }
+  .article-pager__item:hover,
+  .article-pager__item:focus-visible { background: var(--accent-soft); }
+  .article-pager__item[data-direction="next"] { text-align: end; }
+  .article-pager__label { color: var(--ink-3); font-size: 0.8125rem; }
+  .article-pager__title { font-family: var(--article-font); font-size: 1rem; font-weight: 700; line-height: 1.5; }
+  .article-pager__date { color: var(--ink-3); font-family: var(--article-font); font-size: 0.8125rem; }
+
+  .article-page__footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; font-size: 0.9375rem; }
+
+  /* 広い画面の右の目次。ふだんは出さない。 */
+  .article-page__aside { display: none; }
+  .article-side-toc { font-size: 0.875rem; }
+  .article-side-toc__title { margin: 0 0 0.5rem; color: var(--ink-3); font-size: 0.8125rem; }
+  .article-side-toc ol { margin: 0; padding: 0; list-style: none; font-family: var(--article-font); border-inline-start: 1px solid var(--line-soft); }
+  .article-side-toc li[data-level="3"] a { padding-inline-start: 1.5rem; }
+  .article-side-toc a {
+    display: block;
+    margin-inline-start: -1px;
+    padding: 0.35rem 0 0.35rem 0.75rem;
+    border-inline-start: 2px solid transparent;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .article-side-toc a[aria-current="location"] { border-inline-start-color: var(--accent); color: var(--ink-1); font-weight: 700; }
+
+  /* ウィンドウの幅で切り替える。R OSのウィンドウを最大化したときや広げたときにも効く。 */
+  .article-page { container: article-page / inline-size; }
+  @container article-page (min-width: 60rem) {
+    .article-pager { grid-template-columns: 1fr 1fr; }
+    .article-pager__item[data-direction="next"] { grid-column: 2; }
+  }
+  @container article-page (min-width: 62rem) {
+    /* 目次のある記事では、本文の右に目次の列を足し、ページのほかの部分も本文の列にそろえる。 */
+    .article-page:has(.article-page__layout--toc) {
+      --page-side: calc(14rem + 3rem);
+    }
+    .article-page:has(.article-page__layout--toc) > * {
+      max-inline-size: calc(var(--article-measure) + var(--page-side));
+      padding-inline-end: var(--page-side);
+      box-sizing: border-box;
+    }
+    .article-page > .article-page__layout--toc {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 14rem;
+      gap: 3rem;
+      padding-inline-end: 0;
+    }
+    .article-page__layout--toc .article-toc { display: none; }
+    .article-page__layout--toc .article-page__aside {
+      display: block;
+      position: sticky;
+      inset-block-start: 1.5rem;
+      align-self: start;
+      max-block-size: calc(100vh - 8rem);
+      overflow-y: auto;
+    }
+  }
 }
 
 /* OSのCSS（overrides のレイヤー）は、ウィンドウ内の h2・h3 を細字・固定の大きさにしている。
@@ -74,8 +146,8 @@
 @layer overrides {
   /* 目次はリンクが並ぶので、OSの「リンクは常に下線」をやめ、ポインターとフォーカスのときだけ下線を出す。 */
   /* OSの指定（.os-page-content a:not(.btn):not(...):not(...)）より詳細度を上げるため、li を足して同じ :not を重ねる。 */
-  .os-page-content .article-toc li a:not(.btn):not(.os-directory-entry):not(.os-directory-info) { text-decoration: none; }
-  .os-page-content .article-toc li a:not(.btn):not(.os-directory-entry):not(.os-directory-info):is(:hover, :focus-visible) { text-decoration: underline; text-underline-offset: 3px; }
+  .os-page-content :is(.article-toc, .article-side-toc) li a:not(.btn):not(.os-directory-entry):not(.os-directory-info) { text-decoration: none; }
+  .os-page-content :is(.article-toc, .article-side-toc) li a:not(.btn):not(.os-directory-entry):not(.os-directory-info):is(:hover, :focus-visible) { text-decoration: underline; text-underline-offset: 3px; }
   .os-page-content .article-body :is(h2, h3) { font-weight: 700; letter-spacing: normal; line-height: 1.45; }
   .os-page-content .article-body h2 { font-size: 1.4em; }
   .os-page-content .article-body h3 { font-size: 1.15em; }

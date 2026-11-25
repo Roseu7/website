@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { Extension, type JSONContent } from "@tiptap/core";
 import { EditorContent, ReactNodeViewRenderer, useEditor, type Editor } from "@tiptap/react";
 import { Placeholder } from "@tiptap/extensions";
+import InvisibleCharacters, { HardBreakNode, InvisibleCharacter, ParagraphNode } from "@tiptap/extension-invisible-characters";
 import { ArrowLeft, ExternalLink, Eye, PenLine } from "lucide-react";
 import { useLoaderData } from "~/framework/navigation";
 import { ArticleBody } from "~/components/articles/ArticleBody";
@@ -185,9 +186,27 @@ export default function ArticleEditPage() {
     Placeholder.configure({
       placeholder: ({ node }) => node.type.name === "figure" ? "キャプション（任意）" : node.type.name === "paragraph" ? "本文を書く" : "",
     }),
+    // 編集中だけ、段落の終わり・段落内の改行・タブ・全角スペースに薄い印を出す。
+    // 日本語では半角スペースの印は出番が少ないので出さない。CSSは articles-admin.css に書く。
+    InvisibleCharacters.configure({
+      injectCSS: false,
+      builders: [
+        new ParagraphNode(),
+        new HardBreakNode(),
+        new InvisibleCharacter({ type: "tab", predicate: character => character === "\t" }),
+        new InvisibleCharacter({ type: "ideographic-space", predicate: character => character === "\u3000" }),
+      ],
+    }),
     Extension.create({
       name: "articleShortcuts",
-      addKeyboardShortcuts: () => ({ "Mod-k": () => { openLinkRef.current(); return true; } }),
+      addKeyboardShortcuts: () => ({
+        "Mod-k": () => { openLinkRef.current(); return true; },
+        // リストの中では、Tabは字下げ（入れ子）に任せる。それ以外ではタブ文字を入れる。
+        Tab: ({ editor: current }) => {
+          if (current.isActive("listItem")) return false;
+          return current.commands.insertContent("\t");
+        },
+      }),
     }),
   ], []);
 

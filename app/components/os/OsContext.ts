@@ -5,6 +5,8 @@ import type { ConsoleReply } from "~/utils/console";
 export const OsPageContext = createContext(false);
 export const OsWindowActiveContext = createContext(true);
 export const OsCloseAppContext = createContext<(() => void) | undefined>(undefined);
+// ウィンドウの中のページが、タイトルバーに副題（記事のタイトルなど）を出すときに使う。
+export const OsWindowTitleContext = createContext<((value: { path: string; title: string } | null) => void) | undefined>(undefined);
 export const OsOpenAppContext = createContext<((app: OsApp, event: MouseEvent<HTMLAnchorElement>) => void) | undefined>(undefined);
 export const useOsPage = () => useContext(OsPageContext);
 export type OsEditorDocument = { path: string; text: string; save: (path: string, text: string) => Promise<ConsoleReply> };

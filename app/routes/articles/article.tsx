@@ -1,6 +1,10 @@
-import { Link, useLoaderData } from "~/framework/navigation";
+import { useContext, useEffect } from "react";
+import { Link, useLoaderData, useLocation } from "~/framework/navigation";
+import { OsWindowTitleContext } from "~/components/os/OsContext";
 import { PageLayout } from "~/components/layout/PageLayout";
 import { ArticleBody } from "~/components/articles/ArticleBody";
+import { ArticleSideToc } from "~/components/articles/ArticleSideToc";
+import { ShareButton } from "~/components/articles/ShareButton";
 import { siteConfig } from "~/utils/site";
 import { articleDate } from "~/utils/articles/date";
 import type { loader } from "./article.server";
@@ -22,36 +26,72 @@ export const meta = ({ data }: { data?: ArticleData }) => {
 const MIN_OUTLINE_ITEMS = 3;
 
 export default function ArticlePage() {
-  const { article } = useLoaderData<typeof loader>();
+  const { article, adjacent } = useLoaderData<typeof loader>();
+  const shareUrl = `https://roseu.net/articles/${article.id}`;
+  const title = article.title || "無題";
+  const hasOutline = article.outline.length >= MIN_OUTLINE_ITEMS;
+  const { pathname } = useLocation();
+  const setWindowTitle = useContext(OsWindowTitleContext);
+  // R OSのウィンドウのタイトルバーを「記事｜記事のタイトル」にする。
+  useEffect(() => {
+    setWindowTitle?.({ path: pathname, title });
+    return () => setWindowTitle?.(null);
+  }, [setWindowTitle, pathname, title]);
   const published = new Date(article.firstPublishedAt);
   const updated = new Date(article.contentPublishedAt);
   const showUpdated = articleDate.format(updated) !== articleDate.format(published);
   return (
     <PageLayout contentClassName="article-page">
       <p className="article-page__back article-page__back--top"><Link to="/articles">← 記事の一覧へ</Link></p>
-      <article className="article-page__article">
-        <header className="article-page__header">
-          <h1 className="article-page__title">{article.title || "無題"}</h1>
-          <p className="article-page__meta">
-            <span>公開 <time dateTime={published.toISOString()}>{articleDate.format(published)}</time></span>
-            {showUpdated && <span>更新 <time dateTime={updated.toISOString()}>{articleDate.format(updated)}</time></span>}
-          </p>
-        </header>
-        {article.outline.length >= MIN_OUTLINE_ITEMS && (
-          <nav className="article-toc" aria-label="目次">
-            <details open>
-              <summary>目次</summary>
-              <ol>
-                {article.outline.map(item => (
-                  <li key={item.id} data-level={item.level}><a href={`#${item.id}`}>{item.text || "（無題の節）"}</a></li>
-                ))}
-              </ol>
-            </details>
-          </nav>
-        )}
-        <ArticleBody html={article.html} />
-      </article>
-      <p className="article-page__back"><Link to="/articles">記事の一覧へ</Link></p>
+      {/* 広い画面では、本文の右に目次を出す（CSSのコンテナクエリで切り替える）。 */}
+      <div className={`article-page__layout${hasOutline ? " article-page__layout--toc" : ""}`}>
+        <article className="article-page__article">
+          <header className="article-page__header">
+            <h1 className="article-page__title">{title}</h1>
+            <div className="article-page__meta">
+              <span>公開 <time dateTime={published.toISOString()}>{articleDate.format(published)}</time></span>
+              {showUpdated && <span>更新 <time dateTime={updated.toISOString()}>{articleDate.format(updated)}</time></span>}
+              <ShareButton title={title} url={shareUrl} />
+            </div>
+          </header>
+          {hasOutline && (
+            <nav className="article-toc" aria-label="目次">
+              <details open>
+                <summary>目次</summary>
+                <ol>
+                  {article.outline.map(item => (
+                    <li key={item.id} data-level={item.level}><a href={`#${item.id}`}>{item.text || "（無題の節）"}</a></li>
+                  ))}
+                </ol>
+              </details>
+            </nav>
+          )}
+          <ArticleBody html={article.html} />
+        </article>
+        {hasOutline && <aside className="article-page__aside"><ArticleSideToc outline={article.outline} /></aside>}
+      </div>
+      {(adjacent.previous || adjacent.next) && (
+        <nav className="article-pager" aria-label="前後の記事">
+          {adjacent.previous && (
+            <Link to={`/articles/${adjacent.previous.id}`} className="article-pager__item" data-direction="previous">
+              <span className="article-pager__label">前の記事</span>
+              <span className="article-pager__title">{adjacent.previous.title || "無題"}</span>
+              <time className="article-pager__date" dateTime={new Date(adjacent.previous.firstPublishedAt).toISOString()}>{articleDate.format(adjacent.previous.firstPublishedAt)}</time>
+            </Link>
+          )}
+          {adjacent.next && (
+            <Link to={`/articles/${adjacent.next.id}`} className="article-pager__item" data-direction="next">
+              <span className="article-pager__label">次の記事</span>
+              <span className="article-pager__title">{adjacent.next.title || "無題"}</span>
+              <time className="article-pager__date" dateTime={new Date(adjacent.next.firstPublishedAt).toISOString()}>{articleDate.format(adjacent.next.firstPublishedAt)}</time>
+            </Link>
+          )}
+        </nav>
+      )}
+      <div className="article-page__footer">
+        <Link to="/articles">記事の一覧へ</Link>
+        <ShareButton title={title} url={shareUrl} />
+      </div>
     </PageLayout>
   );
 }

@@ -244,6 +244,25 @@
     padding-block: 0.5rem 2rem;
     outline: none;
   }
+  /* 段落の終わり・段落内の改行・タブ・全角スペースの印（@tiptap/extension-invisible-characters）。編集中だけ薄く出す。 */
+  .article-editor .tiptap-invisible-character { block-size: 0; padding: 0; inline-size: 0; pointer-events: none; user-select: none; }
+  .article-editor .tiptap-invisible-character::before {
+    display: inline-block;
+    inline-size: 0;
+    color: var(--ink-3);
+    opacity: 0.6;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8em;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1em;
+    caret-color: inherit;
+  }
+  .article-editor .tiptap-invisible-character--paragraph::before { content: "¶"; }
+  .article-editor .tiptap-invisible-character--break::before { content: "↵"; }
+  .article-editor .tiptap-invisible-character--tab::before { content: "→"; }
+  .article-editor .tiptap-invisible-character--ideographic-space::before { content: "□"; }
+  .article-editor .tiptap-invisible-character + img.ProseMirror-separator { block-size: 0 !important; inline-size: 0 !important; pointer-events: none; user-select: none; }
   .article-editor .article-figure__caption[data-empty]::before { content: "キャプション（任意）"; float: inline-start; block-size: 0; color: var(--ink-3); pointer-events: none; }
   .article-editor p.is-empty::before {
     content: attr(data-placeholder);

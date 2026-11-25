@@ -98,6 +98,18 @@ export async function getPublicArticle(db: D1Database, id: string) {
   return row ? toPublic(row) : null;
 }
 
+export interface AdjacentArticle { id: string; title: string; firstPublishedAt: number }
+
+// 一覧と同じ順番（初めて公開した日時、同じなら記事ID）で、前（古い）と次（新しい）の一般公開の記事を引く。
+export async function getAdjacentArticles(db: D1Database, current: { id: string; firstPublishedAt: number }) {
+  const columns = "id, published_title AS title, first_published_at AS firstPublishedAt";
+  const [older, newer] = await db.batch<AdjacentArticle>([
+    db.prepare(`SELECT ${columns} FROM articles WHERE status = 'published' AND (first_published_at < ?1 OR (first_published_at = ?1 AND id < ?2)) ORDER BY first_published_at DESC, id DESC LIMIT 1`).bind(current.firstPublishedAt, current.id),
+    db.prepare(`SELECT ${columns} FROM articles WHERE status = 'published' AND (first_published_at > ?1 OR (first_published_at = ?1 AND id > ?2)) ORDER BY first_published_at ASC, id ASC LIMIT 1`).bind(current.firstPublishedAt, current.id),
+  ]);
+  return { previous: older.results[0] ?? null, next: newer.results[0] ?? null };
+}
+
 export interface PublicListItem {
   id: string;
   title: string;
