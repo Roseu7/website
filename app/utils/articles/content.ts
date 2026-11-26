@@ -2,8 +2,10 @@ import { Extension, Node, getSchema, markInputRule, nodePasteRule, type Extensio
 import Heading from "@tiptap/extension-heading";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
+import { ListItem } from "@tiptap/extension-list";
 import StarterKit from "@tiptap/starter-kit";
 import { Plugin } from "@tiptap/pm/state";
+import { canJoin } from "@tiptap/pm/transform";
 
 // 32文字。32は256を割り切るので、乱数1バイトの下位5ビットで偏りなく選べる。
 const ID_ALPHABET = "0123456789abcdefghjkmnpqrstvwxyz";
@@ -199,9 +201,35 @@ const JapaneseFriendlyInput = Extension.create({
   },
 });
 
+// リストの項目は、見出しで始めてもよい（目次に出したい項目のため）。2つ目以降には段落や入れ子のリストを置ける。
+const ArticleListItem = ListItem.extend({ content: "(paragraph | heading) block*" });
+
+// 2つ目以降の項目の先頭でBackspaceを押したら、番号だけを外して前の項目の続きの段落にする。
+// 標準（ListKeymap）はリストの外へ出すので、番号付きリストが2つに分かれて番号が1から振り直される。
+// ListKeymapより先に判定するため、優先度を上げる。
+const ListContinuation = Extension.create({
+  name: "listContinuation",
+  priority: 101,
+  addKeyboardShortcuts() {
+    return {
+      Backspace: ({ editor }) => {
+        const { selection, doc } = editor.state;
+        const { $from } = selection;
+        if (!selection.empty || $from.parentOffset !== 0 || $from.depth < 3) return false;
+        if ($from.node(-1).type.name !== "listItem" || $from.index(-1) !== 0 || $from.index(-2) === 0) return false;
+        const itemStart = $from.before(-1);
+        if (!canJoin(doc, itemStart)) return false;
+        return editor.commands.command(({ tr }) => { tr.join(itemStart); return true; });
+      },
+    };
+  },
+});
+
 // 文字色やフォントの拡張を入れないので、貼り付けたそれらの書式はスキーマに無く自然に落ちる。
 export const articleExtensions: Extensions = [
-  StarterKit.configure({ heading: false, link: false }),
+  StarterKit.configure({ heading: false, link: false, listItem: false }),
+  ArticleListItem,
+  ListContinuation,
   JapaneseFriendlyInput,
   ArticleLink,
   ArticleHeading,

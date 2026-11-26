@@ -33,6 +33,7 @@
 		"@tiptap/extension-highlight": "3.35.0",
 		"@tiptap/extension-invisible-characters": "3.35.0",
 		"@tiptap/extension-link": "3.35.0",
+		"@tiptap/extension-list": "3.35.0",
 		"@tiptap/extensions": "3.35.0",
 		"@tiptap/pm": "3.35.0",
 		"@tiptap/react": "3.35.0",

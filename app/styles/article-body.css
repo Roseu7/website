@@ -76,9 +76,10 @@
   .article-body ol { padding-inline-start: 1.5em; }
   .article-body ul { list-style: disc; }
   .article-body ol { list-style: decimal; }
-  .article-body li > p { margin: 0; }
+  .article-body li > * { margin-block: 0; }
   .article-body li + li { margin-block-start: 0.3em; }
-  .article-body hr { border: 0; border-block-start: 1px solid var(--line-soft); margin-block: 2.4em; }
+  /* 項目の中の続きの段落や入れ子のリストは、項目どうしの間より少しだけ空ける。 */
+  .article-body li > * + * { margin-block-start: 0.4em; }  .article-body hr { border: 0; border-block-start: 1px solid var(--line-soft); margin-block: 2.4em; }
 
   /* 列を minmax(0, 1fr) にしないと、列幅が画像の元の幅に引っ張られて本文からはみ出す。 */
   .article-body .article-figure { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5em; }

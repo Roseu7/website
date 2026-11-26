@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { flushSync } from "react-dom";
 import { Extension, type JSONContent } from "@tiptap/core";
+import { Selection, TextSelection } from "@tiptap/pm/state";
 import { EditorContent, ReactNodeViewRenderer, useEditor, type Editor } from "@tiptap/react";
 import { Placeholder } from "@tiptap/extensions";
 import InvisibleCharacters, { HardBreakNode, InvisibleCharacter, ParagraphNode } from "@tiptap/extension-invisible-characters";
@@ -39,6 +40,30 @@ function insertFigure(editor: Editor, position: number, image: UploadedImage) {
   const next = from + (editor.state.doc.nodeAt(from)?.nodeSize ?? 0) + 1;
   editor.chain().focus().setTextSelection(next).scrollIntoView().run();
   return next;
+}
+
+// 上下の矢印で段落の境目を越えるときは、ブラウザに任せずに移動先を決める。
+// 編集中の印（¶）や画像の操作ボタンのような編集できない要素があると、ブラウザによってはカーソルがそこで止まる。
+// 横の位置は、移動先の行のうち今のカーソルと同じ横位置のところにする（測れなければ段落の端）。
+function moveAcrossBlocks(editor: Editor, direction: "up" | "down") {
+  const { view, state } = editor;
+  const { selection } = state;
+  if (!(selection instanceof TextSelection) || !selection.empty || view.composing) return false;
+  const { $head } = selection;
+  // 空の行は1行しかない。endOfTextblock は空の行の中の印や案内文の位置で測るので、空の行では見ない。
+  if ($head.parent.content.size > 0 && !view.endOfTextblock(direction)) return false;
+  const boundary = direction === "up" ? $head.before() : $head.after();
+  const target = Selection.findFrom(state.doc.resolve(boundary), direction === "up" ? -1 : 1);
+  if (!target) return false;
+  let next: Selection = target;
+  if (target instanceof TextSelection) {
+    const left = view.coordsAtPos($head.pos).left;
+    const line = view.coordsAtPos(target.head);
+    const found = view.posAtCoords({ left, top: (line.top + line.bottom) / 2 });
+    if (found && state.doc.resolve(found.pos).parent === target.$head.parent) next = TextSelection.create(state.doc, found.pos);
+  }
+  view.dispatch(state.tr.setSelection(next).scrollIntoView());
+  return true;
 }
 
 // カーソルが、上に固定した帯・ツールバーと、下に固定したツールバー（とキーボード）の間に見えるようにスクロールする。
@@ -219,11 +244,15 @@ export default function ArticleEditPage() {
       name: "articleShortcuts",
       addKeyboardShortcuts: () => ({
         "Mod-k": () => { openLinkRef.current(); return true; },
-        // リストの中では、Tabは字下げ（入れ子）に任せる。それ以外ではタブ文字を入れる。
+        // リストの中では、Tabは字下げ（入れ子）にする。最初の項目のように字下げできないときも、
+        // ブラウザの既定（フォーカスが次の欄へ移る）にしない。リストの外ではタブ文字を入れる。
+        // この拡張はリストの拡張より後に書いたので、Tiptapでは先に呼ばれる。
         Tab: ({ editor: current }) => {
-          if (current.isActive("listItem")) return false;
+          if (current.isActive("listItem")) { current.commands.sinkListItem("listItem"); return true; }
           return current.commands.insertContent("\t");
         },
+        ArrowUp: ({ editor: current }) => moveAcrossBlocks(current, "up"),
+        ArrowDown: ({ editor: current }) => moveAcrossBlocks(current, "down"),
       }),
     }),
   ], []);
