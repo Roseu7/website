@@ -79,7 +79,8 @@
   .article-body li > * { margin-block: 0; }
   .article-body li + li { margin-block-start: 0.3em; }
   /* 項目の中の続きの段落や入れ子のリストは、項目どうしの間より少しだけ空ける。 */
-  .article-body li > * + * { margin-block-start: 0.4em; }  .article-body hr { border: 0; border-block-start: 1px solid var(--line-soft); margin-block: 2.4em; }
+  .article-body li > * + * { margin-block-start: 0.4em; }
+  .article-body hr { border: 0; border-block-start: 1px solid var(--line-soft); margin-block: 2.4em; }
 
   /* 列を minmax(0, 1fr) にしないと、列幅が画像の元の幅に引っ張られて本文からはみ出す。 */
   .article-body .article-figure { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5em; }
@@ -93,6 +94,14 @@
   .article-body > * + .article-heading[data-level="2"] { margin-block-start: 2.4em; }
   .article-body > * + .article-heading[data-level="3"] { margin-block-start: 1.9em; }
   .article-body .article-heading + * { margin-block-start: 0.6em; }
+  /* 本文の直下の大見出しの前（前の節の終わり）に区切り線を引く。編集画面の h2 と公開ページの入れ物の両方に当てる。
+     リストや引用の中の見出しには引かない。手で入れた区切り線の直後は二重になるので引かない。
+     見出しの em は文字が大きいぶん長くなるので、どちらでも同じ間隔になるよう rem で決める。 */
+  .article-body > :not(hr) + :is(h2, .article-heading[data-level="2"]) {
+    margin-block-start: 1.75rem;
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid var(--line-soft);
+  }
   /* 見出しが折り返しても「#」は1行目の真ん中に置く。入れ物の高さを見出しの1行分（文字の大きさ×行の高さ）にそろえる。 */
   .article-body .article-heading { display: flex; align-items: flex-start; gap: 0.25rem; }
   .article-body .article-heading[data-level="2"] { --heading-line: calc(1.4em * 1.45); }
