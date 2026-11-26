@@ -24,6 +24,7 @@ import { Route as NotepadRouteImport } from './start-routes/notepad'
 import { Route as PrivacyRouteImport } from './start-routes/privacy'
 import { Route as ProjectsRouteImport } from './start-routes/projects'
 import { Route as SettingsRouteImport } from './start-routes/settings'
+import { Route as SitemapDotxmlRouteImport } from './start-routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './start-routes/terms'
 import { Route as ToolsRouteImport } from './start-routes/tools'
 import { Route as WsolverRouteImport } from './start-routes/wsolver'
@@ -156,6 +157,11 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -475,6 +481,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/wsolver': typeof WsolverRoute
@@ -550,6 +557,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/wsolver': typeof WsolverRoute
@@ -626,6 +634,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/wsolver': typeof WsolverRoute
@@ -703,6 +712,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/projects'
     | '/settings'
+    | '/sitemap.xml'
     | '/terms'
     | '/tools'
     | '/wsolver'
@@ -778,6 +788,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/projects'
     | '/settings'
+    | '/sitemap.xml'
     | '/terms'
     | '/tools'
     | '/wsolver'
@@ -853,6 +864,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/projects'
     | '/settings'
+    | '/sitemap.xml'
     | '/terms'
     | '/tools'
     | '/wsolver'
@@ -929,6 +941,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ProjectsRoute: typeof ProjectsRoute
   SettingsRoute: typeof SettingsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ToolsRoute: typeof ToolsRoute
   WsolverRoute: typeof WsolverRoute
@@ -1094,6 +1107,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -1521,6 +1541,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ProjectsRoute: ProjectsRoute,
   SettingsRoute: SettingsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ToolsRoute: ToolsRoute,
   WsolverRoute: WsolverRoute,

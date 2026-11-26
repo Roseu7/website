@@ -66,6 +66,7 @@ export const routeModules = {
   "/api/discord/interactions": { path: "/api/discord/interactions", load: () => import("~/routes/api/discord/interactions") },
   "/articles": { path: "/articles", load: () => import("~/routes/articles/index.server") },
   "/articles/:id": { path: "/articles/:id", load: () => import("~/routes/articles/article.server") },
+  "/sitemap.xml": { path: "/sitemap.xml", load: () => import("~/routes/sitemap.server") },
   "/admin/articles": { path: "/admin/articles", load: () => import("~/routes/admin/articles.server") },
   "/admin/articles/:id": { path: "/admin/articles/:id", load: () => import("~/routes/admin/article-edit.server") },
   "/admin/api/articles/:id": { path: "/admin/api/articles/:id", load: () => import("~/routes/admin/articles-api") },
