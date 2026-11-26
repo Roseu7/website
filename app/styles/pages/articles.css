@@ -197,12 +197,15 @@
 
   /* ウィンドウの幅で切り替える。R OSのウィンドウを最大化したときや広げたときにも効く。 */
   .article-page { container: article-page / inline-size; }
+  /* 広いウィンドウでは、本文の行を少し長くする。 */
+  @container article-page (min-width: 80rem) {
+    .article-page > * { --article-measure: calc(44 * 1.0625rem); }
+  }
   @container article-page (min-width: 62rem) {
-    /* 目次のある記事では、本文の右に目次の列を足し、ページのほかの部分も本文の列にそろえる。 */
-    .article-page:has(.article-page__layout--toc) {
-      --page-side: calc(14rem + 3rem);
-    }
+    /* 目次のある記事では、本文と右の目次をひとまとまりにして中央に置き、ページのほかの部分も本文の列にそろえる。
+       コンテナ自身はコンテナクエリの対象にならないので、変数も子の側で決める。 */
     .article-page:has(.article-page__layout--toc) > * {
+      --page-side: calc(14rem + 3rem);
       max-inline-size: calc(var(--article-measure) + var(--page-side));
       padding-inline-end: var(--page-side);
       box-sizing: border-box;
